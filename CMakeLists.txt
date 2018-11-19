@@ -533,6 +533,8 @@ add_executable(otter-browser WIN32 MACOSX_BUNDLE
 	${otter_src}
 )
 
+target_link_libraries(otter-browser vmime)
+
 if (Qt5WebEngineWidgets_FOUND AND ENABLE_QTWEBENGINE)
 	target_link_libraries(otter-browser Qt5::WebEngineCore Qt5::WebEngineWidgets)
 endif ()
