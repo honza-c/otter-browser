@@ -38,7 +38,7 @@ if (EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 	set(CPACK_PACKAGE_NAME "otter-browser")
 	set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${MAJOR_VERSION}.${MINOR_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
 	set(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${MAJOR_VERSION}.${MINOR_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
-	set(CPACK_DEBIAN_PACKAGE_DEPENDS "libhunspell-1.5-0 (>= 1.5.1), libqt5multimedia5 (>=5.6.0), libqt5qml5 (>=5.6.0), libqt5svg5 (>=5.6.0), libqt5webkit5 (>=5.212.0), libqt5xmlpatterns5 (>=5.6.0)")
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS "libhunspell-1.5-0 (>= 1.5.1), libqt5multimedia5 (>=5.6.0), libqt5qml5 (>=5.6.0), libqt5svg5 (>=5.6.0), libqt5webkit5 (>=5.212.0), libqt5xmlpatterns5 (>=5.6.0), libqt5sql5 (>=5.6.0)")
 	set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "gstreamer1.0-plugins-base, gstreamer1.0-plugins-good")
 	set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 	set(CPACK_DEBIAN_PACKAGE_SECTION "web")
@@ -80,7 +80,7 @@ option(ENABLE_CRASHREPORTS "Enable built-in crash reporting (only for official b
 option(ENABLE_DBUS "Enable D-Bus based integration for notifications (only freedesktop.org compatible platforms)" ON)
 option(ENABLE_SPELLCHECK "Enable Hunspell based spell checking" ON)
 
-find_package(Qt5 5.6.0 REQUIRED COMPONENTS Core Gui Multimedia Network PrintSupport Qml Svg Widgets XmlPatterns)
+find_package(Qt5 5.6.0 REQUIRED COMPONENTS Core Gui Multimedia Network PrintSupport Qml Svg Widgets XmlPatterns Sql)
 find_package(Qt5WebEngineWidgets 5.9.0 QUIET)
 find_package(Qt5WebKitWidgets 5.212.0 QUIET)
 find_package(Hunspell 1.5.0 QUIET)
@@ -89,6 +89,7 @@ set_package_properties(Qt5WebEngineCore PROPERTIES URL "https://www.qt.io/" DESC
 set_package_properties(Qt5WebEngineWidgets PROPERTIES URL "https://www.qt.io/" DESCRIPTION "QtWebEngine based backend (widgets)" TYPE OPTIONAL)
 set_package_properties(Qt5WebKit PROPERTIES URL "https://www.qt.io/" DESCRIPTION "QtWebKit based backend (core)" TYPE OPTIONAL)
 set_package_properties(Qt5WebKitWidgets PROPERTIES URL "https://www.qt.io/" DESCRIPTION "QtWebKit based backend (widgets)" TYPE OPTIONAL)
+set_package_properties(Qt5Sql PROPERTIES URL "https://www.qt.io/" DESCRIPTION "QtSql based backend (sql)" TYPE REQUIRED)
 set_package_properties(Hunspell PROPERTIES URL "https://hunspell.github.io/" DESCRIPTION "Generic spell checking support" TYPE OPTIONAL)
 
 set(otter_src
@@ -237,6 +238,30 @@ set(otter_src
 	src/modules/importers/opera/OperaSessionImporter.cpp
 	src/modules/importers/opml/OpmlImporter.cpp
 	src/modules/importers/opml/OpmlImporterWidget.cpp
+        src/modules/mail/attachment.cpp
+        src/modules/mail/contact.cpp
+        src/modules/mail/databasemanager.cpp
+        src/modules/mail/embeddedobject.cpp
+        src/modules/mail/inboxfolder.cpp
+        src/modules/mail/inboxfoldertreeitem.cpp
+        src/modules/mail/inboxfoldertreemodel.cpp
+        src/modules/mail/message.cpp
+        src/modules/mail/messagecontent.cpp
+        src/modules/mail/messagemetadata.cpp
+        src/modules/mail/messagemetadatasqltablemodel.cpp
+        src/modules/mail/multiselectcompleter.cpp
+        src/modules/mail/qpushbuttonwithid.cpp
+        src/modules/mail/useraccount.cpp
+        src/modules/mail/useraccountslistmodel.cpp
+        src/modules/mail/vmimebasemessagingservice.cpp
+        src/modules/mail/vmimeimapservice.cpp
+        src/modules/mail/vmimeinboxfolder.cpp
+        src/modules/mail/vmimeinboxfolderparser.cpp
+        src/modules/mail/vmimeinboxservice.cpp
+        src/modules/mail/vmimemessagecontentparser.cpp
+        src/modules/mail/vmimemessagemetadataparser.cpp
+        src/modules/mail/vmimepop3service.cpp
+        src/modules/mail/vmimesmtpservice.cpp
 	src/modules/widgets/action/ActionWidget.cpp
 	src/modules/widgets/address/AddressWidget.cpp
 	src/modules/widgets/bookmark/BookmarkWidget.cpp
@@ -534,6 +559,7 @@ add_executable(otter-browser WIN32 MACOSX_BUNDLE
 )
 
 target_link_libraries(otter-browser vmime)
+target_link_libraries(otter-browser Qt5::Sql)
 
 if (Qt5WebEngineWidgets_FOUND AND ENABLE_QTWEBENGINE)
 	target_link_libraries(otter-browser Qt5::WebEngineCore Qt5::WebEngineWidgets)
