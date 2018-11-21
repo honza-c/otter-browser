@@ -71,6 +71,11 @@ bool EmailAccountsManager::loadEmailAccounts(const QString &path)
         m_emailAccounts << readFromJson(jsonArray[i].toObject());
     }
 
+    for (UserAccount &account : m_emailAccounts)
+    {
+        account.initializeInbox();
+    }
+
     return true;
 }
 
@@ -141,9 +146,9 @@ UserAccount EmailAccountsManager::readFromJson(const QJsonObject json)
     account.setUserName(json[QLatin1String("userName")].toString());
     account.setPassword(json[QLatin1String("password")].toString());
     account.setSmtpServerUrl(json[QLatin1String("smtpServerUrl")].toString());
-    account.setSmtpServerPort(json[QLatin1String("smtpServerPort")].toInt());
+    account.setSmtpServerPort(json[QLatin1String("smtpServerPort")].toString().toInt());
     account.setIncomingServerAddress(json[QLatin1String("incomingServerAddress")].toString());
-    account.setIncomingServerPort(json[QLatin1String("incomingServerPort")].toInt());
+    account.setIncomingServerPort(json[QLatin1String("incomingServerPort")].toString().toInt());
 
     if (json[QLatin1String("incomingServerType")] == QLatin1String("IMAP"))
     {
