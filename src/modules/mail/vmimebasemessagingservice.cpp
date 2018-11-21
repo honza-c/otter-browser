@@ -1,5 +1,8 @@
 #include "vmimebasemessagingservice.h"
 
+namespace Otter
+{
+
 VmimeBaseMessagingService::VmimeBaseMessagingService(QObject *parent)
     : QObject(parent)
 {
@@ -97,4 +100,6 @@ std::vector<vmime::shared_ptr<vmime::security::cert::X509Certificate>> VmimeBase
     }
 
     return vmimeCertificates;
+}
+
 }

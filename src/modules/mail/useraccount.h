@@ -15,6 +15,9 @@
 #include "messagecontent.h"
 #include "vmimepop3service.h"
 
+namespace Otter
+{
+
 class UserAccount : public QObject
 {
     Q_OBJECT
@@ -112,5 +115,7 @@ public slots:
 };
 
 QDebug operator<<(QDebug debug, const UserAccount &account);
+
+}
 
 #endif // NEWUSERACCOUNT_H

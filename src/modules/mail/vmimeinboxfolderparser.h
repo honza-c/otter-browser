@@ -5,6 +5,9 @@
 #include <vmime/vmime.hpp>
 #include "inboxfolder.h"
 
+namespace Otter
+{
+
 class VmimeInboxFolderParser : public QObject
 {
     Q_OBJECT
@@ -24,5 +27,7 @@ private:
     vmime::shared_ptr<vmime::net::folder> m_folder;
     vmime::net::folderAttributes m_folderAttributes;
 };
+
+}
 
 #endif // VMIMEINBOXFOLDERPARSER_H

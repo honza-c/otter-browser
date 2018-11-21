@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QVariant>
 
+namespace Otter
+{
+
 class InboxFolderTreeItem
 {
 public:
@@ -29,5 +32,7 @@ private:
     QList<QVariant> m_itemData;
     InboxFolderTreeItem *m_parentItem;
 };
+
+}
 
 #endif // INBOXFOLDERTREEITEM_H

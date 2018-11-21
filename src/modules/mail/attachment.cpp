@@ -1,5 +1,8 @@
 #include "attachment.h"
 
+namespace Otter
+{
+
 Attachment::Attachment(const Attachment &other)
 {
     m_name = other.m_name;
@@ -84,4 +87,6 @@ QDataStream& operator>>(QDataStream &dataStream, Attachment &attachment)
     attachment.setData(data);
 
     return dataStream;
+}
+
 }

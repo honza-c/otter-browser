@@ -1,5 +1,8 @@
 #include "vmimemessagemetadataparser.h"
 
+namespace Otter
+{
+
 MessageMetadata VmimeMessageMetadataParser::parse(const vmime::shared_ptr<vmime::net::message> message)
 {
     MessageMetadata messageMetadata;
@@ -199,4 +202,6 @@ int VmimeMessageMetadataParser::getTimeZoneOffsetInUnixTime(const QString timezo
     }
 
     return offset;
+}
+
 }

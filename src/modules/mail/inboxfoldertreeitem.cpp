@@ -1,5 +1,8 @@
 #include "inboxfoldertreeitem.h"
 
+namespace Otter
+{
+
 InboxFolderTreeItem::InboxFolderTreeItem(const QList<QVariant> &data, InboxFolderTreeItem *parent)
 {
     m_parentItem = parent;
@@ -54,4 +57,6 @@ QVariant InboxFolderTreeItem::data(int column) const
 InboxFolderTreeItem *InboxFolderTreeItem::parentItem()
 {
     return m_parentItem;
+}
+
 }

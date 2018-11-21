@@ -12,6 +12,9 @@
 #include "contact.h"
 #include <QSqlError>
 
+namespace Otter
+{
+
 class VmimeInboxService : public VmimeBaseMessagingService
 {
 public:
@@ -31,5 +34,7 @@ protected:
     bool m_foldersCreated();
     QList<VmimeInboxFolder> m_folders;
 };
+
+}
 
 #endif // VMIMEINBOXSERVICE_H

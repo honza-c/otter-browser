@@ -1,5 +1,8 @@
 #include "vmimeinboxservice.h"
 
+namespace Otter
+{
+
 QList<InboxFolder> VmimeInboxService::fetchInboxFolders()
 {
     QList<InboxFolder> folders;
@@ -194,4 +197,6 @@ void VmimeInboxService::moveMessage(const QString sourceFolderPath, const int me
         sourceFolder->close(true);
         destinationFolder->close(true);
     }
+}
+
 }

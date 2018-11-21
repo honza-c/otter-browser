@@ -1,4 +1,8 @@
 #include "vmimeinboxfolderparser.h"
+
+namespace Otter
+{
+
 VmimeInboxFolderParser::VmimeInboxFolderParser(vmime::shared_ptr<vmime::net::folder> folder, QObject *parent)
     : QObject(parent)
 {
@@ -49,4 +53,6 @@ QString VmimeInboxFolderParser::getFolderPath(const vmime::shared_ptr<vmime::net
         vmime::shared_ptr<vmime::net::folder> parent = folder->getParent();
         return QString(getFolderPath(parent) + path.c_str() + "/");
     }
+}
+
 }

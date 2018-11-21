@@ -4,6 +4,9 @@
 #include <QObject>
 #include "attachment.h"
 
+namespace Otter
+{
+
 class EmbeddedObject : public Attachment
 {
     Q_OBJECT
@@ -30,5 +33,7 @@ private:
 QDebug operator <<(QDebug debug, const EmbeddedObject &embeddedObject);
 QDataStream& operator<<(QDataStream &dataStream, const EmbeddedObject &embeddedObject);
 QDataStream& operator>>(QDataStream &dataStream, EmbeddedObject &embeddedObject);
+
+}
 
 #endif // EMBEDDEDOBJECT_H

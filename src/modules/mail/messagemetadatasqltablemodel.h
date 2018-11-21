@@ -8,6 +8,9 @@
 #include <QDataStream>
 #include "contact.h"
 
+namespace Otter
+{
+
 class MessageMetadataSqlTableModel : public QSqlTableModel
 {
     Q_OBJECT
@@ -18,5 +21,7 @@ public slots:
     void onTableHeaderClicked(int);
     void currentRowChanged(const QModelIndex &, const QModelIndex &);
 };
+
+}
 
 #endif // MESSAGEMETADATASQLTABLEMODEL_H

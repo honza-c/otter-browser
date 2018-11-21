@@ -6,6 +6,9 @@
 #include "contact.h"
 #include "embeddedobject.h"
 
+namespace Otter
+{
+
 class MessageContent : public QObject
 {
     Q_OBJECT
@@ -59,5 +62,7 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const MessageContent &messageContent);
+
+}
 
 #endif // MESSAGECONTENT_H

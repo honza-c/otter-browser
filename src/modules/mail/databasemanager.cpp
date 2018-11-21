@@ -1,5 +1,8 @@
 #include "databasemanager.h"
 
+namespace Otter
+{
+
 DatabaseManager::DatabaseManager(QString databaseFileName, QObject *parent)
     : QObject(parent)
 {
@@ -1035,4 +1038,6 @@ QString DatabaseManager::getArchiveFolderPathForAccount(QString emailAddress)
     }
 
     return path;
+}
+
 }

@@ -1,5 +1,8 @@
 #include "messagemetadata.h"
 
+namespace Otter
+{
+
 MessageMetadata::MessageMetadata(const MessageMetadata &other)
 {
     m_emailAddress = other.m_emailAddress;
@@ -198,4 +201,6 @@ QDebug operator<<(QDebug debug, const MessageMetadata &metadata)
                     << metadata.isSeen();
 
     return debug;
+}
+
 }

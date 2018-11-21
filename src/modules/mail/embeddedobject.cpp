@@ -1,5 +1,8 @@
 #include "embeddedobject.h"
 
+namespace Otter
+{
+
 EmbeddedObject::EmbeddedObject(const EmbeddedObject &other)
 {
     m_name = other.m_name;
@@ -81,4 +84,6 @@ QDataStream& operator>>(QDataStream &dataStream, EmbeddedObject &embeddedObject)
     embeddedObject.setData(data);
 
     return dataStream;
+}
+
 }

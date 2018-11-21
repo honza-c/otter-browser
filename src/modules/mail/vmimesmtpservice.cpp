@@ -1,5 +1,8 @@
 #include "vmimesmtpservice.h"
 
+namespace Otter
+{
+
 void VmimeSmtpService::sendMessage(Message message) const
 {
     vmime::shared_ptr<vmime::message> constructedMessage = constructMessage(message);
@@ -123,4 +126,6 @@ vmime::shared_ptr<vmime::message> VmimeSmtpService::constructMessage(const Messa
     }
 
     return messageBuilder.construct();
+}
+
 }

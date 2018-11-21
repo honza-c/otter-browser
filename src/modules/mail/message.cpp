@@ -1,5 +1,8 @@
 #include "message.h"
 
+namespace Otter
+{
+
 Message::Message(const Message &other)
 {
     m_sender = other.m_sender;
@@ -203,4 +206,6 @@ QDebug operator<<(QDebug debug, const Message &message)
     debug.noquote() << "\nDate and time: " << message.dateTime().toString("dd.MM.yyyy HH:mm");
 
     return debug;
+}
+
 }

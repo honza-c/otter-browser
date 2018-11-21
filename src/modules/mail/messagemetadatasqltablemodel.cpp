@@ -1,5 +1,8 @@
 #include "messagemetadatasqltablemodel.h"
 
+namespace Otter
+{
+
 QVariant MessageMetadataSqlTableModel::data(const QModelIndex &index, int role) const
 {
     QModelIndex isSeenIndex = this->index(index.row(), 3, QModelIndex());
@@ -84,4 +87,6 @@ QVariant MessageMetadataSqlTableModel::headerData(int section, Qt::Orientation o
     }
 
     return QVariant();
+}
+
 }

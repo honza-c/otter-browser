@@ -15,6 +15,9 @@
 #include "contact.h"
 #include "embeddedobject.h"
 
+namespace Otter
+{
+
 class DatabaseManager : public QObject
 {
     Q_OBJECT
@@ -77,5 +80,7 @@ private:
     QStringList m_mailFolderTableFields;
     QStringList m_messageDataTableFields;
 };
+
+}
 
 #endif // DATABASEMANAGER_H

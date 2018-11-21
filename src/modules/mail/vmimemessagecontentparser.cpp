@@ -1,5 +1,8 @@
 #include "vmimemessagecontentparser.h"
 
+namespace Otter
+{
+
 VmimeMessageContentParser::VmimeMessageContentParser(vmime::shared_ptr<vmime::message> message, QObject *parent)
     : QObject(parent), m_message(message)
 {
@@ -224,4 +227,6 @@ QString VmimeMessageContentParser::parseTextParts(const char *type) const
     }
 
     return result;
+}
+
 }

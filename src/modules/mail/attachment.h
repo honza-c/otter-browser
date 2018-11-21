@@ -5,6 +5,9 @@
 #include <QDataStream>
 #include <QDebug>
 
+namespace Otter
+{
+
 class Attachment : public QObject
 {
     Q_OBJECT
@@ -36,5 +39,7 @@ protected:
 QDebug operator <<(QDebug debug, const Attachment &attachment);
 QDataStream& operator<<(QDataStream &dataStream, const Attachment &attachment);
 QDataStream& operator>>(QDataStream &dataStream, Attachment &attachment);
+
+}
 
 #endif // ATTACHMENT_H

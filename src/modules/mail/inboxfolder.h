@@ -5,6 +5,9 @@
 #include <QDebug>
 #include <QIcon>
 
+namespace Otter
+{
+
 class InboxFolder : public QObject
 {
     Q_OBJECT
@@ -68,5 +71,7 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const InboxFolder &inboxFolder);
+
+}
 
 #endif // INBOXFOLDER_H

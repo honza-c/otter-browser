@@ -7,6 +7,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
+namespace Otter
+{
+
 class Contact : public QObject
 {
     Q_OBJECT
@@ -44,5 +47,7 @@ private:
 
 QDebug operator<<(QDebug debug, const Contact &contact);
 bool operator==(const Contact first, const Contact second);
+
+}
 
 #endif // CONTACT_H

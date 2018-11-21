@@ -13,6 +13,9 @@
 #include "inboxfolder.h"
 #include "contact.h"
 
+namespace Otter
+{
+
 class VmimeInboxFolder : public QObject
 {
     Q_OBJECT
@@ -36,5 +39,7 @@ private:
 
     bool m_successfullyOpened;
 };
+
+}
 
 #endif // VMIMEINBOXFOLDER_H

@@ -1,5 +1,8 @@
 #include "useraccount.h"
 
+namespace Otter
+{
+
 UserAccount::UserAccount(QObject *parent)
     : QObject (parent)
 {
@@ -506,4 +509,6 @@ QDebug operator<<(QDebug debug, const UserAccount &account)
                     << account.incomingServerPort();
 
     return debug;
+}
+
 }

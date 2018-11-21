@@ -1,5 +1,8 @@
 #include "messagecontent.h"
 
+namespace Otter
+{
+
 MessageContent::MessageContent(const MessageContent &other)
 {
     m_htmlContent = other.m_htmlContent;
@@ -160,4 +163,6 @@ QDebug operator<<(QDebug debug, const MessageContent &messageContent)
     }
 
     return debug;
+}
+
 }

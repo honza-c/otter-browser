@@ -5,6 +5,9 @@
 #include <QAbstractListModel>
 #include "useraccount.h"
 
+namespace Otter
+{
+
 class UserAccountsListModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -19,5 +22,7 @@ private:
 
     QList<UserAccount> *m_data;
 };
+
+}
 
 #endif // NEWUSERACCOUNTSLISTMODEL_H

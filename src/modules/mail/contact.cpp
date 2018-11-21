@@ -1,5 +1,8 @@
 #include "contact.h"
 
+namespace Otter
+{
+
 Contact::Contact(const Contact &other)
 {
     m_name = other.m_name;
@@ -154,4 +157,6 @@ QDebug operator<<(QDebug debug, const Contact &contact)
 bool operator==(const Contact first, const Contact second)
 {
     return first.name() == second.name() && first.emailAddress() == second.emailAddress();
+}
+
 }

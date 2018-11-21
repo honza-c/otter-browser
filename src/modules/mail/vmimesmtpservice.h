@@ -6,6 +6,9 @@
 #include "vmimebasemessagingservice.h"
 #include "message.h"
 
+namespace Otter
+{
+
 class VmimeSmtpService : public VmimeBaseMessagingService
 {
 public:
@@ -18,5 +21,7 @@ private:
     vmime::shared_ptr<vmime::net::transport> getTransport() const;
     vmime::shared_ptr<vmime::message> constructMessage(const Message message) const;
 };
+
+}
 
 #endif // VMIMESMTPSERVICE_H

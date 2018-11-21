@@ -6,6 +6,9 @@
 #include <QSslCertificate>
 #include <vmime/vmime.hpp>
 
+namespace Otter
+{
+
 class VmimeBaseMessagingService : public QObject
 {
     Q_OBJECT
@@ -47,5 +50,7 @@ public slots:
     vmime::shared_ptr<vmime::net::session> m_session;
     vmime::shared_ptr<vmime::security::cert::defaultCertificateVerifier> m_certificateVerifier;
 };
+
+}
 
 #endif // VMIMEBASEMESSAGINGSERVICE_H

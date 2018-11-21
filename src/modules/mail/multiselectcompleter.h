@@ -5,6 +5,9 @@
 #include <QCompleter>
 #include <QLineEdit>
 
+namespace Otter
+{
+
 class MultiSelectCompleter : public QCompleter
 {
     Q_OBJECT
@@ -17,5 +20,7 @@ public:
     QString pathFromIndex(const QModelIndex &index) const;
     QStringList splitPath(const QString &path) const;
 };
+
+}
 
 #endif // MULTISELECTCOMPLETER_H

@@ -8,6 +8,9 @@
 #include "embeddedobject.h"
 #include <QDateTime>
 
+namespace Otter
+{
+
 class Message : public QObject
 {
     Q_OBJECT
@@ -72,5 +75,7 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const Message &message);
+
+}
 
 #endif // MESSAGE_H

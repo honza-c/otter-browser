@@ -1,5 +1,8 @@
 #include "vmimeinboxfolder.h"
 
+namespace Otter
+{
+
 VmimeInboxFolder::VmimeInboxFolder(vmime::shared_ptr<vmime::net::folder> remoteFolder, QString emailAddress, QObject *parent)
     : QObject(parent)
 {
@@ -134,4 +137,6 @@ QList<MessageMetadata> VmimeInboxFolder::getMessagesMetadataFromPosition(int pos
     }
 
     return metadataList;
+}
+
 }

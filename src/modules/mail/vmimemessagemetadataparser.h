@@ -6,6 +6,9 @@
 #include "messagemetadata.h"
 #include "contact.h"
 
+namespace Otter
+{
+
 class VmimeMessageMetadataParser : public QObject
 {
     Q_OBJECT
@@ -31,5 +34,7 @@ private:
     Contact parseExpeditor(vmime::shared_ptr<const vmime::header> header);
     QList<Contact> parseReplyTo(vmime::shared_ptr<const vmime::header> header);
 };
+
+}
 
 #endif // VMIMEMESSAGEMETADATAPARSER_H

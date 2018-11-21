@@ -8,6 +8,9 @@
 #include "contact.h"
 #include "embeddedobject.h"
 
+namespace Otter
+{
+
 class VmimeMessageContentParser : public QObject
 {
     Q_OBJECT
@@ -35,5 +38,7 @@ private:
     vmime::shared_ptr<vmime::message> m_message;
     vmime::shared_ptr<vmime::messageParser> m_messageParser;
 };
+
+}
 
 #endif // VMIMEMESSAGECONTENTPARSER_H

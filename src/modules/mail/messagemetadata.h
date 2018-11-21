@@ -5,6 +5,9 @@
 #include <QDateTime>
 #include "contact.h"
 
+namespace Otter
+{
+
 class MessageMetadata : public QObject
 {
     Q_OBJECT
@@ -74,5 +77,7 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const MessageMetadata &metadata);
+
+}
 
 #endif // MESSAGEMETADATA_H

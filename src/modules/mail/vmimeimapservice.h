@@ -3,6 +3,9 @@
 
 #include "vmimeinboxservice.h"
 
+namespace Otter
+{
+
 class VmimeImapService : public VmimeInboxService
 {
 public:
@@ -12,5 +15,7 @@ public:
 private:
     vmime::utility::url getStoreUrl() const;
 };
+
+}
 
 #endif // VMIMEIMAPSERVICE_H

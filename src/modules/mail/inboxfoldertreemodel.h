@@ -2,15 +2,14 @@
 #define INBOXFOLDERTREEMODEL_H
 
 #include <QObject>
-/*
-#include <QAbstractItemModel>
-#include <QIcon>
-*/
 #include <QtWidgets>
 #include "useraccount.h"
 #include "vmimeinboxservice.h"
 #include "vmimeinboxfolder.h"
 #include "inboxfoldertreeitem.h"
+
+namespace Otter
+{
 
 class InboxFolderTreeModel : public QAbstractItemModel
 {
@@ -33,5 +32,7 @@ private:
 
     InboxFolderTreeItem *m_rootItem;
 };
+
+}
 
 #endif // INBOXFOLDERTREEMODEL_H

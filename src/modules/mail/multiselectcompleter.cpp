@@ -1,5 +1,8 @@
 #include "multiselectcompleter.h"
 
+namespace Otter
+{
+
 QString MultiSelectCompleter::pathFromIndex(const QModelIndex &index) const
 {
     QString path = QCompleter::pathFromIndex(index);
@@ -25,4 +28,6 @@ QStringList MultiSelectCompleter::splitPath(const QString &path) const
     }
 
     return QStringList(path.mid(position));
+}
+
 }

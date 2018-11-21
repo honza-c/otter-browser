@@ -1,5 +1,8 @@
 #include "vmimepop3service.h"
 
+namespace Otter
+{
+
 vmime::utility::url VmimePop3Service::getStoreUrl() const
 {
     QString imapAddress;
@@ -28,4 +31,6 @@ vmime::utility::url VmimePop3Service::getStoreUrl() const
     }
 
     return vmime::utility::url(imapAddress.toStdString());
+}
+
 }

@@ -1,5 +1,8 @@
 #include "inboxfolder.h"
 
+namespace Otter
+{
+
 InboxFolder::InboxFolder(const InboxFolder &other)
 {
     m_path = other.m_path;
@@ -210,4 +213,6 @@ QDebug operator<<(QDebug debug, const InboxFolder &inboxFolder)
                     << inboxFolder.hasChildren();
 
     return debug;
+}
+
 }

@@ -1,5 +1,8 @@
 #include "useraccountslistmodel.h"
 
+namespace Otter
+{
+
 int UserAccountsListModel::rowCount(const QModelIndex &parent) const
 {
     return m_data->size();
@@ -32,4 +35,6 @@ QVariant UserAccountsListModel::data(const QModelIndex &index, int role) const
     {
         return QVariant();
     }
+}
+
 }

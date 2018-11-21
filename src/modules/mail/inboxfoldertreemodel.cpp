@@ -1,5 +1,8 @@
 #include "inboxfoldertreemodel.h"
 
+namespace Otter
+{
+
 InboxFolderTreeModel::InboxFolderTreeModel(const QList<InboxFolder> &data, QObject *parent) : QAbstractItemModel(parent)
 {
     QList<QVariant> captionData;
@@ -286,4 +289,6 @@ Qt::ItemFlags InboxFolderTreeModel::flags(const QModelIndex &index) const
     }
 
     return QAbstractItemModel::flags(index);
+}
+
 }

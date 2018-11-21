@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QPushButton>
 
+namespace Otter
+{
+
 class QPushButtonWithId : public QPushButton
 {
 public:
@@ -16,5 +19,7 @@ public:
 private:
     int m_id;
 };
+
+}
 
 #endif // QPUSHBUTTONWITHID_H
