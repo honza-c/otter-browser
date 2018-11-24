@@ -226,6 +226,7 @@ set(otter_src
 	src/ui/preferences/MouseProfileDialog.cpp
 	src/ui/preferences/PreferencesAdvancedPageWidget.cpp
 	src/ui/preferences/PreferencesContentPageWidget.cpp
+        src/ui/preferences/PreferencesEmailPageWidget.cpp
 	src/ui/preferences/PreferencesGeneralPageWidget.cpp
 	src/ui/preferences/PreferencesPrivacyPageWidget.cpp
 	src/ui/preferences/PreferencesSearchPageWidget.cpp
@@ -282,6 +283,11 @@ set(otter_src
 	src/modules/windows/cache/CacheContentsWidget.cpp
 	src/modules/windows/configuration/ConfigurationContentsWidget.cpp
 	src/modules/windows/cookies/CookiesContentsWidget.cpp
+        src/modules/windows/email/EmailContentReaderWidget.cpp
+        src/modules/windows/email/EmailContentsWidget.cpp
+        src/modules/windows/email/NewEmailFolderDialogWindow.cpp
+        src/modules/windows/email/RenameEmailFolderDialog.cpp
+        src/modules/windows/email/WriteEmailMessageWidget.cpp
 	src/modules/windows/history/HistoryContentsWidget.cpp
 	src/modules/windows/feeds/FeedsContentsWidget.cpp
 	src/modules/windows/links/LinksContentsWidget.cpp
@@ -348,6 +354,7 @@ qt5_wrap_ui(otter_ui
 	src/ui/preferences/MouseProfileDialog.ui
 	src/ui/preferences/PreferencesAdvancedPageWidget.ui
 	src/ui/preferences/PreferencesContentPageWidget.ui
+        src/ui/preferences/PreferencesEmailPageWidget.ui
 	src/ui/preferences/PreferencesGeneralPageWidget.ui
 	src/ui/preferences/PreferencesPrivacyPageWidget.ui
 	src/ui/preferences/PreferencesSearchPageWidget.ui
@@ -360,6 +367,11 @@ qt5_wrap_ui(otter_ui
 	src/modules/windows/cache/CacheContentsWidget.ui
 	src/modules/windows/configuration/ConfigurationContentsWidget.ui
 	src/modules/windows/cookies/CookiesContentsWidget.ui
+        src/modules/windows/email/EmailContentReaderWidget.ui
+        src/modules/windows/email/EmailContentsWidget.ui
+        src/modules/windows/email/NewEmailFolderDialogWindow.ui
+        src/modules/windows/email/RenameEmailFolderDialog.ui
+        src/modules/windows/email/WriteEmailMessageWidget.ui
 	src/modules/windows/feeds/FeedsContentsWidget.ui
 	src/modules/windows/history/HistoryContentsWidget.ui
 	src/modules/windows/links/LinksContentsWidget.ui
