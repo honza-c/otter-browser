@@ -27,14 +27,80 @@ namespace Otter
 
 PreferencesEmailPageWidget::PreferencesEmailPageWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::PreferencesEmailPageWidget)
+    m_ui(new Ui::PreferencesEmailPageWidget)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
+    m_emailAccounts = EmailAccountsManager::getInstance()->getEmailAccounts();
+    m_emailAccountsListModel =  new UserAccountsListModel(m_emailAccounts);
+
+    m_ui->accountListAndActionButtonsWidget->setFixedWidth(m_ui->emailAccountsListView->sizeHint().width());
+
+    m_ui->emailAccountDetailsWidget->setVisible(false);
+    m_ui->emailAccountsListView->setModel(m_emailAccountsListModel);
+
+    m_ui->incomingServerTypeApplicationComboBox->addItem("IMAP");
+    m_ui->incomingServerTypeApplicationComboBox->addItem("POP3");
+
+    connect(m_ui->emailAccountsListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(emailAccountsListViewSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
 
 PreferencesEmailPageWidget::~PreferencesEmailPageWidget()
 {
-    delete ui;
+    delete m_ui;
+}
+
+void PreferencesEmailPageWidget::changeEvent(QEvent *event)
+{
+    QWidget::changeEvent(event);
+
+    if (event->type() == QEvent::LanguageChange)
+    {
+        m_ui->retranslateUi(this);
+    }
+}
+
+void PreferencesEmailPageWidget::emailAccountsListViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    if (selected.indexes().size() > 0)
+    {
+        QModelIndex index = selected.indexes().first();
+
+        if (index.isValid() && index != QModelIndex())
+        {
+            int row = index.row();
+            UserAccount account = m_emailAccounts.at(row);
+
+            m_ui->accountNameLineEditWidget->setText(account.accountName());
+            m_ui->yourNameLineEditWidget->setText(account.contactName());
+            m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
+            m_ui->userNameLineEditWidget->setText(account.userName());
+            m_ui->passwordLineEditWidget->setText(account.password());
+            m_ui->incomingServerUrlLineEditWidget->setText(account.incomingServerAddress());
+            m_ui->incomingServerPortSpinBox->setValue(account.incomingServerPort());
+            m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
+            m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
+
+            if (account.incomingServerType() == UserAccount::IMAP)
+            {
+                m_ui->incomingServerTypeApplicationComboBox->setCurrentIndex(0);
+            }
+            else
+            {
+                m_ui->incomingServerTypeApplicationComboBox->setCurrentIndex(1);
+            }
+
+            m_ui->emailAccountDetailsWidget->setVisible(true);
+        }
+    }
+    else
+    {
+        m_ui->emailAccountDetailsWidget->setVisible(false);
+    }
+}
+
+void PreferencesEmailPageWidget::save()
+{
+
 }
 
 }

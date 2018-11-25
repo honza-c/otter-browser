@@ -39,6 +39,7 @@ class EmailAccountsManager final : public QObject
 public:
     static void createInstance();
     static EmailAccountsManager* getInstance();
+    static QList<UserAccount> getEmailAccounts();
 
 protected:
     explicit EmailAccountsManager(QObject *parent);

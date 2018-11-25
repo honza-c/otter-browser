@@ -23,6 +23,9 @@
 #define PREFERENCESEMAILPAGEWIDGET_H
 
 #include <QWidget>
+#include "../../core/EmailAccountsManager.h"
+#include "../../modules/mail/useraccount.h"
+#include "../../modules/mail/useraccountslistmodel.h"
 
 namespace Otter
 {
@@ -39,8 +42,22 @@ public:
     explicit PreferencesEmailPageWidget(QWidget *parent = nullptr);
     ~PreferencesEmailPageWidget();
 
+public slots:
+    void save();
+
+protected:
+    void changeEvent(QEvent *event) override;
+
+protected slots:
+    void emailAccountsListViewSelectionChanged(const QItemSelection &, const QItemSelection &);
+
 private:
-    Ui::PreferencesEmailPageWidget *ui;
+    Ui::PreferencesEmailPageWidget *m_ui;
+    QList<UserAccount> m_emailAccounts;
+    UserAccountsListModel *m_emailAccountsListModel;
+
+signals:
+    void settingsModified();
 };
 
 }

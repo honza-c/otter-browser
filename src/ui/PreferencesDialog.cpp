@@ -23,6 +23,7 @@
 #include "preferences/PreferencesAdvancedPageWidget.h"
 #include "preferences/PreferencesContentPageWidget.h"
 #include "preferences/PreferencesGeneralPageWidget.h"
+#include "preferences/PreferencesEmailPageWidget.h"
 #include "preferences/PreferencesPrivacyPageWidget.h"
 #include "preferences/PreferencesSearchPageWidget.h"
 #include "../core/Application.h"
@@ -42,7 +43,7 @@ PreferencesDialog::PreferencesDialog(const QString &section, QWidget *parent) : 
 {
 	m_ui->setupUi(this);
 
-	m_loadedTabs.fill(false, 5);
+    m_loadedTabs.fill(false, 5);
 
 	int tab(0);
 
@@ -60,8 +61,12 @@ PreferencesDialog::PreferencesDialog(const QString &section, QWidget *parent) : 
 	}
 	else if (section == QLatin1String("advanced"))
 	{
-		tab = 4;
+        tab = 4;
 	}
+    else if (section == QLatin1String("email"))
+    {
+        tab = 5;
+    }
 
 	currentTabChanged(tab);
 
@@ -145,6 +150,17 @@ void PreferencesDialog::currentTabChanged(int tab)
 			}
 
 			break;
+        case 5:
+            {
+                PreferencesEmailPageWidget *pageWidget(new PreferencesEmailPageWidget(this));
+
+                m_ui->emailLayout->addWidget(pageWidget);
+
+                connect(this, &PreferencesDialog::requestedSave, pageWidget, &PreferencesEmailPageWidget::save);
+                connect(pageWidget, &PreferencesEmailPageWidget::settingsModified, this, &PreferencesDialog::markAsModified);
+            }
+
+        break;
 		default:
 			{
 				PreferencesAdvancedPageWidget *pageWidget(new PreferencesAdvancedPageWidget(this));

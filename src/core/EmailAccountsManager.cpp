@@ -48,6 +48,11 @@ EmailAccountsManager* EmailAccountsManager::getInstance()
     return m_instance;
 }
 
+QList<UserAccount> EmailAccountsManager::getEmailAccounts()
+{
+    return m_emailAccounts;
+}
+
 bool EmailAccountsManager::loadEmailAccounts(const QString &path)
 {
     QFile file(path);
