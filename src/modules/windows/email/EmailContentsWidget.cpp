@@ -33,8 +33,8 @@
 namespace Otter
 {
 
-EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, QWidget *parent) :ContentsWidget (parameters, nullptr, parent),
-    m_window(nullptr),
+EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *window, QWidget *parent) :ContentsWidget (parameters, nullptr, parent),
+    m_window(window),
     m_ui(new Ui::EmailContentsWidget)
 {
     m_ui->setupUi(this);
@@ -46,6 +46,27 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, QWidget 
         m_window = mainWindow->getActiveWindow();
     }
 
+    m_ui->treeView->setModel(new InboxFolderTreeModel(DatabaseManager::getInboxFolders()));
+}
+
+QString EmailContentsWidget::getTitle() const
+{
+    return tr("Email");
+}
+
+QLatin1String EmailContentsWidget::getType() const
+{
+    return QLatin1String("email");
+}
+
+QUrl EmailContentsWidget::getUrl() const
+{
+    return QUrl(QLatin1String("about:email"));
+}
+
+QIcon EmailContentsWidget::getIcon() const
+{
+    return ThemesManager::createIcon(QLatin1String("mail-send"), true);
 }
 
 EmailContentsWidget::~EmailContentsWidget()

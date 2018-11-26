@@ -42,6 +42,7 @@
 #include "../modules/windows/cache/CacheContentsWidget.h"
 #include "../modules/windows/configuration/ConfigurationContentsWidget.h"
 #include "../modules/windows/cookies/CookiesContentsWidget.h"
+#include "../modules/windows/email/EmailContentsWidget.h"
 #include "../modules/windows/feeds/FeedsContentsWidget.h"
 #include "../modules/windows/history/HistoryContentsWidget.h"
 #include "../modules/windows/links/LinksContentsWidget.h"
@@ -262,6 +263,11 @@ ContentsWidget* createContentsWidget(const QString &identifier, const QVariantMa
 	{
 		return new WindowsContentsWidget(parameters, window, parent);
 	}
+
+    if (identifier == QLatin1String("email"))
+    {
+        return new EmailContentsWidget(parameters, window, parent);
+    }
 
 	return nullptr;
 }

@@ -23,6 +23,10 @@
 #define EMAILPANELWIDGET_H
 
 #include "../../../ui/ContentsWidget.h"
+#include "../../../core/EmailAccountsManager.h"
+#include "../../../modules/mail/inboxfoldertreemodel.h"
+#include "../../../modules/mail/inboxfolder.h"
+#include "../../../modules/mail/databasemanager.h"
 
 namespace Otter
 {
@@ -38,8 +42,13 @@ class EmailContentsWidget final : public ContentsWidget
     Q_OBJECT
 
 public:
-    explicit EmailContentsWidget(const QVariantMap &parameters, QWidget *parent = nullptr);
+    explicit EmailContentsWidget(const QVariantMap &parameters, Window *window, QWidget *parent = nullptr);
     ~EmailContentsWidget();
+
+    QString getTitle() const override;
+    QLatin1String getType() const override;
+    QUrl getUrl() const override;
+    QIcon getIcon() const override;
 
 protected:
 
