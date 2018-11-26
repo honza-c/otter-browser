@@ -27,6 +27,8 @@
 #include "../../../modules/mail/inboxfoldertreemodel.h"
 #include "../../../modules/mail/inboxfolder.h"
 #include "../../../modules/mail/databasemanager.h"
+#include "../../../modules/mail/messagemetadatasqltablemodel.h"
+#include "EmailContentReaderWidget.h"
 
 namespace Otter
 {

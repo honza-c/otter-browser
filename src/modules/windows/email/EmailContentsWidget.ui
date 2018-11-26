@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>686</height>
+    <width>1038</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,73 +15,84 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="Otter::LineEditWidget" name="filterLineEditWidget">
-       <property name="placeholderText">
-        <string>Search...</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
+      <widget class="QWidget" name="emailSidebarWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="getMessagesButton">
+            <property name="text">
+             <string>Get Messages</string>
+            </property>
+            <property name="icon">
+             <iconset theme="mail-send-receive">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="writeMessageButton">
+            <property name="text">
+             <string>Write Message</string>
+            </property>
+            <property name="icon">
+             <iconset theme="mail-send">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Otter::LineEditWidget" name="filterLineEditWidget">
+          <property name="placeholderText">
+           <string>Search...</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="emailAccountsLabel">
+          <property name="text">
+           <string>Email accounts:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="treeView"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="tagsLabel">
+          <property name="text">
+           <string>Tags:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListView" name="listView"/>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPushButton" name="getMessagesButton">
-         <property name="text">
-          <string>Get Messages</string>
-         </property>
-         <property name="icon">
-          <iconset theme="mail-send-receive"/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="writeMessageButton">
-         <property name="text">
-          <string>Write Message</string>
-         </property>
-         <property name="icon">
-          <iconset theme="mail-send"/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QLabel" name="emailAccountsLabel">
-       <property name="text">
-        <string>Email accounts:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTreeView" name="treeView"/>
-     </item>
-     <item>
-      <widget class="QLabel" name="tagsLabel">
-       <property name="text">
-        <string>Tags:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QListView" name="listView"/>
+      <widget class="Otter::EmailContentReaderWidget" name="emailContentReaderWidget" native="true"/>
      </item>
     </layout>
    </item>
@@ -92,6 +103,12 @@
    <class>Otter::LineEditWidget</class>
    <extends>QLineEdit</extends>
    <header>src/ui/LineEditWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Otter::EmailContentReaderWidget</class>
+   <extends>QWidget</extends>
+   <header>src/modules/windows/email/EmailContentReaderWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -23,6 +23,7 @@
 #define EMAILCONTENTREADERWIDGET_H
 
 #include <QWidget>
+#include "src/modules/mail/messagemetadatasqltablemodel.h"
 
 namespace Otter
 {
@@ -39,8 +40,10 @@ public:
     explicit EmailContentReaderWidget(QWidget *parent = 0);
     ~EmailContentReaderWidget();
 
+    void setMessageMetadataTableModel(MessageMetadataSqlTableModel *model);
+
 private:
-    Ui::EmailContentReaderWidget *ui;
+    Ui::EmailContentReaderWidget *m_ui;
 };
 
 }

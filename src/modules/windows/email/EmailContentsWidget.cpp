@@ -46,7 +46,17 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
         m_window = mainWindow->getActiveWindow();
     }
 
-    m_ui->treeView->setModel(new InboxFolderTreeModel(DatabaseManager::getInboxFolders()));
+    if (isSidebarPanel())
+    {
+        m_ui->emailContentReaderWidget->setVisible(false);
+        m_ui->treeView->setModel(new InboxFolderTreeModel(DatabaseManager::getInboxFolders()));
+    }
+    else
+    {
+        m_ui->emailSidebarWidget->setVisible(false);
+        EmailContentReaderWidget *readerWidget = m_ui->emailContentReaderWidget;
+        readerWidget->setMessageMetadataTableModel(new MessageMetadataSqlTableModel());
+    }
 }
 
 QString EmailContentsWidget::getTitle() const

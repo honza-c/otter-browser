@@ -27,14 +27,51 @@ namespace Otter
 
 EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::EmailContentReaderWidget)
+    m_ui(new Ui::EmailContentReaderWidget)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
 {
-    delete ui;
+    delete m_ui;
+}
+
+void EmailContentReaderWidget::setMessageMetadataTableModel(MessageMetadataSqlTableModel *model)
+{
+    model->setTable("MessageData");
+    model->select();
+    m_ui->messageMetadataTableView->setModel(model);
+
+    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(11, 0);
+    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(10, 1);
+    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(11, 2);
+
+    m_ui->messageMetadataTableView->hideColumn(1);
+    m_ui->messageMetadataTableView->hideColumn(2);
+    m_ui->messageMetadataTableView->hideColumn(3);
+    m_ui->messageMetadataTableView->hideColumn(4);
+    m_ui->messageMetadataTableView->hideColumn(5);
+    m_ui->messageMetadataTableView->hideColumn(6);
+    m_ui->messageMetadataTableView->hideColumn(7);
+    m_ui->messageMetadataTableView->hideColumn(12);
+    m_ui->messageMetadataTableView->hideColumn(13);
+    m_ui->messageMetadataTableView->hideColumn(14);
+    m_ui->messageMetadataTableView->hideColumn(15);
+    m_ui->messageMetadataTableView->hideColumn(16);
+    m_ui->messageMetadataTableView->hideColumn(17);
+    m_ui->messageMetadataTableView->hideColumn(18);
+    m_ui->messageMetadataTableView->hideColumn(19);
+
+    m_ui->messageMetadataTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_ui->messageMetadataTableView->verticalHeader()->hide();
+    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(3, 0);
+
+    m_ui->messageMetadataTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);
+
+    m_ui->messageMetadataTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_ui->messageMetadataTableView->setSelectionMode(QTableView::SingleSelection);
+    m_ui->messageMetadataTableView->setShowGrid(false);
 }
 
 }
