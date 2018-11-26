@@ -136,6 +136,7 @@ AddonsManager::AddonsManager(QObject *parent) : QObject(parent)
 	registerSpecialPage(SpecialPageInformation(QT_TRANSLATE_NOOP("addons", "Downloads"), {}, QUrl(QLatin1String("about:transfers")), ThemesManager::createIcon(QLatin1String("transfers"), false), SpecialPageInformation::UniversalType), QLatin1String("transfers"));
 	registerSpecialPage(SpecialPageInformation(QT_TRANSLATE_NOOP("addons", "Windows and Tabs"), {}, QUrl(QLatin1String("about:windows")), ThemesManager::createIcon(QLatin1String("window"), false), SpecialPageInformation::UniversalType), QLatin1String("windows"));
     registerSpecialPage(SpecialPageInformation(QT_TRANSLATE_NOOP("addons", "Email"), {}, QUrl(QLatin1String("about:email")), ThemesManager::createIcon(QLatin1String("mail-send"), true), SpecialPageInformation::UniversalType), QLatin1String("email"));
+    registerSpecialPage(SpecialPageInformation(QT_TRANSLATE_NOOP("addons", "Write email"), {}, QUrl(QLatin1String("about:writeEmail")), ThemesManager::createIcon(QLatin1String("mail-send"), true), SpecialPageInformation::PageType::StandaloneType), QLatin1String("writeEmail"));
 }
 
 void AddonsManager::createInstance()

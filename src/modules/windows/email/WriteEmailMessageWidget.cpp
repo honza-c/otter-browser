@@ -20,21 +20,57 @@
 **************************************************************************/
 
 #include "WriteEmailMessageWidget.h"
+#include "../../../core/ThemesManager.h"
+#include "../../../ui/Action.h"
+#include "../../../ui/MainWindow.h"
+#include "../../../ui/Window.h"
+
 #include "ui_WriteEmailMessageWidget.h"
+
+#include <QtWidgets/QDesktopWidget>
+#include <QtWidgets/QToolTip>
 
 namespace Otter
 {
 
-WriteEmailMessageWidget::WriteEmailMessageWidget(QWidget *parent) :
-    QWidget(parent),
+WriteEmailMessageWidget::WriteEmailMessageWidget(const QVariantMap &parameters, Window *window, QWidget *parent) : ContentsWidget (parameters, nullptr, parent),
+    m_window(window),
     ui(new Ui::WriteEmailMessageWidget)
 {
     ui->setupUi(this);
+
+    const MainWindow *mainWindow(MainWindow::findMainWindow(parentWidget()));
+
+    if (mainWindow)
+    {
+        m_window = mainWindow->getActiveWindow();
+    }
+
 }
 
 WriteEmailMessageWidget::~WriteEmailMessageWidget()
 {
     delete ui;
+}
+
+QString WriteEmailMessageWidget::getTitle() const
+{
+    return tr("Write email");
+}
+
+QLatin1String WriteEmailMessageWidget::getType() const
+{
+    return QLatin1String("writeEmail");
+}
+
+QUrl WriteEmailMessageWidget::getUrl() const
+{
+    return QUrl(QLatin1String("about:writeEmail"));
+}
+
+QIcon WriteEmailMessageWidget::getIcon() const
+{
+    return ThemesManager::createIcon(QLatin1String("mail-send"), true);
 }
 
 }
