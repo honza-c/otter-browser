@@ -30,6 +30,9 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui(new Ui::EmailContentReaderWidget)
 {
     m_ui->setupUi(this);
+
+    setupTableModel();
+    setupTableView();
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -37,11 +40,16 @@ EmailContentReaderWidget::~EmailContentReaderWidget()
     delete m_ui;
 }
 
-void EmailContentReaderWidget::setMessageMetadataTableModel(MessageMetadataSqlTableModel *model)
+void EmailContentReaderWidget::setupTableModel()
 {
-    model->setTable("MessageData");
-    model->select();
-    m_ui->messageMetadataTableView->setModel(model);
+    m_messageMetadataTableModel = new MessageMetadataSqlTableModel();
+    m_messageMetadataTableModel->setTable("MessageData");
+    m_messageMetadataTableModel->select();
+}
+
+void EmailContentReaderWidget::setupTableView()
+{
+    m_ui->messageMetadataTableView->setModel(m_messageMetadataTableModel);
 
     m_ui->messageMetadataTableView->horizontalHeader()->moveSection(11, 0);
     m_ui->messageMetadataTableView->horizontalHeader()->moveSection(10, 1);

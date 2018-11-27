@@ -40,10 +40,12 @@ public:
     explicit EmailContentReaderWidget(QWidget *parent = 0);
     ~EmailContentReaderWidget();
 
-    void setMessageMetadataTableModel(MessageMetadataSqlTableModel *model);
-
 private:
+    void setupTableModel();
+    void setupTableView();
+
     Ui::EmailContentReaderWidget *m_ui;
+    MessageMetadataSqlTableModel *m_messageMetadataTableModel;
 };
 
 }

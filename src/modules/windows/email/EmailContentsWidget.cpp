@@ -61,8 +61,6 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     else
     {
         m_ui->emailSidebarWidget->setVisible(false);
-        EmailContentReaderWidget *readerWidget = m_ui->emailContentReaderWidget;
-        readerWidget->setMessageMetadataTableModel(new MessageMetadataSqlTableModel());
     }
 }
 
