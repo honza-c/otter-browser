@@ -20,6 +20,7 @@
 **************************************************************************/
 
 #include "inboxfolder.h"
+#include "../../core/ThemesManager.h"
 
 namespace Otter
 {
@@ -186,15 +187,15 @@ QIcon InboxFolder::getIcon() const
     }
     else if (isTrash())
     {
-        return QIcon::fromTheme("user-trash");
+        return ThemesManager::createIcon(QLatin1String("user-trash"), false);
     }
     else if (isSent())
     {
-        return QIcon::fromTheme("mail-send");
+        return ThemesManager::createIcon(QLatin1String("mail-send"), false);
     }
     else if (path() == "/")
     {
-        return QIcon::fromTheme("mail-send");
+        return ThemesManager::createIcon(QLatin1String("mail-send"), false);
     }
     else
     {
