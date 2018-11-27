@@ -176,10 +176,6 @@ QIcon InboxFolder::getIcon() const
     {
         return QIcon::fromTheme("mail-read");
     }
-    else if (isFlagged())
-    {
-        return QIcon::fromTheme("emblem-mail");
-    }
     else if (isImportant())
     {
         return QIcon::fromTheme("mail-mark-important");

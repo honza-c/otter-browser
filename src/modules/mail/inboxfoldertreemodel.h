@@ -48,7 +48,6 @@ public:
 private:
     void createFolderTreeStructure(QList<InboxFolder> data);
     int getLevel(const QString path) const;
-    QIcon getIcon(const InboxFolder folder) const;
     QString getNameFromPath(const QString path) const;
 
     InboxFolderTreeItem *m_rootItem;

@@ -71,7 +71,7 @@ void InboxFolderTreeModel::createFolderTreeStructure(QList<InboxFolder> data)
     {
         QList<QVariant> rootItemData;
         InboxFolder rootFolder = inboxFoldersForCurrentAccount.at(0);
-        QIcon rootFolderIcon = getIcon(rootFolder);
+        QIcon rootFolderIcon = rootFolder.getIcon();
         rootItemData << rootFolder.emailAddress() << rootFolderIcon << 0;
 
         InboxFolderTreeItem *rootItem = new InboxFolderTreeItem(rootItemData);
@@ -91,6 +91,7 @@ void InboxFolderTreeModel::createFolderTreeStructure(QList<InboxFolder> data)
             int currentLevel = getLevel(folder.path());
             QString name = getNameFromPath(folder.path());
             QIcon icon = folder.getIcon();
+
             QList<QVariant> folderData;
             folderData << name << icon << DatabaseManager::getCountOfUnreadMessagesForFolder(folder.emailAddress(), folder.path());
 
@@ -124,46 +125,6 @@ void InboxFolderTreeModel::createFolderTreeStructure(QList<InboxFolder> data)
 int InboxFolderTreeModel::getLevel(const QString path) const
 {
     return path.count('/');
-}
-
-QIcon InboxFolderTreeModel::getIcon(const InboxFolder folder) const
-{
-    if (folder.isArchive())
-    {
-        return QIcon::fromTheme("mail-read");
-    }
-    else if (folder.isDrafts())
-    {
-        return QIcon::fromTheme("mail-read");
-    }
-    else if (folder.isFlagged())
-    {
-        return QIcon::fromTheme("emblem-mail");
-    }
-    else if (folder.isImportant())
-    {
-        return QIcon::fromTheme("mail-mark-important");
-    }
-    else if (folder.isJunk())
-    {
-        return QIcon::fromTheme("mail-mark-junk");
-    }
-    else if (folder.isTrash())
-    {
-        return QIcon::fromTheme("user-trash");
-    }
-    else if (folder.isSent())
-    {
-        return QIcon::fromTheme("mail-send");
-    }
-    else if (folder.path() == "/")
-    {
-        return QIcon::fromTheme("mail-send");
-    }
-    else
-    {
-        return QIcon::fromTheme("folder");
-    }
 }
 
 QString InboxFolderTreeModel::getNameFromPath(const QString path) const
