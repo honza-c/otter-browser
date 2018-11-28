@@ -13,116 +13,99 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <item>
-    <widget class="QSplitter" name="splitter_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <widget class="Otter::LineEditWidget" name="filterMessagesEdit">
-      <property name="inputMask">
-       <string/>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="placeholderText">
-       <string>Filter messages</string>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QTableView" name="messageMetadataTableView"/>
-    </widget>
-   </item>
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <widget class="QWidget" name="">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QVBoxLayout" name="filterAndMessagesMetadataTableLayout">
        <item>
-        <widget class="QScrollArea" name="scrollArea">
-         <property name="widgetResizable">
+        <widget class="Otter::LineEditWidget" name="filterMessagesEdit">
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>Filter messages</string>
+         </property>
+         <property name="clearButtonEnabled">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>116</width>
-            <height>138</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
-              <widget class="QLabel" name="labelSubject">
-               <property name="text">
-                <string>&lt;b&gt;Subject:&lt;/b&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="fromLabel">
-               <property name="text">
-                <string>&lt;b&gt;From:&lt;/b&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="subjectLabel">
-               <property name="text">
-                <string>&lt;b&gt;To:&lt;/b&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="inCopyLabel">
-               <property name="text">
-                <string>&lt;b&gt;In copy:&lt;/b&gt;</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="replyToLabel">
-               <property name="text">
-                <string>&lt;b&gt;Reply to:&lt;/b&gt;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
         </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        <widget class="QTableView" name="messageMetadataTableView"/>
        </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="messageInfoAndContentLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="messageActionsAndInfoLayout">
+         <item>
+          <layout class="QVBoxLayout" name="actionButtonsLayout">
+           <item>
+            <widget class="QLabel" name="labelSubject">
+             <property name="text">
+              <string>&lt;b&gt;Subject:&lt;/b&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="fromLabel">
+             <property name="text">
+              <string>&lt;b&gt;From:&lt;/b&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="subjectLabel">
+             <property name="text">
+              <string>&lt;b&gt;To:&lt;/b&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="inCopyLabel">
+             <property name="text">
+              <string>&lt;b&gt;In copy:&lt;/b&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="replyToLabel">
+             <property name="text">
+              <string>&lt;b&gt;Reply to:&lt;/b&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item>
           <widget class="QPushButton" name="moveToTrashButton">
            <property name="text">
             <string>Move to trash</string>
            </property>
            <property name="icon">
-            <iconset theme="user-trash"/>
+            <iconset theme="user-trash">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -132,7 +115,8 @@
             <string>Junk</string>
            </property>
            <property name="icon">
-            <iconset theme="mail-mark-junk"/>
+            <iconset theme="mail-mark-junk">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -142,7 +126,8 @@
             <string>Archive</string>
            </property>
            <property name="icon">
-            <iconset theme="archive-insert"/>
+            <iconset theme="archive-insert">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -152,7 +137,8 @@
             <string>Reply all</string>
            </property>
            <property name="icon">
-            <iconset theme="mail-reply-all"/>
+            <iconset theme="mail-reply-all">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -162,7 +148,8 @@
             <string>Reply</string>
            </property>
            <property name="icon">
-            <iconset theme="mail-reply-sender"/>
+            <iconset theme="mail-reply-sender">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
@@ -172,52 +159,106 @@
             <string>Forward</string>
            </property>
            <property name="icon">
-            <iconset theme="mail-forward"/>
+            <iconset theme="mail-forward">
+             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>
         </layout>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWebEngineView" name="messageContentView">
-      <property name="url">
-       <url>
-        <string>about:blank</string>
-       </url>
-      </property>
-     </widget>
-     <widget class="QWidget" name="">
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QScrollArea" name="scrollArea_2">
-         <property name="widgetResizable">
-          <bool>true</bool>
+        <widget class="QWebEngineView" name="messageContentView" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_2">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>878</width>
-            <height>66</height>
-           </rect>
-          </property>
-          <widget class="QLabel" name="attachmentsLabel">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>95</width>
-             <height>70</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>&lt;b&gt;Attachments:&lt;/b&gt;</string>
-           </property>
-          </widget>
-         </widget>
+         <property name="url" stdset="0">
+          <url>
+           <string>about:blank</string>
+          </url>
+         </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="attachmentsLayout">
+         <item>
+          <widget class="QScrollArea" name="attachmentsScrollArea">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Plain</enum>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QAbstractScrollArea::AdjustToContents</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+           </property>
+           <widget class="QWidget" name="attachmentsScrollAreaContentsWidget">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>874</width>
+              <height>68</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetDefaultConstraint</enum>
+             </property>
+             <item>
+              <widget class="QLabel" name="attachmentsLabel">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&lt;b&gt;Attachments:&lt;/b&gt;</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="attachmentsSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
