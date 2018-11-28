@@ -75,11 +75,18 @@ void EmailContentReaderWidget::setupTableView()
     m_ui->messageMetadataTableView->verticalHeader()->hide();
     m_ui->messageMetadataTableView->horizontalHeader()->moveSection(3, 0);
 
-    m_ui->messageMetadataTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);
-
     m_ui->messageMetadataTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_ui->messageMetadataTableView->setSelectionMode(QTableView::SingleSelection);
     m_ui->messageMetadataTableView->setShowGrid(false);
+
+
+    m_ui->messageMetadataTableView->horizontalHeader()->setStretchLastSection(false);
+
+    m_ui->messageMetadataTableView->setColumnWidth(0, 70); // id
+    m_ui->messageMetadataTableView->horizontalHeader()->setSectionResizeMode(11, QHeaderView::Stretch); // subject
+    m_ui->messageMetadataTableView->setColumnWidth(9, 250); // sender
+    m_ui->messageMetadataTableView->setColumnWidth(10, 100); // size
+    m_ui->messageMetadataTableView->setColumnWidth(8, 150); // date
 }
 
 }
