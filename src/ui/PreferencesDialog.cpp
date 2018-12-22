@@ -43,7 +43,7 @@ PreferencesDialog::PreferencesDialog(const QString &section, QWidget *parent) : 
 {
 	m_ui->setupUi(this);
 
-    m_loadedTabs.fill(false, 5);
+    m_loadedTabs.fill(false, 6);
 
 	int tab(0);
 
@@ -160,7 +160,7 @@ void PreferencesDialog::currentTabChanged(int tab)
                 connect(pageWidget, &PreferencesEmailPageWidget::settingsModified, this, &PreferencesDialog::markAsModified);
             }
 
-        break;
+            break;
 		default:
 			{
 				PreferencesAdvancedPageWidget *pageWidget(new PreferencesAdvancedPageWidget(this));
