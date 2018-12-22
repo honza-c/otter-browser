@@ -108,7 +108,7 @@ public:
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb);
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
-    void updateMessageContentInDatabase(const QString folderPath, const int positionInFolder, MessageContent messageContent);
+    void updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent);
 
     connectionSettingsHolder getConnectionSettings() const;
 

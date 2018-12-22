@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="filterAndMessagesMetadataTableLayout">
        <item>
         <widget class="Otter::LineEditWidget" name="filterMessagesEdit">
@@ -42,14 +42,14 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="messageInfoAndContentLayout">
        <item>
         <layout class="QHBoxLayout" name="messageActionsAndInfoLayout">
          <item>
           <layout class="QVBoxLayout" name="actionButtonsLayout">
            <item>
-            <widget class="QLabel" name="labelSubject">
+            <widget class="QLabel" name="subjectLabel">
              <property name="text">
               <string>&lt;b&gt;Subject:&lt;/b&gt;</string>
              </property>
@@ -63,7 +63,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="subjectLabel">
+            <widget class="QLabel" name="toLabel">
              <property name="text">
               <string>&lt;b&gt;To:&lt;/b&gt;</string>
              </property>

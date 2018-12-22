@@ -24,6 +24,8 @@
 
 #include <QWidget>
 #include "src/modules/mail/messagemetadatasqltablemodel.h"
+#include "src/modules/mail/databasemanager.h"
+#include "../../../core/EmailAccountsManager.h"
 
 namespace Otter
 {
@@ -40,9 +42,13 @@ public:
     explicit EmailContentReaderWidget(QWidget *parent = 0);
     ~EmailContentReaderWidget();
 
+private slots:
+    void messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &);
+
 private:
     void setupTableModel();
     void setupTableView();
+    void showMessageContent(int messageId);
 
     Ui::EmailContentReaderWidget *m_ui;
     MessageMetadataSqlTableModel *m_messageMetadataTableModel;

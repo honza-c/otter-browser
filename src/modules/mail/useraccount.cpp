@@ -377,8 +377,10 @@ void UserAccount::fetchMissingMessageContent(const QString folderPath, const int
     QFuture<MessageContent> future = fetchMessageContent(folderPath, positionInFolder);
     QFutureWatcher<MessageContent> *watcher = new QFutureWatcher<MessageContent>();
 
+    QString emailAddress = m_emailAddress;
+
     connect(watcher, &QFutureWatcher<MessageContent>::finished, [=](){
-        updateMessageContentInDatabase(folderPath, positionInFolder, future.result());
+        updateMessageContentInDatabase(emailAddress, folderPath, positionInFolder, future.result());
     });
 
     watcher->setFuture(future);
@@ -474,11 +476,11 @@ QFuture<QList<MessageMetadata>> UserAccount::fetchMessagesMetadata(QMap<QString,
     return QtConcurrent::run(fetchMessageMetadataWorker, getConnectionSettings(), folderPathsWithMessagesCountsInDb);
 }
 
-void UserAccount::updateMessageContentInDatabase(const QString folderPath, const int positionInFolder, MessageContent messageContent)
+void UserAccount::updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent)
 {
     if (messageContent != MessageContent())
     {
-        int folderId = DatabaseManager::getFolderId(m_emailAddress, folderPath);
+        int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
         int messageId = DatabaseManager::getMessageId(folderId, positionInFolder);
 
         DatabaseManager::updateHtmlContent(messageId, messageContent.htmlContent());
@@ -487,9 +489,8 @@ void UserAccount::updateMessageContentInDatabase(const QString folderPath, const
         DatabaseManager::updateEmbeddedObjectsContent(messageId, messageContent.embeddedObjects());
         DatabaseManager::updateRecipients(messageId, messageContent.recipients());
         DatabaseManager::updateCopyRecipients(messageId, messageContent.copyRecipients());
-        DatabaseManager::updateBlindCopyRecipients(messageId, messageContent.blindCopyRecipients());
 
-        emit messageContentFetched(messageId);
+        // emit messageContentFetched(messageId);
     }
 }
 

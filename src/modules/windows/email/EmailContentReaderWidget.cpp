@@ -33,6 +33,8 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
 
     setupTableModel();
     setupTableView();
+
+    connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -87,6 +89,141 @@ void EmailContentReaderWidget::setupTableView()
     m_ui->messageMetadataTableView->setColumnWidth(9, 250); // sender
     m_ui->messageMetadataTableView->setColumnWidth(10, 100); // size
     m_ui->messageMetadataTableView->setColumnWidth(8, 150); // date
+
+    m_messageMetadataTableModel->setFilter("folderId = 5");
+
+    while (m_messageMetadataTableModel->canFetchMore())
+    {
+        m_messageMetadataTableModel->fetchMore();
+    }
+
+    m_ui->messageMetadataTableView->scrollToBottom();
+
+    m_ui->attachmentsScrollArea->setVisible(false);
+}
+
+void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QModelIndex &current, const QModelIndex &)
+{
+    int messageId = m_messageMetadataTableModel->data(current.sibling(current.row(), 0), Qt::DisplayRole).toInt();
+    QString htmlContent = DatabaseManager::getHtmlContent(messageId);
+    QString plainTextContent = DatabaseManager::getTextContent(messageId);
+
+    if (htmlContent == QString() && plainTextContent == QString())
+    {
+        if (messageId > 0)
+        {
+            int folderId = m_messageMetadataTableModel->data(current.sibling(current.row(), 1), Qt::DisplayRole).toInt();
+
+            QString folderPath = DatabaseManager::getFolderPath(folderId);
+            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+            int positionInFolder = DatabaseManager::getPositionInFolder(messageId);
+
+            if (positionInFolder > 0)
+            {
+                for (UserAccount &userAccount : EmailAccountsManager::getEmailAccounts())
+                {
+                    if (userAccount.emailAddress() == emailAddress)
+                    {
+                        userAccount.fetchMissingMessageContent(folderPath, positionInFolder);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        showMessageContent(messageId);
+    }
+}
+
+void EmailContentReaderWidget::showMessageContent(int messageId)
+{
+    if (messageId > 0)
+    {
+        QString subject = DatabaseManager::getSubject(messageId);
+
+        QString htmlContent = DatabaseManager::getHtmlContent(messageId);
+        QString plainTextContent = DatabaseManager::getTextContent(messageId);
+        QList<EmbeddedObject> embeddedObjects = DatabaseManager::getEmbeddedObjects(messageId);
+
+        if (!embeddedObjects.isEmpty())
+        {
+            for (EmbeddedObject embeddedObject : embeddedObjects)
+            {
+                QString srcOld = "src=\"cid:" + embeddedObject.name() + "\"";
+                QString srcNew = "src=\"data:" + embeddedObject.mimeType() + ";base64," + embeddedObject.data().toBase64() + "\"";
+
+                htmlContent.replace(srcOld, srcNew);
+            }
+        }
+
+        QList<Contact> recipients = DatabaseManager::getRecipients(messageId);
+        QList<Contact> copyRecipients = DatabaseManager::getCopyRecipients(messageId);
+        QList<Contact> replyTo = DatabaseManager::getReplyTo(messageId);
+
+        Contact from = DatabaseManager::getSender(messageId);
+
+        m_ui->subjectLabel->setText("<b>Subject:</b> " + subject);
+
+        m_ui->fromLabel->setText("<b>From:</b> "
+                           + Contact::toString(from)
+                           .replace("<", "&lt;")
+                           .replace(">", "&gt;"));
+
+        m_ui->toLabel->setText("<b>To:</b> "
+                         + Contact::toString(recipients)
+                         .replace("<", "&lt;")
+                         .replace(">", "&gt;"));
+
+        if (replyTo.isEmpty())
+        {
+            m_ui->replyToLabel->setVisible(false);
+        }
+        else
+        {
+            m_ui->replyToLabel->setVisible(true);
+            m_ui->replyToLabel->setText("<b>Reply to:</b> "
+                                  + Contact::toString(replyTo)
+                                  .replace("<", "&lt;")
+                                  .replace(">", "&gt;"));
+        }
+
+        if (copyRecipients.isEmpty())
+        {
+            m_ui->inCopyLabel->setVisible(false);
+        }
+        else
+        {
+            m_ui->inCopyLabel->setVisible(true);
+            m_ui->inCopyLabel->setText("<b>In copy:</b> "
+                                 + Contact::toString(copyRecipients)
+                                 .replace("<", "&lt;")
+                                 .replace(">", "&gt;"));
+        }
+
+        if (htmlContent != QString())
+        {
+            m_ui->messageContentView->setHtml(htmlContent);
+        }
+        else if (plainTextContent != QString())
+        {
+            m_ui->messageContentView->setHtml(plainTextContent);
+        }
+        else
+        {
+            m_ui->messageContentView->setHtml(QString());
+        }
+
+        if (!replyTo.isEmpty() || !copyRecipients.isEmpty())
+        {
+            m_ui->replyAllButton->setVisible(true);
+        }
+        else
+        {
+            m_ui->replyAllButton->setVisible(false);
+        }
+    }
 }
 
 }
