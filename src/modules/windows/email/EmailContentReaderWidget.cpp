@@ -269,3 +269,23 @@ void Otter::EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool 
 
     m_ui->messageContentView->reload();
 }
+
+void Otter::EmailContentReaderWidget::on_filterMessagesEdit_textChanged(const QString &input)
+{
+    int folderId = 5;
+
+    MessageMetadataSqlTableModel *tableModel = static_cast<MessageMetadataSqlTableModel*>(m_ui->messageMetadataTableView->model());
+
+    tableModel->setFilter(QString("folderId = %1 AND (sender LIKE '%%2%' OR subject LIKE '%%2%' OR plainTextContent LIKE '%%2%' OR htmlContent LIKE '%%2%')")
+                        .arg(folderId)
+                        .arg(input));
+
+    tableModel->select();
+
+    while (tableModel->canFetchMore())
+    {
+        tableModel->fetchMore();
+    }
+
+    m_ui->messageMetadataTableView->scrollToBottom();
+}
