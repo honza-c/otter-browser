@@ -37,6 +37,10 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
     webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::JavascriptEnabled, false);
 
+    m_ui->blockRemoteContentWidget->setVisible(false);
+    m_ui->blockRemoteContentLine->setVisible(false);
+    m_ui->messageActionsAndInfoWidget->setVisible(false);
+
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
 }
 
@@ -107,36 +111,41 @@ void EmailContentReaderWidget::setupTableView()
 
 void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QModelIndex &current, const QModelIndex &)
 {
-    int messageId = m_messageMetadataTableModel->data(current.sibling(current.row(), 0), Qt::DisplayRole).toInt();
-    QString htmlContent = DatabaseManager::getHtmlContent(messageId);
-    QString plainTextContent = DatabaseManager::getTextContent(messageId);
-
-    if (htmlContent == QString() && plainTextContent == QString())
+    if (current.isValid())
     {
-        if (messageId > 0)
+        m_ui->messageActionsAndInfoWidget->setVisible(true);
+
+        int messageId = m_messageMetadataTableModel->data(current.sibling(current.row(), 0), Qt::DisplayRole).toInt();
+        QString htmlContent = DatabaseManager::getHtmlContent(messageId);
+        QString plainTextContent = DatabaseManager::getTextContent(messageId);
+
+        if (htmlContent == QString() && plainTextContent == QString())
         {
-            int folderId = m_messageMetadataTableModel->data(current.sibling(current.row(), 1), Qt::DisplayRole).toInt();
-
-            QString folderPath = DatabaseManager::getFolderPath(folderId);
-            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
-
-            int positionInFolder = DatabaseManager::getPositionInFolder(messageId);
-
-            if (positionInFolder > 0)
+            if (messageId > 0)
             {
-                for (UserAccount &userAccount : EmailAccountsManager::getEmailAccounts())
+                int folderId = m_messageMetadataTableModel->data(current.sibling(current.row(), 1), Qt::DisplayRole).toInt();
+
+                QString folderPath = DatabaseManager::getFolderPath(folderId);
+                QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+                int positionInFolder = DatabaseManager::getPositionInFolder(messageId);
+
+                if (positionInFolder > 0)
                 {
-                    if (userAccount.emailAddress() == emailAddress)
+                    for (UserAccount &userAccount : EmailAccountsManager::getEmailAccounts())
                     {
-                        userAccount.fetchMissingMessageContent(folderPath, positionInFolder);
+                        if (userAccount.emailAddress() == emailAddress)
+                        {
+                            userAccount.fetchMissingMessageContent(folderPath, positionInFolder);
+                        }
                     }
                 }
             }
         }
-    }
-    else
-    {
-        showMessageContent(messageId);
+        else
+        {
+            showMessageContent(messageId);
+        }
     }
 }
 

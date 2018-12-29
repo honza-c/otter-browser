@@ -45,126 +45,128 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="messageInfoAndContentLayout">
        <item>
-        <layout class="QHBoxLayout" name="messageActionsAndInfoLayout">
-         <item>
-          <layout class="QVBoxLayout" name="actionButtonsLayout">
-           <item>
-            <widget class="QLabel" name="subjectLabel">
-             <property name="text">
-              <string>&lt;b&gt;Subject:&lt;/b&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="fromLabel">
-             <property name="text">
-              <string>&lt;b&gt;From:&lt;/b&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="toLabel">
-             <property name="text">
-              <string>&lt;b&gt;To:&lt;/b&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="inCopyLabel">
-             <property name="text">
-              <string>&lt;b&gt;In copy:&lt;/b&gt;</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="replyToLabel">
-             <property name="text">
-              <string>&lt;b&gt;Reply to:&lt;/b&gt;</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="moveToTrashButton">
-           <property name="text">
-            <string>Move to trash</string>
-           </property>
-           <property name="icon">
-            <iconset theme="user-trash">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="junkButton">
-           <property name="text">
-            <string>Junk</string>
-           </property>
-           <property name="icon">
-            <iconset theme="mail-mark-junk">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="archiveButton">
-           <property name="text">
-            <string>Archive</string>
-           </property>
-           <property name="icon">
-            <iconset theme="archive-insert">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="replyAllButton">
-           <property name="text">
-            <string>Reply all</string>
-           </property>
-           <property name="icon">
-            <iconset theme="mail-reply-all">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="replyButton">
-           <property name="text">
-            <string>Reply</string>
-           </property>
-           <property name="icon">
-            <iconset theme="mail-reply-sender">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="forwardButton">
-           <property name="text">
-            <string>Forward</string>
-           </property>
-           <property name="icon">
-            <iconset theme="mail-forward">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QWidget" name="messageActionsAndInfoWidget" native="true">
+         <layout class="QHBoxLayout" name="messageActionsAndInfoLayout">
+          <item>
+           <layout class="QVBoxLayout" name="actionButtonsLayout">
+            <item>
+             <widget class="QLabel" name="subjectLabel">
+              <property name="text">
+               <string>&lt;b&gt;Subject:&lt;/b&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="fromLabel">
+              <property name="text">
+               <string>&lt;b&gt;From:&lt;/b&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="toLabel">
+              <property name="text">
+               <string>&lt;b&gt;To:&lt;/b&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="inCopyLabel">
+              <property name="text">
+               <string>&lt;b&gt;In copy:&lt;/b&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="replyToLabel">
+              <property name="text">
+               <string>&lt;b&gt;Reply to:&lt;/b&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="moveToTrashButton">
+            <property name="text">
+             <string>Move to trash</string>
+            </property>
+            <property name="icon">
+             <iconset theme="user-trash">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="junkButton">
+            <property name="text">
+             <string>Junk</string>
+            </property>
+            <property name="icon">
+             <iconset theme="mail-mark-junk">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="archiveButton">
+            <property name="text">
+             <string>Archive</string>
+            </property>
+            <property name="icon">
+             <iconset theme="archive-insert">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="replyAllButton">
+            <property name="text">
+             <string>Reply all</string>
+            </property>
+            <property name="icon">
+             <iconset theme="mail-reply-all">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="replyButton">
+            <property name="text">
+             <string>Reply</string>
+            </property>
+            <property name="icon">
+             <iconset theme="mail-reply-sender">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="forwardButton">
+            <property name="text">
+             <string>Forward</string>
+            </property>
+            <property name="icon">
+             <iconset theme="mail-forward">
+              <normaloff>.</normaloff>.</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <widget class="Line" name="blockRemoteContentLine">
