@@ -34,6 +34,9 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     setupTableModel();
     setupTableView();
 
+    QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
+    webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::JavascriptEnabled, false);
+
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
 }
 
@@ -137,6 +140,23 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
     }
 }
 
+void EmailContentReaderWidget::setupBlockRemoteContentPanel(bool isHtmlMessage)
+{
+    if (isHtmlMessage)
+    {
+        m_ui->blockRemoteContentLine->setVisible(true);
+        m_ui->blockRemoteContentWidget->setVisible(true);
+
+        QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
+        webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::AutoLoadImages, false);
+    }
+    else
+    {
+        m_ui->blockRemoteContentLine->setVisible(false);
+        m_ui->blockRemoteContentWidget->setVisible(false);
+    }
+}
+
 void EmailContentReaderWidget::showMessageContent(int messageId)
 {
     if (messageId > 0)
@@ -146,6 +166,8 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
         QString htmlContent = DatabaseManager::getHtmlContent(messageId);
         QString plainTextContent = DatabaseManager::getTextContent(messageId);
         QList<EmbeddedObject> embeddedObjects = DatabaseManager::getEmbeddedObjects(messageId);
+
+        setupBlockRemoteContentPanel(!htmlContent.isEmpty());
 
         if (!embeddedObjects.isEmpty())
         {
@@ -226,4 +248,15 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
     }
 }
 
+}
+
+void Otter::EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool checked)
+{
+    m_ui->blockRemoteContentLine->setVisible(false);
+    m_ui->blockRemoteContentWidget->setVisible(false);
+
+    QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
+    webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::AutoLoadImages, true);
+
+    m_ui->messageContentView->reload();
 }

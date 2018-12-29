@@ -23,6 +23,8 @@
 #define EMAILCONTENTREADERWIDGET_H
 
 #include <QWidget>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
 #include "src/modules/mail/messagemetadatasqltablemodel.h"
 #include "src/modules/mail/databasemanager.h"
 #include "../../../core/EmailAccountsManager.h"
@@ -45,10 +47,13 @@ public:
 private slots:
     void messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &);
 
+    void on_enableRemoteContentButton_clicked(bool checked);
+
 private:
     void setupTableModel();
     void setupTableView();
     void showMessageContent(int messageId);
+    void setupBlockRemoteContentPanel(bool isHtmlMessage);
 
     Ui::EmailContentReaderWidget *m_ui;
     MessageMetadataSqlTableModel *m_messageMetadataTableModel;
