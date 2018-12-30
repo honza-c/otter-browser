@@ -44,6 +44,9 @@ public:
     explicit EmailContentReaderWidget(QWidget *parent = 0);
     ~EmailContentReaderWidget();
 
+public slots:
+    void selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &);
+
 private slots:
     void messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &);
 
@@ -56,8 +59,15 @@ private:
     void showMessageContent(int messageId);
     void setupBlockRemoteContentPanel(bool isHtmlMessage);
 
+    void updateMessageMetadataTableFilter(QModelIndex currentIndex, QString filterText);
+
+    QString getEmailAddressFromFolderTreeItemIndex(QModelIndex currentIndex);
+    QString getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);
+    QString getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);
+
     Ui::EmailContentReaderWidget *m_ui;
     MessageMetadataSqlTableModel *m_messageMetadataTableModel;
+    QModelIndex m_currentInboxFolderTreeIndex;
 };
 
 }

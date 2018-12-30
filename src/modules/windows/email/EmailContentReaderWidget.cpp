@@ -259,7 +259,7 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
 
 }
 
-void Otter::EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool checked)
+void Otter::EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool)
 {
     m_ui->blockRemoteContentLine->setVisible(false);
     m_ui->blockRemoteContentWidget->setVisible(false);
@@ -272,15 +272,32 @@ void Otter::EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool 
 
 void Otter::EmailContentReaderWidget::on_filterMessagesEdit_textChanged(const QString &input)
 {
-    int folderId = 5;
+    updateMessageMetadataTableFilter(m_currentInboxFolderTreeIndex, input);
+}
+
+void Otter::EmailContentReaderWidget::updateMessageMetadataTableFilter(QModelIndex currentIndex, QString filterText)
+{
+    QString emailAddress = getEmailAddressFromFolderTreeItemIndex(currentIndex);
+    QString folderPath = getFolderPathFromFolderTreeItemIndex(currentIndex);
+    int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
 
     MessageMetadataSqlTableModel *tableModel = static_cast<MessageMetadataSqlTableModel*>(m_ui->messageMetadataTableView->model());
 
-    tableModel->setFilter(QString("folderId = %1 AND (sender LIKE '%%2%' OR subject LIKE '%%2%' OR plainTextContent LIKE '%%2%' OR htmlContent LIKE '%%2%')")
-                        .arg(folderId)
-                        .arg(input));
-
-    tableModel->select();
+    if (folderId > 0)
+    {
+        if (filterText == QString())
+        {
+            tableModel->setFilter(QString("folderId = %1").arg(folderId));
+            tableModel->select();
+        }
+        else
+        {
+            tableModel->setFilter(QString("folderId = %1 AND (sender LIKE '%%2%' OR subject LIKE '%%2%' OR plainTextContent LIKE '%%2%' OR htmlContent LIKE '%%2%')")
+                                       .arg(folderId)
+                                       .arg(filterText));
+            tableModel->select();
+        }
+    }
 
     while (tableModel->canFetchMore())
     {
@@ -288,4 +305,48 @@ void Otter::EmailContentReaderWidget::on_filterMessagesEdit_textChanged(const QS
     }
 
     m_ui->messageMetadataTableView->scrollToBottom();
+}
+
+QString Otter::EmailContentReaderWidget::getEmailAddressFromFolderTreeItemIndex(QModelIndex currentIndex)
+{
+    QString path = getFullFolderPathFromFolderTreeItemIndex(currentIndex);
+    return path.split("/")[0];
+}
+
+QString Otter::EmailContentReaderWidget::getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
+{
+    InboxFolderTreeItem* item = static_cast<InboxFolderTreeItem*>(currentIndex.internalPointer());
+
+    if (item != nullptr)
+    {
+        QString path = item->data(0).toString();
+        QModelIndex index = currentIndex;
+
+        while(index.parent() != QModelIndex())
+        {
+            index = index.parent();
+            item = static_cast<InboxFolderTreeItem*>(index.internalPointer());
+            path = item->data(0).toString() + "/" + path;
+        }
+
+        return path;
+    }
+    else
+    {
+        return QString();
+    }
+}
+
+QString Otter::EmailContentReaderWidget::getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
+{
+    QString path = getFullFolderPathFromFolderTreeItemIndex(currentIndex);
+    QString emailAddress = getEmailAddressFromFolderTreeItemIndex(currentIndex);
+
+    return path.right(path.length() - emailAddress.length());
+}
+
+void Otter::EmailContentReaderWidget::selectedInboxFolderTreeIndexChanged(const QModelIndex &currentIndex, const QModelIndex &)
+{
+    m_currentInboxFolderTreeIndex = currentIndex;
+    updateMessageMetadataTableFilter(currentIndex, m_ui->filterMessagesEdit->text());
 }

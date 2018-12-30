@@ -58,6 +58,8 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     {
         m_ui->emailContentReaderWidget->setVisible(false);
     }
+
+    connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
 }
 
 QString EmailContentsWidget::getTitle() const
