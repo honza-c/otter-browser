@@ -25,9 +25,11 @@
 #include <QWidget>
 #include <QWebEngineView>
 #include <QWebEngineSettings>
+#include <QtWidgets>
 #include "src/modules/mail/messagemetadatasqltablemodel.h"
 #include "src/modules/mail/databasemanager.h"
 #include "../../../core/EmailAccountsManager.h"
+#include "src/modules/mail/qpushbuttonwithid.h"
 
 namespace Otter
 {
@@ -50,6 +52,7 @@ public slots:
 private slots:
     void messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &);
     void messageContentFetched(int);
+    void onAttachmentButtonClicked(bool);
 
     void on_enableRemoteContentButton_clicked(bool checked);
     void on_filterMessagesEdit_textChanged(const QString &input);
@@ -59,9 +62,11 @@ private:
     void setupTableView();
     void showMessageContent(int messageId);
     void setupBlockRemoteContentPanel(bool isHtmlMessage);
+    void setupAttachmentsPanel(QList<Attachment> attachments);
 
     void updateMessageMetadataTableFilter(QModelIndex currentIndex, QString filterText);
-
+    void deleteOldAttachmentsLayout(QLayout *layout);
+    QHBoxLayout* createAttachmentsLayout(QString caption, QList<Attachment> attachments);
     QString getEmailAddressFromFolderTreeItemIndex(QModelIndex currentIndex);
     QString getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);
     QString getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);

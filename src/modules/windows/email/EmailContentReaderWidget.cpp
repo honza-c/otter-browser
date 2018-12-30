@@ -41,6 +41,8 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->blockRemoteContentLine->setVisible(false);
     m_ui->messageActionsAndInfoWidget->setVisible(false);
 
+    m_ui->blockRemoteContentLayout->setContentsMargins(0, 0, 0, 0);
+
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
 
     for (UserAccount &account : EmailAccountsManager::getEmailAccounts())
@@ -178,6 +180,7 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
         QString htmlContent = DatabaseManager::getHtmlContent(messageId);
         QString plainTextContent = DatabaseManager::getTextContent(messageId);
         QList<EmbeddedObject> embeddedObjects = DatabaseManager::getEmbeddedObjects(messageId);
+        QList<Attachment> attachments = DatabaseManager::getAttachments(messageId);
 
         setupBlockRemoteContentPanel(!htmlContent.isEmpty());
 
@@ -259,12 +262,112 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
         }
 
         m_ui->messageActionsAndInfoWidget->setVisible(true);
+        setupAttachmentsPanel(attachments);
     }
 }
 
+void EmailContentReaderWidget::setupAttachmentsPanel(QList<Attachment> attachments)
+{
+    if (attachments.size() > 0)
+    {
+        QLayout *oldLayout = m_ui->attachmentsWidget->layout();
+        deleteOldAttachmentsLayout(oldLayout);
+        m_ui->attachmentsWidget->setLayout(createAttachmentsLayout("<b>Attachments:</b>", attachments));
+
+        if (m_ui->attachmentsWidget->layout()->count() > 1)
+        {
+            m_ui->attachmentsScrollArea->show();
+        }
+        else
+        {
+            m_ui->attachmentsScrollArea->hide();
+        }
+    }
+    else
+    {
+        m_ui->attachmentsScrollArea->hide();
+    }
 }
 
-void Otter::EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool)
+void EmailContentReaderWidget::deleteOldAttachmentsLayout(QLayout *layout)
+{
+    if (layout != nullptr)
+    {
+        QLayoutItem *item;
+        QWidget *widget;
+
+        while ((item = layout->takeAt(0)) != nullptr)
+        {
+            if ((widget = item->widget()) != nullptr)
+            {
+                widget->hide();
+                delete widget;
+            }
+        }
+    }
+
+    delete layout;
+}
+
+QHBoxLayout* EmailContentReaderWidget::createAttachmentsLayout(QString caption, QList<Attachment> attachments)
+{
+    QHBoxLayout *layout = new QHBoxLayout();
+    QLabel *attachmentsLabel = new QLabel(caption);
+    layout->addWidget(attachmentsLabel);
+
+    for (int i = 0; i < attachments.size(); i++)
+    {
+        QString name = attachments.at(i).name();
+
+        if (name != QString())
+        {
+            QPushButtonWithId *button = new QPushButtonWithId(attachments.at(i).name());
+            button->setId(i);
+            button->setIcon(QIcon::fromTheme("mail-attachment"));
+
+            QObject::connect(button, SIGNAL(clicked(bool)), this, SLOT(onAttachmentButtonClicked(bool)));
+
+            layout->addWidget(button);
+        }
+    }
+
+    layout->setAlignment(Qt::AlignLeft);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    return layout;
+}
+
+void EmailContentReaderWidget::onAttachmentButtonClicked(bool)
+{
+    QPushButtonWithId *button = static_cast<QPushButtonWithId*>(QObject::sender());
+    QModelIndex index = m_ui->messageMetadataTableView->currentIndex();
+    int messageId = m_ui->messageMetadataTableView->model()->data(QModelIndex(index.sibling(index.row(), 0)), Qt::DisplayRole).toInt();
+    Attachment attachment = DatabaseManager::getAttachments(messageId).at(button->id());
+
+    QFileDialog dialog;
+
+    QString defaultPath = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
+    dialog.setDirectory(defaultPath);
+    dialog.setWindowTitle("Save attachment");
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.selectFile(attachment.name());
+    dialog.setMimeTypeFilters(QStringList(attachment.mimeType()));
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        QString fileName = dialog.selectedFiles().first();
+
+        if (fileName != QString())
+        {
+            QFile file(fileName);
+            file.open(QIODevice::WriteOnly);
+            file.write(attachment.data());
+            file.close();
+        }
+    }
+}
+
+void EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool)
 {
     m_ui->blockRemoteContentLine->setVisible(false);
     m_ui->blockRemoteContentWidget->setVisible(false);
@@ -275,12 +378,12 @@ void Otter::EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool)
     m_ui->messageContentView->reload();
 }
 
-void Otter::EmailContentReaderWidget::on_filterMessagesEdit_textChanged(const QString &input)
+void EmailContentReaderWidget::on_filterMessagesEdit_textChanged(const QString &input)
 {
     updateMessageMetadataTableFilter(m_currentInboxFolderTreeIndex, input);
 }
 
-void Otter::EmailContentReaderWidget::updateMessageMetadataTableFilter(QModelIndex currentIndex, QString filterText)
+void EmailContentReaderWidget::updateMessageMetadataTableFilter(QModelIndex currentIndex, QString filterText)
 {
     QString emailAddress = getEmailAddressFromFolderTreeItemIndex(currentIndex);
     QString folderPath = getFolderPathFromFolderTreeItemIndex(currentIndex);
@@ -312,13 +415,13 @@ void Otter::EmailContentReaderWidget::updateMessageMetadataTableFilter(QModelInd
     m_ui->messageMetadataTableView->scrollToBottom();
 }
 
-QString Otter::EmailContentReaderWidget::getEmailAddressFromFolderTreeItemIndex(QModelIndex currentIndex)
+QString EmailContentReaderWidget::getEmailAddressFromFolderTreeItemIndex(QModelIndex currentIndex)
 {
     QString path = getFullFolderPathFromFolderTreeItemIndex(currentIndex);
     return path.split("/")[0];
 }
 
-QString Otter::EmailContentReaderWidget::getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
+QString EmailContentReaderWidget::getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
 {
     InboxFolderTreeItem* item = static_cast<InboxFolderTreeItem*>(currentIndex.internalPointer());
 
@@ -342,7 +445,7 @@ QString Otter::EmailContentReaderWidget::getFullFolderPathFromFolderTreeItemInde
     }
 }
 
-QString Otter::EmailContentReaderWidget::getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
+QString EmailContentReaderWidget::getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
 {
     QString path = getFullFolderPathFromFolderTreeItemIndex(currentIndex);
     QString emailAddress = getEmailAddressFromFolderTreeItemIndex(currentIndex);
@@ -350,13 +453,13 @@ QString Otter::EmailContentReaderWidget::getFolderPathFromFolderTreeItemIndex(QM
     return path.right(path.length() - emailAddress.length());
 }
 
-void Otter::EmailContentReaderWidget::selectedInboxFolderTreeIndexChanged(const QModelIndex &currentIndex, const QModelIndex &)
+void EmailContentReaderWidget::selectedInboxFolderTreeIndexChanged(const QModelIndex &currentIndex, const QModelIndex &)
 {
     m_currentInboxFolderTreeIndex = currentIndex;
     updateMessageMetadataTableFilter(currentIndex, m_ui->filterMessagesEdit->text());
 }
 
-void Otter::EmailContentReaderWidget::messageContentFetched(int messageId)
+void EmailContentReaderWidget::messageContentFetched(int messageId)
 {
     QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
 
@@ -370,4 +473,6 @@ void Otter::EmailContentReaderWidget::messageContentFetched(int messageId)
             showMessageContent(messageId);
         }
     }
+}
+
 }
