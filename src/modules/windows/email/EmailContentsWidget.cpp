@@ -46,21 +46,17 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
         m_window = mainWindow->getActiveWindow();
     }
 
+    m_ui->inboxFoldersTreeView->setModel(new InboxFolderTreeModel(DatabaseManager::getInboxFolders()));
+    m_ui->inboxFoldersTreeView->setViewMode(ItemViewWidget::TreeView);
+    m_ui->inboxFoldersTreeView->expandAll();
+
+    // m_ui->getMessagesButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send-receive"), false));
+    m_ui->getMessagesButton->setIcon(QIcon::fromTheme("mail-send-receive"));
+    m_ui->writeMessageButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send"), false));
+
     if (isSidebarPanel())
     {
         m_ui->emailContentReaderWidget->setVisible(false);
-
-        m_ui->inboxFoldersTreeView->setModel(new InboxFolderTreeModel(DatabaseManager::getInboxFolders()));
-        m_ui->inboxFoldersTreeView->setViewMode(ItemViewWidget::TreeView);
-        m_ui->inboxFoldersTreeView->expandAll();
-
-        // m_ui->getMessagesButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send-receive"), false));
-        m_ui->getMessagesButton->setIcon(QIcon::fromTheme("mail-send-receive"));
-        m_ui->writeMessageButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send"), false));
-    }
-    else
-    {
-        m_ui->emailSidebarWidget->setVisible(false);
     }
 }
 

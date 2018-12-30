@@ -13,95 +13,100 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout" name="windowLayout">
-     <item>
-      <widget class="QWidget" name="emailSidebarWidget" native="true">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <layout class="QHBoxLayout" name="emailSidebarButtonsLayout">
-          <item>
-           <widget class="QPushButton" name="getMessagesButton">
-            <property name="text">
-             <string>Get Messages</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="writeMessageButton">
-            <property name="text">
-             <string>Write Message</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QSplitter" name="inboxFolderTreeAndTagsSplitter">
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="handleWidth">
-           <number>4</number>
-          </property>
-          <widget class="QWidget" name="layoutWidget">
-           <layout class="QVBoxLayout" name="tagsVerticalLayout">
-            <item>
-             <widget class="QLabel" name="emailAccountsLabel">
-              <property name="text">
-               <string>Email Accounts:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="Otter::ItemViewWidget" name="inboxFoldersTreeView">
-              <property name="headerHidden">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+    <widget class="QSplitter" name="splitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="emailSidebarButtonsLayout">
+         <item>
+          <widget class="QPushButton" name="getMessagesButton">
+           <property name="text">
+            <string>Get Messages</string>
+           </property>
           </widget>
-          <widget class="QWidget" name="layoutWidget">
-           <layout class="QVBoxLayout" name="inboxFolderTreeVerticalLayout">
-            <item>
-             <widget class="QLabel" name="tagsLabel">
-              <property name="text">
-               <string>Tags:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QListView" name="tagsListView"/>
-            </item>
-           </layout>
+         </item>
+         <item>
+          <widget class="QPushButton" name="writeMessageButton">
+           <property name="text">
+            <string>Write Message</string>
+           </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSplitter" name="inboxFolderTreeAndTagsSplitter">
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="handleWidth">
+          <number>4</number>
+         </property>
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QVBoxLayout" name="tagsVerticalLayout">
+           <item>
+            <widget class="QLabel" name="emailAccountsLabel">
+             <property name="text">
+              <string>Email Accounts:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Otter::ItemViewWidget" name="inboxFoldersTreeView">
+             <property name="headerHidden">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="Otter::EmailContentReaderWidget" name="emailContentReaderWidget" native="true"/>
-     </item>
-    </layout>
+         <widget class="QWidget" name="layoutWidget">
+          <layout class="QVBoxLayout" name="inboxFolderTreeVerticalLayout">
+           <item>
+            <widget class="QLabel" name="tagsLabel">
+             <property name="text">
+              <string>Tags:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QListView" name="tagsListView"/>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="Otter::EmailContentReaderWidget" name="emailContentReaderWidget" native="true"/>
+    </widget>
    </item>
   </layout>
  </widget>
