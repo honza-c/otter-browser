@@ -490,7 +490,7 @@ void UserAccount::updateMessageContentInDatabase(const QString emailAddress, con
         DatabaseManager::updateRecipients(messageId, messageContent.recipients());
         DatabaseManager::updateCopyRecipients(messageId, messageContent.copyRecipients());
 
-        // emit messageContentFetched(messageId);
+        emit messageContentFetched(messageId);
     }
 }
 

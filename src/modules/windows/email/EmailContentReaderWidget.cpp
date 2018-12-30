@@ -42,6 +42,11 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->messageActionsAndInfoWidget->setVisible(false);
 
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
+
+    for (UserAccount &account : EmailAccountsManager::getEmailAccounts())
+    {
+        connect(&account, SIGNAL(messageContentFetched(int)), this, SLOT(messageContentFetched(int)));
+    }
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -113,8 +118,6 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
 {
     if (current.isValid())
     {
-        m_ui->messageActionsAndInfoWidget->setVisible(true);
-
         int messageId = m_messageMetadataTableModel->data(current.sibling(current.row(), 0), Qt::DisplayRole).toInt();
         QString htmlContent = DatabaseManager::getHtmlContent(messageId);
         QString plainTextContent = DatabaseManager::getTextContent(messageId);
@@ -254,6 +257,8 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
         {
             m_ui->replyAllButton->setVisible(false);
         }
+
+        m_ui->messageActionsAndInfoWidget->setVisible(true);
     }
 }
 
@@ -349,4 +354,20 @@ void Otter::EmailContentReaderWidget::selectedInboxFolderTreeIndexChanged(const 
 {
     m_currentInboxFolderTreeIndex = currentIndex;
     updateMessageMetadataTableFilter(currentIndex, m_ui->filterMessagesEdit->text());
+}
+
+void Otter::EmailContentReaderWidget::messageContentFetched(int messageId)
+{
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedRows().at(0);
+        int currentMessageId = m_ui->messageMetadataTableView->model()->data(QModelIndex(index.sibling(index.row(), 0)), Qt::DisplayRole).toInt();
+
+        if (messageId == currentMessageId)
+        {
+            showMessageContent(messageId);
+        }
+    }
 }

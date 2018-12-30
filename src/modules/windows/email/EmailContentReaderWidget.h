@@ -49,6 +49,7 @@ public slots:
 
 private slots:
     void messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &);
+    void messageContentFetched(int);
 
     void on_enableRemoteContentButton_clicked(bool checked);
     void on_filterMessagesEdit_textChanged(const QString &input);

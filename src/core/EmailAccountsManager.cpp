@@ -48,7 +48,7 @@ EmailAccountsManager* EmailAccountsManager::getInstance()
     return m_instance;
 }
 
-QList<UserAccount> EmailAccountsManager::getEmailAccounts()
+QList<UserAccount>& EmailAccountsManager::getEmailAccounts()
 {
     return m_emailAccounts;
 }
