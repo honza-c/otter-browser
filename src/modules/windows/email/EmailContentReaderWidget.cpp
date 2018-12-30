@@ -43,6 +43,9 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
 
     m_ui->blockRemoteContentLayout->setContentsMargins(0, 0, 0, 0);
 
+    m_ui->splitter->setStretchFactor(0, 1);
+    m_ui->splitter->setStretchFactor(1, 5);
+
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
 
     for (UserAccount &account : EmailAccountsManager::getEmailAccounts())
@@ -103,8 +106,6 @@ void EmailContentReaderWidget::setupTableView()
     m_ui->messageMetadataTableView->setColumnWidth(9, 250); // sender
     m_ui->messageMetadataTableView->setColumnWidth(10, 100); // size
     m_ui->messageMetadataTableView->setColumnWidth(8, 150); // date
-
-    m_messageMetadataTableModel->setFilter("folderId = 5");
 
     while (m_messageMetadataTableModel->canFetchMore())
     {

@@ -59,6 +59,12 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
         m_ui->emailContentReaderWidget->setVisible(false);
     }
 
+    m_ui->splitter->setStretchFactor(0, 1);
+    m_ui->splitter->setStretchFactor(1, 5);
+
+    m_ui->inboxFolderTreeAndTagsSplitter->setStretchFactor(0, 4);
+    m_ui->inboxFolderTreeAndTagsSplitter->setStretchFactor(1, 1);
+
     connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
 }
 
