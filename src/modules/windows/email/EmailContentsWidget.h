@@ -56,6 +56,16 @@ protected:
 
 protected slots:
 
+private slots:
+    void folderTreeViewContextMenuRequested(QPoint);
+    void createNewFolderActionTriggered(bool);
+    void createNewSubfolderActionTriggered(bool);
+    void deleteFolderActionTriggered(bool);
+    void renameFolderActionTriggered(bool);
+
+    void on_getMessagesButton_clicked();
+    void on_writeMessageButton_clicked();
+
 private:
     Window *m_window;
     Ui::EmailContentsWidget *m_ui;

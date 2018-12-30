@@ -65,6 +65,9 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     m_ui->inboxFolderTreeAndTagsSplitter->setStretchFactor(0, 4);
     m_ui->inboxFolderTreeAndTagsSplitter->setStretchFactor(1, 1);
 
+    m_ui->inboxFoldersTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(m_ui->inboxFoldersTreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderTreeViewContextMenuRequested(QPoint)));
     connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
 }
 
@@ -99,6 +102,75 @@ void EmailContentsWidget::on_getMessagesButton_clicked()
 }
 
 void EmailContentsWidget::on_writeMessageButton_clicked()
+{
+    // TODO:
+}
+
+void EmailContentsWidget::folderTreeViewContextMenuRequested(QPoint position)
+{
+    QItemSelectionModel *selectionModel = m_ui->inboxFoldersTreeView->selectionModel();
+    QModelIndex indexUnderCursor = m_ui->inboxFoldersTreeView->indexAt(position);
+
+    if (indexUnderCursor.isValid())
+    {
+        QMenu *menu = new QMenu();
+
+        InboxFolderTreeItem* selectedItem = static_cast<InboxFolderTreeItem*>(selectionModel->selectedIndexes().first().internalPointer());
+        QString caption = selectedItem->data(0).toString();
+
+        QRegExp emailAddressRegexPattern("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b");
+        emailAddressRegexPattern.setCaseSensitivity(Qt::CaseInsensitive);
+        emailAddressRegexPattern.setPatternSyntax(QRegExp::RegExp);
+
+        emailAddressRegexPattern.indexIn(caption);
+
+        if (emailAddressRegexPattern.capturedTexts().last() != QString())
+        {
+            return;
+        }
+        else if (caption == "INBOX")
+        {
+            QAction *newFolderAction = new QAction("New Folder");
+
+            connect(newFolderAction, SIGNAL(triggered(bool)), this, SLOT(createNewFolderActionTriggered(bool)));
+
+            menu->addAction(newFolderAction);
+        }
+        else
+        {
+            QAction *newSubfolderAction = new QAction("New Subfolder");
+            QAction *deleteFolderAction = new QAction("Delete Folder");
+            QAction *renameFolderAction = new QAction("Rename Folder");
+
+            connect(newSubfolderAction, SIGNAL(triggered(bool)), this, SLOT(createNewSubfolderActionTriggered(bool)));
+            connect(deleteFolderAction, SIGNAL(triggered(bool)), this, SLOT(deleteFolderActionTriggered(bool)));
+            connect(renameFolderAction, SIGNAL(triggered(bool)), this, SLOT(renameFolderActionTriggered(bool)));
+
+            menu->addAction(newSubfolderAction);
+            menu->addAction(deleteFolderAction);
+            menu->addAction(renameFolderAction);
+        }
+
+        menu->popup(m_ui->inboxFoldersTreeView->viewport()->mapToGlobal(position));
+    }
+}
+
+void EmailContentsWidget::createNewFolderActionTriggered(bool)
+{
+    // TODO:
+}
+
+void EmailContentsWidget::createNewSubfolderActionTriggered(bool)
+{
+    // TODO:
+}
+
+void EmailContentsWidget::deleteFolderActionTriggered(bool)
+{
+    // TODO:
+}
+
+void EmailContentsWidget::renameFolderActionTriggered(bool)
 {
     // TODO:
 }

@@ -40,6 +40,7 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->blockRemoteContentWidget->setVisible(false);
     m_ui->blockRemoteContentLine->setVisible(false);
     m_ui->messageActionsAndInfoWidget->setVisible(false);
+    m_ui->attachmentsScrollArea->setVisible(false);
 
     m_ui->blockRemoteContentLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -98,6 +99,9 @@ void EmailContentReaderWidget::setupTableView()
     m_ui->messageMetadataTableView->setSelectionMode(QTableView::SingleSelection);
     m_ui->messageMetadataTableView->setShowGrid(false);
 
+    m_ui->messageMetadataTableView->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(m_ui->messageMetadataTableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageMetadataTableViewContextMenuRequested(QPoint)));
 
     m_ui->messageMetadataTableView->horizontalHeader()->setStretchLastSection(false);
 
@@ -113,8 +117,63 @@ void EmailContentReaderWidget::setupTableView()
     }
 
     m_ui->messageMetadataTableView->scrollToBottom();
+}
 
-    m_ui->attachmentsScrollArea->setVisible(false);
+void EmailContentReaderWidget::messageMetadataTableViewContextMenuRequested(QPoint position)
+{
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+    MessageMetadataSqlTableModel *model = static_cast<MessageMetadataSqlTableModel*>(m_ui->messageMetadataTableView->model());
+
+
+    if (selectionModel->hasSelection())
+    {
+        QMenu *menu = new QMenu();
+
+        QModelIndex index = selectionModel->selectedRows().at(0);
+        int folderId = model->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+        QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+        QList<InboxFolder> folders = DatabaseManager::getInboxFolders(emailAddress);
+
+
+        QMenu *moveMessageMenu = new QMenu("Move to");
+
+        for (InboxFolder folder : folders)
+        {
+            if (folder.path() != "/")
+            {
+                QAction *action = new QAction(folder.path());
+                action->setIcon(folder.getIcon());
+                moveMessageMenu->addAction(action);
+
+                connect(action, SIGNAL(triggered(bool)), this, SLOT(moveMessageActionTriggered(bool)));
+            }
+        }
+
+        QMenu *copyMessageMenu = new QMenu("Copy to");
+
+        for (InboxFolder folder : folders)
+        {
+            if (folder.path() != "/")
+            {
+                QAction *action = new QAction(folder.path());
+                action->setIcon(folder.getIcon());
+                copyMessageMenu->addAction(action);
+
+                QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(copyMessageActionTriggered(bool)));
+            }
+        }
+
+        QAction *deleteAction = new QAction("Delete Message");
+
+        QObject::connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(deleteMessageActionTriggered(bool)));
+
+        menu->addMenu(moveMessageMenu);
+        menu->addMenu(copyMessageMenu);
+        menu->addAction(deleteAction);
+
+        menu->popup(m_ui->messageMetadataTableView->viewport()->mapToGlobal(position));
+    }
 }
 
 void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QModelIndex &current, const QModelIndex &)
@@ -502,6 +561,21 @@ void EmailContentReaderWidget::on_replyButton_clicked()
 }
 
 void EmailContentReaderWidget::on_forwardButton_clicked()
+{
+    // TODO:
+}
+
+void EmailContentReaderWidget::moveMessageActionTriggered(bool)
+{
+    // TODO:
+}
+
+void EmailContentReaderWidget::copyMessageActionTriggered(bool)
+{
+    // TODO:
+}
+
+void EmailContentReaderWidget::deleteMessageActionTriggered(bool)
 {
     // TODO:
 }

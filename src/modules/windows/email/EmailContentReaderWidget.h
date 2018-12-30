@@ -53,9 +53,20 @@ private slots:
     void messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &);
     void messageContentFetched(int);
     void onAttachmentButtonClicked(bool);
+    void messageMetadataTableViewContextMenuRequested(QPoint);
+
+    void moveMessageActionTriggered(bool);
+    void copyMessageActionTriggered(bool);
+    void deleteMessageActionTriggered(bool);
 
     void on_enableRemoteContentButton_clicked(bool checked);
     void on_filterMessagesEdit_textChanged(const QString &input);
+    void on_moveToTrashButton_clicked();
+    void on_junkButton_clicked();
+    void on_archiveButton_clicked();
+    void on_replyAllButton_clicked();
+    void on_replyButton_clicked();
+    void on_forwardButton_clicked();
 
 private:
     void setupTableModel();
