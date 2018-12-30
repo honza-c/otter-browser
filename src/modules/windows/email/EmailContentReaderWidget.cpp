@@ -476,4 +476,35 @@ void EmailContentReaderWidget::messageContentFetched(int messageId)
     }
 }
 
+void EmailContentReaderWidget::on_moveToTrashButton_clicked()
+{
+    // TODO:
 }
+
+void EmailContentReaderWidget::on_junkButton_clicked()
+{
+    // TODO:
+}
+
+void EmailContentReaderWidget::on_archiveButton_clicked()
+{
+    // TODO:
+}
+
+void EmailContentReaderWidget::on_replyAllButton_clicked()
+{
+    // TODO:
+}
+
+void EmailContentReaderWidget::on_replyButton_clicked()
+{
+    // TODO:
+}
+
+void EmailContentReaderWidget::on_forwardButton_clicked()
+{
+    // TODO:
+}
+
+}
+

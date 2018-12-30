@@ -93,4 +93,14 @@ EmailContentsWidget::~EmailContentsWidget()
     delete m_ui;
 }
 
+void EmailContentsWidget::on_getMessagesButton_clicked()
+{
+    // TODO:
+}
+
+void EmailContentsWidget::on_writeMessageButton_clicked()
+{
+    // TODO:
+}
+
 }
