@@ -53,6 +53,10 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     {
         connect(&account, SIGNAL(messageContentFetched(int)), this, SLOT(messageContentFetched(int)));
     }
+
+
+
+    // m_ui->textBrowserWidget->
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -223,6 +227,7 @@ void EmailContentReaderWidget::setupBlockRemoteContentPanel(bool isHtmlMessage)
 
         QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
         webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::AutoLoadImages, false);
+        m_ui->textBrowserWidget->setImagesPolicy(TextBrowserWidget::ImagesPolicy::NoImages);
     }
     else
     {
@@ -302,14 +307,19 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
         if (htmlContent != QString())
         {
             m_ui->messageContentView->setHtml(htmlContent);
+            // m_ui->textBrowserWidget->setText(htmlContent);
+            m_ui->textBrowserWidget->setHtml(htmlContent);
         }
         else if (plainTextContent != QString())
         {
             m_ui->messageContentView->setHtml(plainTextContent);
+            // m_ui->textBrowserWidget->setText(plainTextContent);
+            m_ui->textBrowserWidget->setPlainText(plainTextContent);
         }
         else
         {
             m_ui->messageContentView->setHtml(QString());
+            m_ui->textBrowserWidget->setText(QString());
         }
 
         if (!replyTo.isEmpty() || !copyRecipients.isEmpty())
@@ -434,6 +444,10 @@ void EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool)
 
     QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
     webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::AutoLoadImages, true);
+    m_ui->textBrowserWidget->setImagesPolicy(TextBrowserWidget::ImagesPolicy::AllImages);
+
+    m_ui->textBrowserWidget->reload();
+
 
     m_ui->messageContentView->reload();
 }

@@ -30,6 +30,7 @@
 #include "src/modules/mail/databasemanager.h"
 #include "../../../core/EmailAccountsManager.h"
 #include "src/modules/mail/qpushbuttonwithid.h"
+#include "src/ui/TextBrowserWidget.h"
 
 namespace Otter
 {

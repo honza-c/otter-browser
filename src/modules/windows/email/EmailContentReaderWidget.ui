@@ -224,6 +224,9 @@
         </widget>
        </item>
        <item>
+        <widget class="TextBrowserWidget" name="textBrowserWidget"/>
+       </item>
+       <item>
         <layout class="QVBoxLayout" name="attachmentsLayout">
          <property name="spacing">
           <number>0</number>
@@ -259,7 +262,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>874</width>
+              <width>858</width>
               <height>68</height>
              </rect>
             </property>
@@ -313,6 +316,11 @@
    <class>Otter::LineEditWidget</class>
    <extends>QLineEdit</extends>
    <header>src/ui/LineEditWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TextBrowserWidget</class>
+   <extends>QTextBrowser</extends>
+   <header>src/ui/TextBrowserWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
