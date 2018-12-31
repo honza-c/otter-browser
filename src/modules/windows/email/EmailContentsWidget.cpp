@@ -88,7 +88,7 @@ QUrl EmailContentsWidget::getUrl() const
 
 QIcon EmailContentsWidget::getIcon() const
 {
-    return ThemesManager::createIcon(QLatin1String("mail-send"), true);
+    return ThemesManager::createIcon(QLatin1String("mail"), true);
 }
 
 EmailContentsWidget::~EmailContentsWidget()

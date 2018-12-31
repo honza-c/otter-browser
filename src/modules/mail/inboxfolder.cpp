@@ -171,35 +171,35 @@ QIcon InboxFolder::getIcon() const
 {
     if (isArchive())
     {
-        return QIcon::fromTheme("mail-read");
+        return ThemesManager::createIcon(QLatin1String("mail-read"), true);
     }
     else if (isDrafts())
     {
-        return QIcon::fromTheme("mail-read");
+        return ThemesManager::createIcon(QLatin1String("mail-read"), true);
     }
     else if (isImportant())
     {
-        return QIcon::fromTheme("mail-mark-important");
+        return ThemesManager::createIcon(QLatin1String("mail-read"), true);
     }
     else if (isJunk())
     {
-        return QIcon::fromTheme("mail-mark-junk");
+        return ThemesManager::createIcon(QLatin1String("mail-mark-junk"), true);
     }
     else if (isTrash())
     {
-        return ThemesManager::createIcon(QLatin1String("user-trash"), false);
+        return ThemesManager::createIcon(QLatin1String("user-trash"), true);
     }
     else if (isSent())
     {
-        return ThemesManager::createIcon(QLatin1String("mail-send"), false);
+        return ThemesManager::createIcon(QLatin1String("mail-send"), true);
     }
     else if (path() == "/")
     {
-        return ThemesManager::createIcon(QLatin1String("mail-send"), false);
+        return ThemesManager::createIcon(QLatin1String("mail"), true);
     }
     else
     {
-        return QIcon::fromTheme("folder");
+        return ThemesManager::createIcon(QLatin1String("folder-koperta"), true);
     }
 }
 

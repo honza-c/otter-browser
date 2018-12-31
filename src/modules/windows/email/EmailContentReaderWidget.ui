@@ -104,20 +104,12 @@
             <property name="text">
              <string>Move to trash</string>
             </property>
-            <property name="icon">
-             <iconset theme="user-trash">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="junkButton">
             <property name="text">
              <string>Junk</string>
-            </property>
-            <property name="icon">
-             <iconset theme="mail-mark-junk">
-              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -126,20 +118,12 @@
             <property name="text">
              <string>Archive</string>
             </property>
-            <property name="icon">
-             <iconset theme="archive-insert">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="replyAllButton">
             <property name="text">
              <string>Reply all</string>
-            </property>
-            <property name="icon">
-             <iconset theme="mail-reply-all">
-              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>
@@ -148,20 +132,12 @@
             <property name="text">
              <string>Reply</string>
             </property>
-            <property name="icon">
-             <iconset theme="mail-reply-sender">
-              <normaloff>.</normaloff>.</iconset>
-            </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="forwardButton">
             <property name="text">
              <string>Forward</string>
-            </property>
-            <property name="icon">
-             <iconset theme="mail-forward">
-              <normaloff>.</normaloff>.</iconset>
             </property>
            </widget>
           </item>

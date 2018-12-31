@@ -21,6 +21,7 @@
 
 #include "EmailContentReaderWidget.h"
 #include "ui_EmailContentReaderWidget.h"
+#include "../../../core/ThemesManager.h"
 
 namespace Otter
 {
@@ -54,9 +55,11 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
         connect(&account, SIGNAL(messageContentFetched(int)), this, SLOT(messageContentFetched(int)));
     }
 
-
-
-    // m_ui->textBrowserWidget->
+    m_ui->moveToTrashButton->setIcon(ThemesManager::createIcon(QLatin1String("user-trash"), true));
+    m_ui->junkButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-mark-junk"), true));
+    m_ui->replyAllButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-all"), true));
+    m_ui->replyButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-sender"), true));
+    m_ui->forwardButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-forward"), true));
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -393,7 +396,7 @@ QHBoxLayout* EmailContentReaderWidget::createAttachmentsLayout(QString caption, 
         {
             QPushButtonWithId *button = new QPushButtonWithId(attachments.at(i).name());
             button->setId(i);
-            button->setIcon(QIcon::fromTheme("mail-attachment"));
+            button->setIcon(ThemesManager::createIcon(QLatin1String("mail-attachment"), true));
 
             QObject::connect(button, SIGNAL(clicked(bool)), this, SLOT(onAttachmentButtonClicked(bool)));
 

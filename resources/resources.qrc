@@ -71,6 +71,7 @@
         <file>icons/theme/edit-undo.png</file>
         <file>icons/theme/feeds.png</file>
         <file>icons/theme/fill-password.png</file>
+        <file>icons/theme/folder-koperta.png</file>
         <file>icons/theme/go-down.png</file>
         <file>icons/theme/go-first.png</file>
         <file>icons/theme/go-home.png</file>
@@ -84,6 +85,14 @@
         <file>icons/theme/links.png</file>
         <file>icons/theme/list-add.png</file>
         <file>icons/theme/list-remove.png</file>
+        <file>icons/theme/mail.png</file>
+        <file>icons/theme/mail-attachment.png</file>
+        <file>icons/theme/mail-forward.png</file>
+        <file>icons/theme/mail-mark-junk.png</file>
+        <file>icons/theme/mail-mark-nojunk.png</file>
+        <file>icons/theme/mail-read.png</file>
+        <file>icons/theme/mail-reply-all.png</file>
+        <file>icons/theme/mail-reply-sender.png</file>
         <file>icons/theme/mail-send.png</file>
         <file>icons/theme/media-playback-pause.png</file>
         <file>icons/theme/media-playback-start.png</file>
