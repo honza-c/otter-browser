@@ -38,6 +38,13 @@ WriteEmailMessageWidget::WriteEmailMessageWidget(QWidget *parent) :
     m_ui(new Ui::WriteEmailMessageWidget)
 {
     m_ui->setupUi(this);
+
+    m_ui->sendButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send"), true));
+    m_ui->attachButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-attachment"), true));
+    m_ui->backToInboxButton->setIcon(ThemesManager::createIcon(QLatin1String("go-previous"), true));
+
+    m_ui->splitter->setStretchFactor(0, 1);
+    m_ui->splitter->setStretchFactor(1, 2);
 }
 
 void WriteEmailMessageWidget::on_backToInboxButton_clicked()
