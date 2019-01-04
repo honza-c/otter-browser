@@ -50,25 +50,25 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     m_ui->inboxFoldersTreeView->setViewMode(ItemViewWidget::TreeView);
     m_ui->inboxFoldersTreeView->expandAll();
 
-    // m_ui->getMessagesButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send-receive"), false));
-    m_ui->getMessagesButton->setIcon(QIcon::fromTheme("mail-send-receive"));
+    m_ui->getMessagesButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send-receive"), false));
     m_ui->writeMessageButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send"), false));
 
     if (isSidebarPanel())
     {
-        m_ui->emailContentReaderWidget->setVisible(false);
+        m_ui->emailTabWidget->setVisible(false);
     }
+    else
+    {
+        m_ui->writeEmailWidget->setVisible(false);
 
-    m_ui->splitter->setStretchFactor(0, 1);
-    m_ui->splitter->setStretchFactor(1, 5);
+        m_ui->splitter->setStretchFactor(0, 1);
+        m_ui->splitter->setStretchFactor(1, 5);
 
-    m_ui->inboxFolderTreeAndTagsSplitter->setStretchFactor(0, 4);
-    m_ui->inboxFolderTreeAndTagsSplitter->setStretchFactor(1, 1);
-
-    m_ui->inboxFoldersTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
-
-    connect(m_ui->inboxFoldersTreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderTreeViewContextMenuRequested(QPoint)));
-    connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
+        m_ui->inboxFoldersTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(m_ui->inboxFoldersTreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderTreeViewContextMenuRequested(QPoint)));
+        connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
+        connect(m_ui->writeEmailWidget, SIGNAL(returnToInboxRequested()), this, SLOT(returnToInboxRequested()));
+    }
 }
 
 QString EmailContentsWidget::getTitle() const
@@ -103,7 +103,12 @@ void EmailContentsWidget::on_getMessagesButton_clicked()
 
 void EmailContentsWidget::on_writeMessageButton_clicked()
 {
-    // TODO:
+    if (!isSidebarPanel())
+    {
+        m_ui->emailContentReaderWidget->hide();
+        m_ui->emailSidebarWidget->hide();
+        m_ui->writeEmailWidget->show();
+    }
 }
 
 void EmailContentsWidget::folderTreeViewContextMenuRequested(QPoint position)
@@ -173,6 +178,13 @@ void EmailContentsWidget::deleteFolderActionTriggered(bool)
 void EmailContentsWidget::renameFolderActionTriggered(bool)
 {
     // TODO:
+}
+
+void EmailContentsWidget::returnToInboxRequested()
+{
+    m_ui->writeEmailWidget->hide();
+    m_ui->emailContentReaderWidget->show();
+    m_ui->emailSidebarWidget->show();
 }
 
 }

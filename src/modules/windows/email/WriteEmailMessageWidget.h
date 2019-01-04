@@ -23,7 +23,7 @@
 #define WRITEEMAILMESSAGEWIDGET_H
 
 #include <QWidget>
-#include "../../../ui/ContentsWidget.h"
+#include <QtWidgets>
 
 namespace Otter
 {
@@ -32,22 +32,22 @@ namespace Ui {
     class WriteEmailMessageWidget;
 }
 
-class WriteEmailMessageWidget : public ContentsWidget
+class WriteEmailMessageWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WriteEmailMessageWidget(const QVariantMap &parameters, Window *window, QWidget *parent = nullptr);
-    ~WriteEmailMessageWidget();
+    explicit WriteEmailMessageWidget(QWidget *parent = 0);
 
-    QString getTitle() const override;
-    QLatin1String getType() const override;
-    QUrl getUrl() const override;
-    QIcon getIcon() const override;
+private slots:
+
+    void on_backToInboxButton_clicked();
+
+signals:
+    void returnToInboxRequested();
 
 private:
-    Window *m_window;
-    Ui::WriteEmailMessageWidget *ui;
+    Ui::WriteEmailMessageWidget *m_ui;
 };
 
 }

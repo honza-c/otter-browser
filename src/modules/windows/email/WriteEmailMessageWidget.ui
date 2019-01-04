@@ -19,12 +19,20 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
+        <widget class="QPushButton" name="backToInboxButton">
+         <property name="text">
+          <string>&lt; Back to inbox</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="sendButton">
          <property name="text">
           <string>Send</string>
          </property>
          <property name="icon">
-          <iconset theme="mail-send"/>
+          <iconset theme="mail-send">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>
@@ -34,7 +42,8 @@
           <string>Attach</string>
          </property>
          <property name="icon">
-          <iconset theme="mail-attachment"/>
+          <iconset theme="mail-attachment">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>

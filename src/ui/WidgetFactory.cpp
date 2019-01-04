@@ -270,11 +270,6 @@ ContentsWidget* createContentsWidget(const QString &identifier, const QVariantMa
         return new EmailContentsWidget(parameters, window, parent);
     }
 
-    if (identifier == QLatin1String("writeEmail"))
-    {
-        return new WriteEmailMessageWidget(parameters, window, parent);
-    }
-
 	return nullptr;
 }
 

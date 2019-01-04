@@ -29,6 +29,7 @@
 #include "../../../modules/mail/databasemanager.h"
 #include "../../../modules/mail/messagemetadatasqltablemodel.h"
 #include "EmailContentReaderWidget.h"
+#include "WriteEmailMessageWidget.h"
 
 namespace Otter
 {
@@ -62,6 +63,8 @@ private slots:
     void createNewSubfolderActionTriggered(bool);
     void deleteFolderActionTriggered(bool);
     void renameFolderActionTriggered(bool);
+    void returnToInboxRequested();
+
 
     void on_getMessagesButton_clicked();
     void on_writeMessageButton_clicked();

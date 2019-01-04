@@ -33,44 +33,16 @@
 namespace Otter
 {
 
-WriteEmailMessageWidget::WriteEmailMessageWidget(const QVariantMap &parameters, Window *window, QWidget *parent) : ContentsWidget (parameters, nullptr, parent),
-    m_window(window),
-    ui(new Ui::WriteEmailMessageWidget)
+WriteEmailMessageWidget::WriteEmailMessageWidget(QWidget *parent) :
+    QWidget (parent),
+    m_ui(new Ui::WriteEmailMessageWidget)
 {
-    ui->setupUi(this);
-
-    const MainWindow *mainWindow(MainWindow::findMainWindow(parentWidget()));
-
-    if (mainWindow)
-    {
-        m_window = mainWindow->getActiveWindow();
-    }
-
+    m_ui->setupUi(this);
 }
 
-WriteEmailMessageWidget::~WriteEmailMessageWidget()
+void WriteEmailMessageWidget::on_backToInboxButton_clicked()
 {
-    delete ui;
-}
-
-QString WriteEmailMessageWidget::getTitle() const
-{
-    return tr("Write email");
-}
-
-QLatin1String WriteEmailMessageWidget::getType() const
-{
-    return QLatin1String("writeEmail");
-}
-
-QUrl WriteEmailMessageWidget::getUrl() const
-{
-    return QUrl(QLatin1String("about:writeEmail"));
-}
-
-QIcon WriteEmailMessageWidget::getIcon() const
-{
-    return ThemesManager::createIcon(QLatin1String("mail-send"), true);
+    emit returnToInboxRequested();
 }
 
 }
