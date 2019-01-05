@@ -15,9 +15,9 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_4">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <layout class="QVBoxLayout" name="mainVerticalLayout">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="messageButtonsHorizontalLayout">
        <item>
         <widget class="QPushButton" name="backToInboxButton">
          <property name="text">
@@ -55,7 +55,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="messageInfoAndAttachmentsVerticalLayout">
        <item>
         <widget class="QWidget" name="messageInfoAndAttachmentsWidget" native="true">
          <property name="sizePolicy">
@@ -92,7 +92,7 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="Otter::LineEditWidget" name="toEdit"/>
+              <widget class="Otter::LineEditWidget" name="toLineEdit"/>
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="inCopyLabel">
@@ -102,7 +102,7 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="Otter::LineEditWidget" name="inCopyEdit"/>
+              <widget class="Otter::LineEditWidget" name="inCopyLineEdit"/>
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="inBlindCopyLabel">
@@ -112,7 +112,7 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="Otter::LineEditWidget" name="inBlindCopyEdit"/>
+              <widget class="Otter::LineEditWidget" name="inBlindCopyLineEdit"/>
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="SubjectLabel">
@@ -122,7 +122,7 @@
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="Otter::LineEditWidget" name="subjectEdit"/>
+              <widget class="Otter::LineEditWidget" name="subjectLineEdit"/>
              </item>
             </layout>
            </widget>
@@ -144,7 +144,7 @@
               </widget>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout">
+              <layout class="QHBoxLayout" name="attachmentsButtonsAndListViewHorizontalLayout">
                <item>
                 <widget class="QListView" name="attachmentListView">
                  <property name="sizePolicy">
@@ -156,7 +156,7 @@
                 </widget>
                </item>
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout">
+                <layout class="QVBoxLayout" name="attachmentsButtonsVerticalLayout">
                  <item>
                   <widget class="QToolButton" name="addAttachmentToolboxButton">
                    <property name="sizePolicy">
@@ -196,12 +196,12 @@
       </layout>
      </item>
      <item>
-      <widget class="QSplitter" name="splitter">
+      <widget class="QSplitter" name="messageContentSplitter">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QTextEdit" name="textEdit"/>
-       <widget class="QTextBrowser" name="textBrowser"/>
+       <widget class="QTextEdit" name="messageContentTextEdit"/>
+       <widget class="QTextBrowser" name="messageContentTextBrowser"/>
       </widget>
      </item>
     </layout>
