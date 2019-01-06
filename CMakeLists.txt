@@ -241,6 +241,7 @@ set(otter_src
 	src/modules/importers/opml/OpmlImporter.cpp
 	src/modules/importers/opml/OpmlImporterWidget.cpp
         src/modules/mail/attachment.cpp
+        src/modules/mail/attachmentslistmodel.cpp
         src/modules/mail/contact.cpp
         src/modules/mail/databasemanager.cpp
         src/modules/mail/embeddedobject.cpp

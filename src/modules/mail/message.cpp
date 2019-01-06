@@ -174,6 +174,37 @@ void Message::setDateTime(const QDateTime dateTime)
     m_dateTime = dateTime;
 }
 
+bool operator==(const Message &message1, const Message &message2)
+{
+    Contact m_sender;
+    QString m_subject;
+
+    QList<Contact> m_addressListTo;
+    QList<Contact> m_addressListInCopy;
+    QList<Contact> m_addressListInBlindCopy;
+    QList<Contact> m_addressListReplyTo;
+
+    QString m_plainTextContent;
+    QString m_htmlContent;
+
+    QList<Attachment> m_attachments;
+    QList<EmbeddedObject> m_embeddedObjects;
+
+    QDateTime m_dateTime;
+
+    return message1.sender() == message2.sender()
+            && message1.subject() == message2.subject()
+            && message1.addressListTo() == message2.addressListTo()
+            && message1.addressListInCopy() == message2.addressListInCopy()
+            && message1.addressListInBlindCopy() == message2.addressListInBlindCopy()
+            && message1.replyTo() == message2.replyTo()
+            && message1.plainTextContent() == message2.plainTextContent()
+            && message1.htmlContent() == message2.htmlContent()
+            && message1.attachments() == message2.attachments()
+            && message1.embeddedObjects() == message2.embeddedObjects()
+            && message1.dateTime() == message2.dateTime();
+}
+
 QDebug operator<<(QDebug debug, const Message &message)
 {
     QDebugStateSaver saver(debug);

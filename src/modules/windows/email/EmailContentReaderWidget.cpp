@@ -60,6 +60,8 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->replyAllButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-all"), true));
     m_ui->replyButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-sender"), true));
     m_ui->forwardButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-forward"), true));
+
+    m_ui->textBrowserWidget->hide();
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -569,17 +571,38 @@ void EmailContentReaderWidget::on_archiveButton_clicked()
 
 void EmailContentReaderWidget::on_replyAllButton_clicked()
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedRows().at(0);
+        int messageId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 0)), Qt::DisplayRole).toInt();
+        emit replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode::ReplyAll, messageId);
+    }
 }
 
 void EmailContentReaderWidget::on_replyButton_clicked()
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedRows().at(0);
+        int messageId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 0)), Qt::DisplayRole).toInt();
+        emit replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode::Reply, messageId);
+    }
 }
 
 void EmailContentReaderWidget::on_forwardButton_clicked()
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedRows().at(0);
+        int messageId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 0)), Qt::DisplayRole).toInt();
+        emit replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode::Forward, messageId);
+    }
 }
 
 void EmailContentReaderWidget::moveMessageActionTriggered(bool)

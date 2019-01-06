@@ -25,6 +25,18 @@
 #include <QWidget>
 #include <QtWidgets>
 
+#include "../../../core/EmailAccountsManager.h"
+#include "src/modules/mail/databasemanager.h"
+#include "ui_WriteEmailMessageWidget.h"
+
+#include "src/modules/mail/useraccount.h"
+#include "src/modules/mail/useraccountslistmodel.h"
+#include "src/modules/mail/attachment.h"
+#include "src/modules/mail/attachmentslistmodel.h"
+#include "src/modules/mail/message.h"
+#include "src/modules/mail/contact.h"
+#include "src/modules/mail/multiselectcompleter.h"
+
 namespace Otter
 {
 
@@ -37,16 +49,43 @@ class WriteEmailMessageWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit WriteEmailMessageWidget(QWidget *parent = 0);
+    enum Mode { WriteMessage, Reply, ReplyAll, Forward };
+
+    explicit WriteEmailMessageWidget(QWidget *parent = nullptr);
+
+    void setMessage(Message message);
+    void setSenderComboBoxEditable(bool value);
+    void setMode(const Mode mode);
 
 private slots:
-
     void on_backToInboxButton_clicked();
+    void on_attachButton_clicked();
+    void on_sendButton_clicked();
+    void on_addAttachmentToolboxButton_clicked();
+    void on_removeAttachmentToolboxButton_clicked();
 
 signals:
     void returnToInboxRequested();
 
 private:
+    void setSenderIndex(const Message message);
+    void setSubject(const Message message);
+    void setPlainTextAndHtmlText(const Message message);
+    void setRecipients(const Message message);
+    void setAttachments(const Message message);
+    void setEmbeddedObjects(const Message message);
+    void addAttachment();
+    QList<Contact> parseContacts(const QString rawdata) const;
+    QRegExp getEmailAddressRegexPattern() const;
+    void setHtmlContent(const QString content);
+    void resetWidget();
+
+    const QString dateTimeFormat = "dd.MM.yyyy HH:mm";
+
+    QList<Attachment> m_attachments;
+    QList<EmbeddedObject> m_embeddedObjects;
+    Mode m_mode;
+    Message m_message;
     Ui::WriteEmailMessageWidget *m_ui;
 };
 

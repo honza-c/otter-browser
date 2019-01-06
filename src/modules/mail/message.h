@@ -96,6 +96,7 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const Message &message);
+bool operator==(const Message &message1, const Message &message2);
 
 }
 

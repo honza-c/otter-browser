@@ -68,6 +68,7 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
         connect(m_ui->inboxFoldersTreeView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderTreeViewContextMenuRequested(QPoint)));
         connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
         connect(m_ui->writeEmailWidget, SIGNAL(returnToInboxRequested()), this, SLOT(returnToInboxRequested()));
+        connect(m_ui->emailContentReaderWidget, SIGNAL(replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int)), this, SLOT(replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int)));
     }
 }
 
@@ -107,6 +108,8 @@ void EmailContentsWidget::on_writeMessageButton_clicked()
     {
         m_ui->emailContentReaderWidget->hide();
         m_ui->emailSidebarWidget->hide();
+        m_ui->writeEmailWidget->setMode(WriteEmailMessageWidget::Mode::WriteMessage);
+        m_ui->writeEmailWidget->setMessage(Message());
         m_ui->writeEmailWidget->show();
     }
 }
@@ -185,6 +188,40 @@ void EmailContentsWidget::returnToInboxRequested()
     m_ui->writeEmailWidget->hide();
     m_ui->emailContentReaderWidget->show();
     m_ui->emailSidebarWidget->show();
+}
+
+void EmailContentsWidget::replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode mode, int messageId)
+{
+    m_ui->emailContentReaderWidget->hide();
+    m_ui->emailSidebarWidget->hide();
+    m_ui->writeEmailWidget->setMode(mode);
+    m_ui->writeEmailWidget->setMessage(getMessage(messageId));
+    m_ui->writeEmailWidget->setSenderComboBoxEditable(true);
+    m_ui->writeEmailWidget->show();
+}
+
+Message EmailContentsWidget::getMessage(const int messageId) const
+{
+    QString htmlContent = DatabaseManager::getHtmlContent(messageId);
+    QString plainTextContent = DatabaseManager::getTextContent(messageId);
+    QString subject = DatabaseManager::getSubject(messageId);
+    Contact from = DatabaseManager::getSender(messageId);
+    QList<Contact> to = DatabaseManager::getRecipients(messageId);
+    QDateTime date = DatabaseManager::getDate(messageId);
+    QList<Attachment> attachments = DatabaseManager::getAttachments(messageId);
+    QList<EmbeddedObject> embeddedObjects = DatabaseManager::getEmbeddedObjects(messageId);
+
+    Message message;
+    message.setHtmlContent(htmlContent);
+    message.setPlainTextContent(plainTextContent);
+    message.setSubject(subject);
+    message.setSender(from);
+    message.setAddressListTo(to);
+    message.setDateTime(date);
+    message.setAttachments(attachments);
+    message.setEmbeddedObjects(embeddedObjects);
+
+    return message;
 }
 
 }

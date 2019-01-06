@@ -64,12 +64,15 @@ private slots:
     void deleteFolderActionTriggered(bool);
     void renameFolderActionTriggered(bool);
     void returnToInboxRequested();
+    void replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int);
 
 
     void on_getMessagesButton_clicked();
     void on_writeMessageButton_clicked();
 
 private:
+    Message getMessage(const int messageId) const;
+
     Window *m_window;
     Ui::EmailContentsWidget *m_ui;
 };

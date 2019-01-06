@@ -31,6 +31,7 @@
 #include "../../../core/EmailAccountsManager.h"
 #include "src/modules/mail/qpushbuttonwithid.h"
 #include "src/ui/TextBrowserWidget.h"
+#include "WriteEmailMessageWidget.h"
 
 namespace Otter
 {
@@ -46,6 +47,9 @@ class EmailContentReaderWidget : public QWidget
 public:
     explicit EmailContentReaderWidget(QWidget *parent = 0);
     ~EmailContentReaderWidget();
+
+signals:
+    void replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int);
 
 public slots:
     void selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &);
