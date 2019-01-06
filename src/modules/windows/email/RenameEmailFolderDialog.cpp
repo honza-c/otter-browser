@@ -27,16 +27,42 @@ namespace Otter
 
 RenameEmailFolderDialog::RenameEmailFolderDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::RenameEmailFolderDialog)
+    m_ui(new Ui::RenameEmailFolderDialog)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
 
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Rename");
+    m_ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Rename Folder");
+
+    QObject::connect(m_ui->folderNameLineEditWidget, SIGNAL(textEdited(const QString &)), this, SLOT(editNameTextEdited(const QString &)));
 }
 
 RenameEmailFolderDialog::~RenameEmailFolderDialog()
 {
-    delete ui;
+    delete m_ui;
+}
+
+void RenameEmailFolderDialog::setFolderName(const QString folderName)
+{
+    m_ui->folderNameLineEditWidget->setText(folderName);
+    m_ui->folderNameLineEditWidget->setFocus();
+    m_ui->folderNameLineEditWidget->selectAll();
+}
+
+QString RenameEmailFolderDialog::getFolderName() const
+{
+    return m_ui->folderNameLineEditWidget->text();
+}
+
+void RenameEmailFolderDialog::editNameTextEdited(const QString &text)
+{
+    if (text == QString())
+    {
+        m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }
+    else
+    {
+        m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
 }
 
 }

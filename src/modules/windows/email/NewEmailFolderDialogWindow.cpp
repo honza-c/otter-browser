@@ -27,17 +27,37 @@ namespace Otter
 
 NewEmailFolderDialogWindow::NewEmailFolderDialogWindow(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::NewEmailFolderDialogWindow)
+    m_ui(new Ui::NewEmailFolderDialogWindow)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
 
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Create Folder");
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    m_ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Create Folder");
+    m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    setFixedHeight(sizeHint().height());
+
+    QObject::connect(m_ui->nameLineEditWidget, SIGNAL(textEdited(const QString &)), this, SLOT(editNameTextEdited(const QString &)));
 }
 
 NewEmailFolderDialogWindow::~NewEmailFolderDialogWindow()
 {
-    delete ui;
+    delete m_ui;
+}
+
+QString NewEmailFolderDialogWindow::getFolderName() const
+{
+    return m_ui->nameLineEditWidget->text();
+}
+
+void NewEmailFolderDialogWindow::editNameTextEdited(const QString &text)
+{
+    if (text == QString())
+    {
+        m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }
+    else
+    {
+        m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
 }
 
 }

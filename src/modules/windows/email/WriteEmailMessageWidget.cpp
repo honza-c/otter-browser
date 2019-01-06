@@ -48,6 +48,11 @@ WriteEmailMessageWidget::WriteEmailMessageWidget(QWidget *parent) :
     m_ui->senderComboBox->setModel(model);
 }
 
+WriteEmailMessageWidget::~WriteEmailMessageWidget()
+{
+    delete m_ui;
+}
+
 void WriteEmailMessageWidget::setMode(const Mode mode)
 {
     m_mode = mode;

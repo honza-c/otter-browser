@@ -99,7 +99,10 @@ EmailContentsWidget::~EmailContentsWidget()
 
 void EmailContentsWidget::on_getMessagesButton_clicked()
 {
-    // TODO:
+    for (UserAccount& account : EmailAccountsManager::getEmailAccounts())
+    {
+        account.initializeInbox();
+    }
 }
 
 void EmailContentsWidget::on_writeMessageButton_clicked()
@@ -165,22 +168,150 @@ void EmailContentsWidget::folderTreeViewContextMenuRequested(QPoint position)
 
 void EmailContentsWidget::createNewFolderActionTriggered(bool)
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->inboxFoldersTreeView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedIndexes().first();
+
+        QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
+        QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
+        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
+
+        NewEmailFolderDialogWindow *dialog = new NewEmailFolderDialogWindow();
+        dialog->setWindowTitle("New Folder");
+
+        if (dialog->exec())
+        {
+            QString folderName = dialog->getFolderName();
+
+            if (folderName != QString())
+            {
+                qWarning() << "Folder " << folderName << " will be created in INBOX folder of account " << emailAddress;
+                // TODO: validace na lomitka a existujici adresare ve stejnem adresari
+            }
+        }
+    }
 }
 
 void EmailContentsWidget::createNewSubfolderActionTriggered(bool)
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->inboxFoldersTreeView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedIndexes().first();
+
+        QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
+        QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
+        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
+
+        NewEmailFolderDialogWindow *dialog = new NewEmailFolderDialogWindow();
+        dialog->setWindowTitle("New Subfolder");
+
+        if (dialog->exec())
+        {
+            QString folderName = dialog->getFolderName();
+
+            if (folderName != QString())
+            {
+                qWarning() << "Folder " << folderName << " will be created on path " << folderPath << " in account " << emailAddress;
+                // TODO: validace na lomitka a existujici adresare ve stejnem adresari
+            }
+        }
+    }
 }
 
 void EmailContentsWidget::deleteFolderActionTriggered(bool)
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->inboxFoldersTreeView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedIndexes().first();
+
+        QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
+        QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
+        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
+
+        QMessageBox messageBox;
+
+        messageBox.setWindowTitle("Delete Folder");
+        messageBox.setText("Are you sure to delete the folder " + folderPath.split("/").last() + "?");
+        messageBox.setIcon(QMessageBox::Question);
+        messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
+        messageBox.addButton(new QPushButton("Delete Folder"), QMessageBox::ButtonRole::AcceptRole);
+
+        if (messageBox.exec())
+        {
+           qWarning() << "Folder " << folderPath << " of account " << emailAddress << " will be deleted";
+        }
+    }
 }
 
 void EmailContentsWidget::renameFolderActionTriggered(bool)
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->inboxFoldersTreeView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedIndexes().first();
+
+        QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
+        QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
+        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
+
+        RenameEmailFolderDialog *dialog = new RenameEmailFolderDialog();
+        dialog->setFolderName(folderPath.split("/").last());
+
+        if (dialog->exec())
+        {
+            QString folderName = dialog->getFolderName();
+
+            if (folderName != QString())
+            {
+                qWarning() << "Renaming a directory. Original name:  " << folderPath.split("/").last() << " New name: " << folderName;
+            }
+        }
+    }
+}
+
+QString EmailContentsWidget::getEmailAddressFromFolderTreeItemIndex(QModelIndex currentIndex)
+{
+    QString path = getFullFolderPathFromFolderTreeItemIndex(currentIndex);
+    return path.split("/")[0];
+}
+
+QString EmailContentsWidget::getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
+{
+    QString path = getFullFolderPathFromFolderTreeItemIndex(currentIndex);
+    QString emailAddress = getEmailAddressFromFolderTreeItemIndex(currentIndex);
+
+    return path.right(path.length() - emailAddress.length());
+}
+
+QString EmailContentsWidget::getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex)
+{
+    InboxFolderTreeItem* item = static_cast<InboxFolderTreeItem*>(currentIndex.internalPointer());
+
+    if (item != nullptr)
+    {
+        QString path = item->data(0).toString();
+        QModelIndex index = currentIndex;
+
+        while(index.parent() != QModelIndex())
+        {
+            index = index.parent();
+            item = static_cast<InboxFolderTreeItem*>(index.internalPointer());
+            path = item->data(0).toString() + "/" + path;
+        }
+
+        return path;
+    }
+    else
+    {
+        return QString();
+    }
 }
 
 void EmailContentsWidget::returnToInboxRequested()

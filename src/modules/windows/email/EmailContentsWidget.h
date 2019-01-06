@@ -30,6 +30,8 @@
 #include "../../../modules/mail/messagemetadatasqltablemodel.h"
 #include "EmailContentReaderWidget.h"
 #include "WriteEmailMessageWidget.h"
+#include "RenameEmailFolderDialog.h"
+#include "NewEmailFolderDialogWindow.h"
 
 namespace Otter
 {
@@ -72,6 +74,10 @@ private slots:
 
 private:
     Message getMessage(const int messageId) const;
+
+    QString getEmailAddressFromFolderTreeItemIndex(QModelIndex currentIndex);
+    QString getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);
+    QString getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);
 
     Window *m_window;
     Ui::EmailContentsWidget *m_ui;

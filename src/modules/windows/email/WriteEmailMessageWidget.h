@@ -52,6 +52,7 @@ public:
     enum Mode { WriteMessage, Reply, ReplyAll, Forward };
 
     explicit WriteEmailMessageWidget(QWidget *parent = nullptr);
+    ~WriteEmailMessageWidget();
 
     void setMessage(Message message);
     void setSenderComboBoxEditable(bool value);

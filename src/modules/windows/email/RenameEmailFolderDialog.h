@@ -40,8 +40,14 @@ public:
     explicit RenameEmailFolderDialog(QWidget *parent = nullptr);
     ~RenameEmailFolderDialog();
 
+    void setFolderName(const QString folderName);
+    QString getFolderName() const;
+
+private slots:
+    void editNameTextEdited(const QString &);
+
 private:
-    Ui::RenameEmailFolderDialog *ui;
+    Ui::RenameEmailFolderDialog *m_ui;
 };
 
 }

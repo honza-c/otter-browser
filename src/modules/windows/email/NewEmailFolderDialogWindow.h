@@ -41,8 +41,13 @@ public:
     explicit NewEmailFolderDialogWindow(QWidget *parent = nullptr);
     ~NewEmailFolderDialogWindow();
 
+    QString getFolderName() const;
+
+private slots:
+    void editNameTextEdited(const QString &);
+
 private:
-    Ui::NewEmailFolderDialogWindow *ui;
+    Ui::NewEmailFolderDialogWindow *m_ui;
 };
 
 }
