@@ -185,22 +185,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QWebEngineView" name="messageContentView">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="url">
-          <url>
-           <string>about:blank</string>
-          </url>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="TextBrowserWidget" name="textBrowserWidget"/>
+        <widget class="TextBrowserWidget" name="messageContentWidget"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="attachmentsLayout">
@@ -283,11 +268,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QWebEngineView</class>
-   <extends>QWidget</extends>
-   <header location="global">QtWebEngineWidgets/QWebEngineView</header>
-  </customwidget>
   <customwidget>
    <class>Otter::LineEditWidget</class>
    <extends>QLineEdit</extends>

@@ -35,9 +35,6 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     setupTableModel();
     setupTableView();
 
-    QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
-    webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::JavascriptEnabled, false);
-
     m_ui->blockRemoteContentWidget->setVisible(false);
     m_ui->blockRemoteContentLine->setVisible(false);
     m_ui->messageActionsAndInfoWidget->setVisible(false);
@@ -60,8 +57,6 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->replyAllButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-all"), true));
     m_ui->replyButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-sender"), true));
     m_ui->forwardButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-forward"), true));
-
-    m_ui->textBrowserWidget->hide();
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -230,9 +225,7 @@ void EmailContentReaderWidget::setupBlockRemoteContentPanel(bool isHtmlMessage)
         m_ui->blockRemoteContentLine->setVisible(true);
         m_ui->blockRemoteContentWidget->setVisible(true);
 
-        QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
-        webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::AutoLoadImages, false);
-        m_ui->textBrowserWidget->setImagesPolicy(TextBrowserWidget::ImagesPolicy::NoImages);
+        m_ui->messageContentWidget->setImagesPolicy(TextBrowserWidget::ImagesPolicy::NoImages);
     }
     else
     {
@@ -311,20 +304,15 @@ void EmailContentReaderWidget::showMessageContent(int messageId)
 
         if (htmlContent != QString())
         {
-            m_ui->messageContentView->setHtml(htmlContent);
-            // m_ui->textBrowserWidget->setText(htmlContent);
-            m_ui->textBrowserWidget->setHtml(htmlContent);
+            m_ui->messageContentWidget->setHtml(htmlContent);
         }
         else if (plainTextContent != QString())
         {
-            m_ui->messageContentView->setHtml(plainTextContent);
-            // m_ui->textBrowserWidget->setText(plainTextContent);
-            m_ui->textBrowserWidget->setPlainText(plainTextContent);
+            m_ui->messageContentWidget->setPlainText(plainTextContent);
         }
         else
         {
-            m_ui->messageContentView->setHtml(QString());
-            m_ui->textBrowserWidget->setText(QString());
+            m_ui->messageContentWidget->setText(QString());
         }
 
         if (!replyTo.isEmpty() || !copyRecipients.isEmpty())
@@ -447,14 +435,8 @@ void EmailContentReaderWidget::on_enableRemoteContentButton_clicked(bool)
     m_ui->blockRemoteContentLine->setVisible(false);
     m_ui->blockRemoteContentWidget->setVisible(false);
 
-    QWebEngineSettings *webViewSettings = m_ui->messageContentView->settings()->globalSettings();
-    webViewSettings->setAttribute(QWebEngineSettings::WebAttribute::AutoLoadImages, true);
-    m_ui->textBrowserWidget->setImagesPolicy(TextBrowserWidget::ImagesPolicy::AllImages);
-
-    m_ui->textBrowserWidget->reload();
-
-
-    m_ui->messageContentView->reload();
+    m_ui->messageContentWidget->setImagesPolicy(TextBrowserWidget::ImagesPolicy::AllImages);
+    m_ui->messageContentWidget->reload();
 }
 
 void EmailContentReaderWidget::on_filterMessagesEdit_textChanged(const QString &input)
