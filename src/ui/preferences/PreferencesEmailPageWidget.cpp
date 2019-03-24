@@ -21,6 +21,7 @@
 
 #include "PreferencesEmailPageWidget.h"
 #include "ui_PreferencesEmailPageWidget.h"
+#include <QMessageBox>
 
 namespace Otter
 {
@@ -31,7 +32,7 @@ PreferencesEmailPageWidget::PreferencesEmailPageWidget(QWidget *parent) :
 {
     m_ui->setupUi(this);
     m_emailAccounts = EmailAccountsManager::getInstance()->getEmailAccounts();
-    m_emailAccountsListModel =  new UserAccountsListModel(m_emailAccounts);
+    m_emailAccountsListModel = new UserAccountsListModel(m_emailAccounts);
 
     m_ui->accountListAndActionButtonsWidget->setFixedWidth(m_ui->emailAccountsListView->sizeHint().width());
 
@@ -40,6 +41,9 @@ PreferencesEmailPageWidget::PreferencesEmailPageWidget(QWidget *parent) :
 
     m_ui->incomingServerTypeApplicationComboBox->addItem("IMAP");
     m_ui->incomingServerTypeApplicationComboBox->addItem("POP3");
+
+    m_ui->saveChangesButton->setVisible(false);
+    m_ui->discardChangesButton->setVisible(false);
 
     connect(m_ui->emailAccountsListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(emailAccountsListViewSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
@@ -103,4 +107,71 @@ void PreferencesEmailPageWidget::save()
 
 }
 
+}
+
+void Otter::PreferencesEmailPageWidget::on_addAccountButton_clicked()
+{
+    m_ui->emailAccountsListView->setEnabled(false);
+
+    m_ui->addAccountButton->setVisible(false);
+    m_ui->removeAccountButton->setVisible(false);
+
+    m_ui->saveChangesButton->setVisible(true);
+    m_ui->discardChangesButton->setVisible(true);
+
+    m_ui->horizontalSpacer->changeSize(m_ui->horizontalSpacer->maximumSize().width(), m_ui->horizontalSpacer->sizeHint().height());
+
+    m_ui->accountNameLineEditWidget->setText(QString());
+    m_ui->yourNameLineEditWidget->setText(QString());
+    m_ui->emailAddressLineEditWidget->setText(QString());
+    m_ui->userNameLineEditWidget->setText(QString());
+    m_ui->passwordLineEditWidget->setText(QString());
+    m_ui->incomingServerUrlLineEditWidget->setText(QString());
+    m_ui->incomingServerPortSpinBox->clear();
+    m_ui->smtpServerUrlLineEditWidget->setText(QString());
+    m_ui->smtpServerPortSpinBox->clear();
+
+    m_ui->emailAccountDetailsWidget->setVisible(true);
+
+    m_ui->accountNameLineEditWidget->setFocus();
+}
+
+void Otter::PreferencesEmailPageWidget::on_saveChangesButton_clicked()
+{
+    m_ui->emailAccountsListView->setEnabled(true);
+
+    m_ui->addAccountButton->setVisible(true);
+    m_ui->removeAccountButton->setVisible(true);
+
+    m_ui->saveChangesButton->setVisible(false);
+    m_ui->discardChangesButton->setVisible(false);
+}
+
+void Otter::PreferencesEmailPageWidget::on_discardChangesButton_clicked()
+{
+    m_ui->emailAccountsListView->setEnabled(true);
+
+    m_ui->addAccountButton->setVisible(true);
+    m_ui->removeAccountButton->setVisible(true);
+
+    m_ui->saveChangesButton->setVisible(false);
+    m_ui->discardChangesButton->setVisible(false);
+}
+
+void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
+{
+    int accountIndex = m_ui->emailAccountsListView->selectionModel()->selectedRows().first().row();
+    QString accountAddress = m_emailAccounts.at(accountIndex).emailAddress();
+    QMessageBox messageBox;
+
+    messageBox.setWindowTitle("Delete e-mail account");
+    messageBox.setText("Are you sure to delete the account " +  accountAddress + "?");
+    messageBox.setIcon(QMessageBox::Question);
+    messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
+    messageBox.addButton(new QPushButton("Delete Account"), QMessageBox::ButtonRole::AcceptRole);
+
+    if (messageBox.exec())
+    {
+        m_emailAccountsListModel->removeRows(accountIndex, 1);
+    }
 }

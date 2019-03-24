@@ -58,6 +58,11 @@ private:
 
 signals:
     void settingsModified();
+private slots:
+    void on_addAccountButton_clicked();
+    void on_saveChangesButton_clicked();
+    void on_discardChangesButton_clicked();
+    void on_removeAccountButton_clicked();
 };
 
 }

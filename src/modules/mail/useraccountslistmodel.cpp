@@ -58,4 +58,36 @@ QVariant UserAccountsListModel::data(const QModelIndex &index, int role) const
     }
 }
 
+bool UserAccountsListModel::removeRows(int position, int rows, const QModelIndex &parent)
+{
+    beginRemoveRows(parent, position, position + rows - 1);
+
+    m_data->removeAt(position);
+
+    // TODO: save changes and reinitialize accounts
+
+    endRemoveRows();
+
+    return true;
+}
+
+bool UserAccountsListModel::insertRows(int position, int rows, const QModelIndex &parent)
+{
+    beginInsertRows(parent, position, position + rows - 1);
+
+    m_data->insert(position, m_userAccountToAdd);
+
+    // TODO: save changes and reinitialize accounts
+
+    endInsertRows();
+
+    return true;
+}
+
+void UserAccountsListModel::addAccount(UserAccount account)
+{
+    m_userAccountToAdd = account;
+    insertRows(rowCount(), 1);
+}
+
 }

@@ -39,8 +39,14 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
 
+    bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
+    bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
+
+    void addAccount(UserAccount account);
+
 private:
 
+    UserAccount m_userAccountToAdd;
     QList<UserAccount> *m_data;
 };
 

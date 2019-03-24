@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
+    <width>876</width>
     <height>587</height>
    </rect>
   </property>
@@ -24,7 +24,21 @@
        <item>
         <widget class="QWidget" name="accountListAndActionButtonsWidget" native="true">
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="2">
+          <item row="1" column="1">
+           <widget class="QPushButton" name="removeAccountButton">
+            <property name="text">
+             <string>Remove account</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="addAccountButton">
+            <property name="text">
+             <string>Add account</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -38,18 +52,31 @@
            </spacer>
           </item>
           <item row="0" column="0">
-           <widget class="QPushButton" name="addAccountButton">
+           <widget class="QPushButton" name="saveChangesButton">
             <property name="text">
-             <string>Add account</string>
+             <string>Save changes</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="removeAccountButton">
+           <widget class="QPushButton" name="discardChangesButton">
             <property name="text">
-             <string>Remove account</string>
+             <string>Discard changes</string>
             </property>
            </widget>
+          </item>
+          <item row="0" column="4">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
