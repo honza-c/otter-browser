@@ -35,12 +35,12 @@ QVariant MessageMetadataSqlTableModel::data(const QModelIndex &index, int role) 
         font.setBold(true);
         return font;
     }
-    else if (index.column() == 8 && role == Qt::DisplayRole)
+    else if (index.column() == 5 && role == Qt::DisplayRole)
     {
         QString timeData = QSqlTableModel::data(index, role).toString();
         return QDateTime::fromSecsSinceEpoch(timeData.toLong()).toString("dd.MM.yyyy HH:mm");
     }
-    else if (index.column() == 9 && role == Qt::DisplayRole)
+    else if (index.column() == 6 && role == Qt::DisplayRole)
     {
         QString jsonString = QSqlTableModel::data(index, role).toString();
         Contact sender = Contact::contactFromJson(jsonString);
@@ -94,13 +94,13 @@ QVariant MessageMetadataSqlTableModel::headerData(int section, Qt::Orientation o
         {
         case 0:
             return "ID";
-        case 8:
+        case 5:
             return "Date";
-        case 9:
+        case 6:
             return "Sender";
-        case 10:
+        case 7:
             return "Size";
-        case 11:
+        case 8:
             return "Subject";
         default:
             return QVariant();

@@ -75,25 +75,20 @@ void EmailContentReaderWidget::setupTableView()
 {
     m_ui->messageMetadataTableView->setModel(m_messageMetadataTableModel);
 
-    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(11, 0);
-    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(10, 1);
-    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(11, 2);
+    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(8, 1);
+    m_ui->messageMetadataTableView->horizontalHeader()->moveSection(6, 15);
 
     m_ui->messageMetadataTableView->hideColumn(1);
     m_ui->messageMetadataTableView->hideColumn(2);
     m_ui->messageMetadataTableView->hideColumn(3);
     m_ui->messageMetadataTableView->hideColumn(4);
-    m_ui->messageMetadataTableView->hideColumn(5);
-    m_ui->messageMetadataTableView->hideColumn(6);
-    m_ui->messageMetadataTableView->hideColumn(7);
+    m_ui->messageMetadataTableView->hideColumn(9);
+    m_ui->messageMetadataTableView->hideColumn(10);
+    m_ui->messageMetadataTableView->hideColumn(11);
     m_ui->messageMetadataTableView->hideColumn(12);
     m_ui->messageMetadataTableView->hideColumn(13);
     m_ui->messageMetadataTableView->hideColumn(14);
     m_ui->messageMetadataTableView->hideColumn(15);
-    m_ui->messageMetadataTableView->hideColumn(16);
-    m_ui->messageMetadataTableView->hideColumn(17);
-    m_ui->messageMetadataTableView->hideColumn(18);
-    m_ui->messageMetadataTableView->hideColumn(19);
 
     m_ui->messageMetadataTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_ui->messageMetadataTableView->verticalHeader()->hide();
@@ -110,10 +105,10 @@ void EmailContentReaderWidget::setupTableView()
     m_ui->messageMetadataTableView->horizontalHeader()->setStretchLastSection(false);
 
     m_ui->messageMetadataTableView->setColumnWidth(0, 70); // id
-    m_ui->messageMetadataTableView->horizontalHeader()->setSectionResizeMode(11, QHeaderView::Stretch); // subject
-    m_ui->messageMetadataTableView->setColumnWidth(9, 250); // sender
-    m_ui->messageMetadataTableView->setColumnWidth(10, 100); // size
-    m_ui->messageMetadataTableView->setColumnWidth(8, 150); // date
+    m_ui->messageMetadataTableView->horizontalHeader()->setSectionResizeMode(8, QHeaderView::Stretch); // subject
+    m_ui->messageMetadataTableView->setColumnWidth(6, 250); // sender
+    m_ui->messageMetadataTableView->setColumnWidth(7, 100); // size
+    m_ui->messageMetadataTableView->setColumnWidth(5, 150); // date
 
     while (m_messageMetadataTableModel->canFetchMore())
     {
