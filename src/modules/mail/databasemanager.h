@@ -55,7 +55,6 @@ public:
     static void updateEmbeddedObjectsContent(const int messageId, const QList<EmbeddedObject> embeddedObjects);
     static void updateRecipients(const int messageId, const QList<Contact> recipients);
     static void updateCopyRecipients(const int messageId, const QList<Contact> copyRecipients);
-    static void updateBlindCopyRecipients(const int messageId, const QList<Contact> blindCopyRecipients);
     static QList<Attachment> getAttachments(const int messageId);
     static QList<EmbeddedObject> getEmbeddedObjects(const int messageId);
     static QStringList getFoldersPathForAccount(const QString emailAddress);

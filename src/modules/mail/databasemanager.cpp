@@ -31,15 +31,13 @@ DatabaseManager::DatabaseManager(QString databaseFileName, QObject *parent)
 
     m_tableNames << "Folders" << "MessageData";
 
-    m_mailFolderTableFields << "id" << "email" << "path" << "flag_all" << "flag_archive"
-                            << "flag_drafts" << "flag_important"  << "flag_junk"
-                            << "flag_sent" << "flag_trash";
+    m_mailFolderTableFields << "id" << "emailAddress" << "path" << "isAllMessages" << "isArchive"
+                            << "isDrafts" << "isJunk" << "isSent" << "isTrash";
 
-    m_messageDataTableFields << "id" << "folderId" << "positionInFolder" << "flag_seen" << "flag_deleted"
-                              << "flag_recent" << "flag_replied" << "flag_draft"
+    m_messageDataTableFields << "id" << "folderId" << "uid" << "isSeen" << "isDraft"
                               << "date" << "sender" << "size" << "subject"
                               << "recipients" << "copyRecipients" << "plainTextContent" << "htmlContent"
-                              << "attachments" << "embeddedObjects" << "blindCopyRecipients" << "replyTo";
+                              << "attachments" << "embeddedObjects" << "replyToRecipients";
 
     if (!checkDatabaseStructure())
     {
@@ -67,26 +65,22 @@ void DatabaseManager::initializeDatabaseStructure()
     QSqlQuery msgFoldersQuery;
     msgFoldersQuery.exec("create table Folders "
                          "(id integer primary key, "
-                         "email text,"
+                         "emailAddress text,"
                          "path text,"
-                         "flag_all integer,"
-                         "flag_archive integer,"
-                         "flag_drafts integer,"
-                         "flag_important integer,"
-                         "flag_junk integer,"
-                         "flag_sent integer,"
-                         "flag_trash integer)");
+                         "isAllMessages integer,"
+                         "isArchive integer,"
+                         "isDrafts integer,"
+                         "isJunk integer,"
+                         "isSent integer,"
+                         "isTrash integer)");
 
     QSqlQuery msgDataQuery;
     msgDataQuery.exec("create table MessageData "
                       "(id integer primary key, "
                       "folderId integer, "
-                      "positionInFolder integer, "
-                      "flag_seen integer, "
-                      "flag_deleted integer, "
-                      "flag_recent integer, "
-                      "flag_replied integer, "
-                      "flag_draft integer, "
+                      "uid integer, "
+                      "isSeen integer, "
+                      "isDraft integer, "
                       "date text, "
                       "sender text, "
                       "size integer, "
@@ -97,8 +91,7 @@ void DatabaseManager::initializeDatabaseStructure()
                       "htmlContent text, "
                       "attachments blob, "
                       "embeddedObjects blob, "
-                      "blindCopyRecipients text, "
-                      "replyTo text)");
+                      "replyToRecipients text)");
 
 }
 
@@ -185,9 +178,9 @@ int DatabaseManager::getFolderId(const QString emailAddress, const QString folde
     QSqlQuery query;
 
     query.prepare("SELECT id FROM Folders "
-                  "WHERE email = :email AND path = :path");
+                  "WHERE emailAddress = :emailAddress AND path = :path");
 
-    query.bindValue(":email", emailAddress);
+    query.bindValue(":emailAddress", emailAddress);
     query.bindValue(":path", folderPath);
     query.exec();
 
@@ -282,11 +275,11 @@ QList<Contact> DatabaseManager::getCopyRecipients(const int messageId)
 
 QList<Contact> DatabaseManager::getReplyTo(const int messageId)
 {
-    QList<Contact> replyTo;
+    QList<Contact> replyToRecipients;
 
     QSqlQuery query;
 
-    query.prepare("SELECT replyTo FROM MessageData "
+    query.prepare("SELECT replyToRecipients FROM MessageData "
                             "WHERE id = :messageId");
 
     query.bindValue(":messageId", messageId);
@@ -294,19 +287,19 @@ QList<Contact> DatabaseManager::getReplyTo(const int messageId)
 
     while (query.next())
     {
-        replyTo = Contact::contactsFromJson(query.value(0).toString());
+        replyToRecipients = Contact::contactsFromJson(query.value(0).toString());
     }
 
-    return replyTo;
+    return replyToRecipients;
 }
 
 int DatabaseManager::getPositionInFolder(const int messageId)
 {
-    int positionInFolder = 0;
+    int uid = 0;
 
     QSqlQuery query;
 
-    query.prepare("SELECT positionInFolder FROM MessageData "
+    query.prepare("SELECT uid FROM MessageData "
                   "WHERE id = :messageId");
 
     query.bindValue(":messageId", messageId);
@@ -314,23 +307,23 @@ int DatabaseManager::getPositionInFolder(const int messageId)
 
     while (query.next())
     {
-        positionInFolder = query.value(0).toInt();
+        uid = query.value(0).toInt();
     }
 
-    return positionInFolder;
+    return uid;
 }
 
-int DatabaseManager::getMessageId(const int folderId, const int positionInFolder)
+int DatabaseManager::getMessageId(const int folderId, const int uid)
 {
     int messageId = 0;
 
     QSqlQuery query;
 
     query.prepare("SELECT id FROM MessageData "
-                  "WHERE folderId = :folderId AND positionInFolder = :positionInFolder");
+                  "WHERE folderId = :folderId AND uid = :uid");
 
     query.bindValue(":folderId", folderId);
-    query.bindValue(":positionInFolder", positionInFolder);
+    query.bindValue(":uid", uid);
     query.exec();
 
     while (query.next())
@@ -391,21 +384,6 @@ void DatabaseManager::updateCopyRecipients(const int messageId, const QList<Cont
 
     query.prepare("UPDATE MessageData "
                   "SET copyRecipients = :json "
-                  "WHERE id = :messageId");
-
-    query.bindValue(":json", jsonString);
-    query.bindValue(":messageId", messageId);
-
-    query.exec();
-}
-
-void DatabaseManager::updateBlindCopyRecipients(const int messageId, const QList<Contact> blindCopyRecipients)
-{    
-    QString jsonString = Contact::toJson(blindCopyRecipients);
-    QSqlQuery query;
-
-    query.prepare("UPDATE MessageData "
-                  "SET blindCopyRecipients = :json "
                   "WHERE id = :messageId");
 
     query.bindValue(":json", jsonString);
@@ -587,9 +565,9 @@ QStringList DatabaseManager::getFoldersPathForAccount(const QString emailAddress
 
     query.prepare("SELECT path FROM Folders"
                   " WHERE "
-                  "email = :email");
+                  "emailAddress = :emailAddress");
 
-    query.bindValue(":email", emailAddress);
+    query.bindValue(":emailAddress", emailAddress);
     query.exec();
 
     while (query.next())
@@ -618,9 +596,9 @@ void DatabaseManager::deleteFolderFromDatabase(const QString emailAddress, const
 
     deleteFolderQuery.prepare("DELETE FROM Folders"
                               " WHERE "
-                              "email = :email AND path = :path");
+                              "emailAddress = :emailAddress AND path = :path");
 
-    deleteFolderQuery.bindValue(":email", emailAddress);
+    deleteFolderQuery.bindValue(":emailAddress", emailAddress);
     deleteFolderQuery.bindValue(":path", path);
 
     deleteFolderQuery.exec();
@@ -631,19 +609,18 @@ void DatabaseManager::addFolderToDatabase(const InboxFolder folder)
     QSqlQuery query;
 
     query.prepare("INSERT INTO Folders "
-                  "(email, path, flag_all, flag_archive, flag_drafts, flag_important, flag_junk, flag_sent, flag_trash)"
+                  "(emailAddress, path, isAllMessages, isArchive, isDrafts, isJunk, isSent, isTrash)"
                   " VALUES "
-                  "(:email, :path, :flag_all, :flag_archive, :flag_drafts, :flag_important, :flag_junk, :flag_sent, :flag_trash)");
+                  "(:emailAddress, :path, :isAllMessages, :isArchive, :isDrafts, :isJunk, :isSent, :isTrash)");
 
-    query.bindValue(":email", folder.emailAddress());
+    query.bindValue(":emailAddress", folder.emailAddress());
     query.bindValue(":path", folder.path());
-    query.bindValue(":flag_all", folder.isAllMessages());
-    query.bindValue(":flag_archive", folder.isArchive());
-    query.bindValue(":flag_drafts", folder.isDrafts());
-    query.bindValue(":flag_important", folder.isImportant());
-    query.bindValue(":flag_junk", folder.isJunk());
-    query.bindValue(":flag_sent", folder.isSent());
-    query.bindValue(":flag_trash", folder.isTrash());
+    query.bindValue(":isAllMessages", folder.isAllMessages());
+    query.bindValue(":isArchive", folder.isArchive());
+    query.bindValue(":isDrafts", folder.isDrafts());
+    query.bindValue(":isJunk", folder.isJunk());
+    query.bindValue(":isSent", folder.isSent());
+    query.bindValue(":isTrash", folder.isTrash());
 
     query.exec();
 }
@@ -682,9 +659,9 @@ int DatabaseManager::getTotalCountOfUnreadMessages()
                   " COUNT( * ) "
                   "FROM MessageData"
                   " WHERE "
-                  "flag_seen = :flag_seen");
+                  "isSeen = :isSeen");
 
-    query.bindValue(":flag_seen", 0);
+    query.bindValue(":isSeen", 0);
     query.exec();
 
     if (query.next())
@@ -707,11 +684,11 @@ int DatabaseManager::getCountOfUnreadMessagesForFolder(QString emailAddress, QSt
                   " COUNT( * ) "
                   "FROM MessageData"
                   " WHERE "
-                  "flag_seen = :flag_seen"
+                  "isSeen = :isSeen"
                   " AND "
                   "folderId = :folderId");
 
-    query.bindValue(":flag_seen", 0);
+    query.bindValue(":isSeen", 0);
     query.bindValue(":folderId", folderId);
     query.exec();
 
@@ -730,11 +707,11 @@ void DatabaseManager::addMessagesMetadataToDatabase(const QList<MessageMetadata>
         QSqlQuery query;
 
         query.prepare("INSERT INTO MessageData "
-                      "(folderId, positionInFolder, flag_seen, flag_deleted, flag_recent, flag_replied, flag_draft, date, sender, size, subject, replyTo)"
+                      "(folderId, uid, isSeen, isDraft, date, sender, size, subject, replyToRecipients)"
                       " VALUES "
-                      "(:folderId, :positionInFolder, :flag_seen, :flag_deleted, :flag_recent, :flag_replied, :flag_draft, :date, :sender, :size, :subject, :replyTo)");
+                      "(:folderId, :uid, :isSeen, :isDraft, :date, :sender, :size, :subject, :replyToRecipients)");
 
-        QVariantList folderIdInDb, positionInFolder, flag_seen, flag_deleted, flag_recent, flag_replied, flag_draft, date, sender, size, subject, replyTo;
+        QVariantList folderIdInDb, uid, isSeen, isDraft, date, sender, size, subject, replyToRecipients;
 
         for (MessageMetadata data : metadata)
         {
@@ -743,32 +720,26 @@ void DatabaseManager::addMessagesMetadataToDatabase(const QList<MessageMetadata>
             if (folderId > 0)
             {
                 folderIdInDb << folderId;
-                positionInFolder << static_cast<int>(data.messageId());
-                flag_seen << data.isSeen();
-                flag_deleted << data.isDeleted();
-                flag_recent << data.isRecent();
-                flag_replied << data.isReplied();
-                flag_draft << data.isDraft();
+                uid << static_cast<int>(data.messageId());
+                isSeen << data.isSeen();
+                isDraft << data.isDraft();
                 date << data.dateTime().toSecsSinceEpoch();
                 sender << Contact::toJson(data.from());
                 size << static_cast<int>(data.size());
                 subject << data.subject();
-                replyTo << Contact::toJson(data.replyTo());
+                replyToRecipients << Contact::toJson(data.replyTo());
             }
         }
 
         query.bindValue(":folderId", folderIdInDb);
-        query.bindValue(":positionInFolder", positionInFolder);
-        query.bindValue(":flag_seen", flag_seen);
-        query.bindValue(":flag_deleted", flag_deleted);
-        query.bindValue(":flag_recent", flag_recent);
-        query.bindValue(":flag_replied", flag_replied);
-        query.bindValue(":flag_draft", flag_draft);
+        query.bindValue(":uid", uid);
+        query.bindValue(":isSeen", isSeen);
+        query.bindValue(":isDraft", isDraft);
         query.bindValue(":date", date);
         query.bindValue(":sender", sender);
         query.bindValue(":size", size);
         query.bindValue(":subject", subject);
-        query.bindValue(":replyTo", replyTo);
+        query.bindValue(":replyToRecipients", replyToRecipients);
 
         query.execBatch();
 }
@@ -832,7 +803,7 @@ QList<InboxFolder> DatabaseManager::getInboxFolders()
                   " * "
                   "FROM Folders"
                   " ORDER BY"
-                  " email ASC,"
+                  " emailAddress ASC,"
                   " path ASC");
 
     while (query.next())
@@ -865,11 +836,11 @@ QList<InboxFolder> DatabaseManager::getInboxFolders(QString emailAddress)
                   " * "
                   "FROM Folders"
                   " WHERE "
-                  " email = :email "
+                  " emailAddress = :emailAddress "
                   " ORDER BY"
                   " path ASC");
 
-    query.bindValue(":email", emailAddress);
+    query.bindValue(":emailAddress", emailAddress);
     query.exec();
 
     while (query.next())
@@ -926,13 +897,13 @@ QStringList DatabaseManager::getDataForContactsCompleter()
         contacts << Contact::toString(contact);
     }
 
-    QSqlQuery replyToQuery;
-    replyToQuery.prepare("SELECT replyTo FROM MessageData");
-    replyToQuery.exec();
+    QSqlQuery replyToRecipientsQuery;
+    replyToRecipientsQuery.prepare("SELECT replyToRecipients FROM MessageData");
+    replyToRecipientsQuery.exec();
 
-    while (replyToQuery.next())
+    while (replyToRecipientsQuery.next())
     {
-        Contact contact = Contact::contactFromJson(replyToQuery.value(0).toString());
+        Contact contact = Contact::contactFromJson(replyToRecipientsQuery.value(0).toString());
         contacts << Contact::toString(contact);
     }
 
@@ -965,7 +936,7 @@ QString DatabaseManager::getEmailAddress(int folderId)
 
     QSqlQuery query;
 
-    query.prepare("SELECT email FROM Folders "
+    query.prepare("SELECT emailAddress FROM Folders "
                   "WHERE id = :id");
 
     query.bindValue(":id", folderId);
@@ -985,7 +956,7 @@ bool DatabaseManager::isFolderJunk(int folderId)
 
     QSqlQuery query;
 
-    query.prepare("SELECT flag_junk FROM Folders "
+    query.prepare("SELECT isJunk FROM Folders "
                   "WHERE id = :id");
 
     query.bindValue(":id", folderId);
@@ -1005,7 +976,7 @@ bool DatabaseManager::isFolderTrash(int folderId)
 
     QSqlQuery query;
 
-    query.prepare("SELECT flag_trash FROM Folders "
+    query.prepare("SELECT isTrash FROM Folders "
                   "WHERE id = :id");
 
     query.bindValue(":id", folderId);
@@ -1025,7 +996,7 @@ bool DatabaseManager::isFolderArchive(int folderId)
 
     QSqlQuery query;
 
-    query.prepare("SELECT flag_archive FROM Folders "
+    query.prepare("SELECT isArchive FROM Folders "
                   "WHERE id = :id");
 
     query.bindValue(":id", folderId);
@@ -1046,10 +1017,10 @@ QString DatabaseManager::getArchiveFolderPathForAccount(QString emailAddress)
     QSqlQuery query;
 
     query.prepare("SELECT path FROM Folders "
-                  "WHERE email = :email AND flag_archive = :flag_archive");
+                  "WHERE emailAddress = :emailAddress AND isArchive = :isArchive");
 
-    query.bindValue(":email", emailAddress);
-    query.bindValue(":flag_archive", 1);
+    query.bindValue(":emailAddress", emailAddress);
+    query.bindValue(":isArchive", 1);
 
     query.exec();
 
