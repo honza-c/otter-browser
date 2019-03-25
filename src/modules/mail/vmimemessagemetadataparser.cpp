@@ -49,7 +49,7 @@ MessageMetadata VmimeMessageMetadataParser::parse(const vmime::shared_ptr<vmime:
         messageMetadata.setIsDraft(false);
     }
 
-    messageMetadata.setMessageId(message->getNumber());
+    messageMetadata.setUid(std::stoul((static_cast<std::string>(message->getUID())).c_str()));
     messageMetadata.setSize(message->getSize());
 
     messageMetadata.setDateTime(parseDateTime(header));

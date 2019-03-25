@@ -720,7 +720,7 @@ void DatabaseManager::addMessagesMetadataToDatabase(const QList<MessageMetadata>
             if (folderId > 0)
             {
                 folderIdInDb << folderId;
-                uid << static_cast<int>(data.messageId());
+                uid << static_cast<int>(data.uid());
                 isSeen << data.isSeen();
                 isDraft << data.isDraft();
                 date << data.dateTime().toSecsSinceEpoch();

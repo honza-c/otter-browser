@@ -28,7 +28,7 @@ MessageMetadata::MessageMetadata(const MessageMetadata &other)
 {
     m_emailAddress = other.m_emailAddress;
     m_folderPath = other.m_folderPath;
-    m_messageId = other.m_messageId;
+    m_uid = other.m_uid;
     m_size = other.m_size;
     m_dateTime = other.m_dateTime;
     m_from = other.m_from;
@@ -45,7 +45,7 @@ MessageMetadata& MessageMetadata::operator=(const MessageMetadata &other)
 {
     m_emailAddress = other.m_emailAddress;
     m_folderPath = other.m_folderPath;
-    m_messageId = other.m_messageId;
+    m_uid = other.m_uid;
     m_size = other.m_size;
     m_dateTime = other.m_dateTime;
     m_from = other.m_from;
@@ -80,14 +80,14 @@ void MessageMetadata::setFolderPath(const QString folderPath)
     m_folderPath = folderPath;
 }
 
-unsigned long MessageMetadata::messageId() const
+unsigned long MessageMetadata::uid() const
 {
-    return m_messageId;
+    return m_uid;
 }
 
-void MessageMetadata::setMessageId(const unsigned long messageId)
+void MessageMetadata::setUid(const unsigned long messageId)
 {
-    m_messageId = messageId;
+    m_uid = messageId;
 }
 
 unsigned long MessageMetadata::size() const
@@ -198,8 +198,8 @@ QDebug operator<<(QDebug debug, const MessageMetadata &metadata)
                     << metadata.emailAddress()
                     << "\nFolder path: "
                     << metadata.folderPath()
-                    << "Message ID: "
-                    << metadata.messageId()
+                    << "UID: "
+                    << metadata.uid()
                     << "\nSize: "
                     << metadata.size()
                     << "\nDate and time: "

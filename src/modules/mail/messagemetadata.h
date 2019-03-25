@@ -44,8 +44,8 @@ public:
     QString folderPath() const;
     void setFolderPath(const QString folderPath);
 
-    unsigned long messageId() const;
-    void setMessageId(const unsigned long messageId);
+    unsigned long uid() const;
+    void setUid(const unsigned long uid);
 
     unsigned long size() const;
     void setSize(const unsigned long size);
@@ -84,7 +84,7 @@ public slots:
 private:
     QString m_emailAddress;
     QString m_folderPath;
-    unsigned long m_messageId;
+    unsigned long m_uid;
     unsigned long m_size;
     QDateTime m_dateTime;
     Contact m_from;
