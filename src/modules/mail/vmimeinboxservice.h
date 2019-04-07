@@ -45,6 +45,7 @@ public:
     QList<InboxFolder> fetchInboxFolders();
     void initializeStore();
     QList<MessageMetadata> fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb);
+    QList<MessageMetadata> fetchMessagesMetadata();
     MessageContent fetchMessageContent(QString folderPath, int positionInFolder);
     void moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
 protected:

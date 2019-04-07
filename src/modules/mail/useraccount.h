@@ -99,7 +99,7 @@ public:
     void sendMessage(Message message) const;
     QFuture<MessageContent> fetchMessageContent(QString folderPath, int positionInFolder);
     void fetchMissingMessageContent(const QString folderPath, const int positionInFolder);
-    void fetchMessageMetadata(QList<InboxFolder> folders);
+    void fetchMessageMetadata();
     void updateMessageMetadataInDatabase(QList<MessageMetadata> metadata);
 
     QFuture<bool> moveMessageThread(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
@@ -107,6 +107,7 @@ public:
 
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb);
+    QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
     void updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent);
 

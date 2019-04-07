@@ -311,45 +311,41 @@ void UserAccount::fetchStoreContent()
 
     connect(watcher, &QFutureWatcher<QList<InboxFolder>>::finished, [=](){
         updateFolderStructureInDatabase(future.result());
-        fetchMessageMetadata(future.result());
+        fetchMessageMetadata();
     });
 
     watcher->setFuture(future);
 }
 
-void UserAccount::fetchMessageMetadata(QList<InboxFolder> folders)
+void UserAccount::fetchMessageMetadata()
 {
-    QMap<QString, int> folderPathsWithMessagesCountsInDb;
-
-    for (InboxFolder folder : folders)
-    {
-        folderPathsWithMessagesCountsInDb[folder.path()] = DatabaseManager::getMessagesCountForFolder(m_emailAddress, folder.path());
-    }
-
-    QFuture<QList<MessageMetadata>> future = fetchMessagesMetadata(folderPathsWithMessagesCountsInDb);
+    QFuture<QList<MessageMetadata>> future = fetchMessagesMetadata();
     QFutureWatcher<QList<MessageMetadata>> *watcher = new QFutureWatcher<QList<MessageMetadata>>();
 
-    connect(watcher, &QFutureWatcher<QList<MessageMetadata>>::finished, [=](){
-        DatabaseManager::addMessagesMetadataToDatabase(future.result());
-
-        QList<MessageMetadata> metadataList = future.result();
-        int unreadMessages = 0;
-
-        for (MessageMetadata metadata : metadataList)
-        {
-            if (!metadata.isSeen())
-            {
-                unreadMessages++;
-            }
-        }
-
-        if (unreadMessages > 0)
-        {
-            emit newMessagesReceived(m_emailAddress, unreadMessages);
-        }
+    connect(watcher, &QFutureWatcher<QList<MessageMetadata>>::finished, [=]()
+    {
+        DatabaseManager::updateMessageMetadata(future.result(), m_emailAddress);
     });
 
     watcher->setFuture(future);
+}
+
+QFuture<QList<MessageMetadata>> UserAccount::fetchMessagesMetadata()
+{
+    auto fetchMessageMetadataWorker = [](const connectionSettingsHolder settings)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.incomingServerAddress);
+        imapService.setPort(settings.incomingServerPort);
+
+        return imapService.fetchMessagesMetadata();
+    };
+
+    return QtConcurrent::run(fetchMessageMetadataWorker, getConnectionSettings());
 }
 
 void UserAccount::sendMessage(Message message) const

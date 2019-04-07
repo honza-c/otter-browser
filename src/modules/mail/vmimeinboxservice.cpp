@@ -76,6 +76,28 @@ QList<MessageMetadata> VmimeInboxService::fetchMessagesMetadata(QMap<QString, in
     return metadata;
 }
 
+QList<MessageMetadata> VmimeInboxService::fetchMessagesMetadata()
+{
+    QList<MessageMetadata> metadata;
+    QList<VmimeInboxFolder> inboxFolders;
+
+    initializeStore();
+
+    vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
+    std::vector<vmime::shared_ptr<vmime::net::folder>> subFolders = rootFolder->getFolders(true);
+    subFolders.push_back(rootFolder);
+
+    for (vmime::shared_ptr<vmime::net::folder> folder : subFolders)
+    {
+        VmimeInboxFolder inboxFolder = VmimeInboxFolder(folder, QString(m_emailAddress.c_str()));
+        metadata.append(inboxFolder.getMessagesMetadata());
+    }
+
+    m_store->disconnect();
+
+    return metadata;
+}
+
 MessageContent VmimeInboxService::fetchMessageContent(QString folderPath, int positionInFolder)
 {
     initializeStore();

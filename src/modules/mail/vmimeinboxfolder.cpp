@@ -77,6 +77,44 @@ void VmimeInboxFolder::setData(const InboxFolder inboxFolder)
     m_inboxFolder = inboxFolder;
 }
 
+QList<MessageMetadata> VmimeInboxFolder::getMessagesMetadata() const
+{
+    if (!m_successfullyOpened)
+    {
+        return QList<MessageMetadata>();
+    }
+
+    size_t messagesCount = m_remoteFolder->getMessageCount();
+
+    QList<MessageMetadata> metadataList;
+
+    if (messagesCount >= 1)
+    {
+        std::vector<vmime::shared_ptr<vmime::net::message>> messages =
+                m_remoteFolder->getMessages(vmime::net::messageSet::byNumber(1, -1));
+
+        m_remoteFolder->fetchMessages(messages,
+                                      vmime::net::fetchAttributes::ENVELOPE |
+                                      vmime::net::fetchAttributes::FLAGS |
+                                      vmime::net::fetchAttributes::SIZE |
+                                      vmime::net::fetchAttributes::UID);
+
+        VmimeMessageMetadataParser parser;
+
+        for (unsigned int i = 0; i < messages.size(); i++)
+        {
+            vmime::shared_ptr<vmime::net::message> message = messages[i];
+            MessageMetadata metadata = parser.parse(message);
+            metadata.setEmailAddress(m_inboxFolder.emailAddress());
+            metadata.setFolderPath(m_inboxFolder.path());
+
+            metadataList.push_back(metadata);
+        }
+    }
+
+    return metadataList;
+}
+
 QList<MessageMetadata> VmimeInboxFolder::getMessagesMetadataFromPosition(int position) const
 {
     if (!m_successfullyOpened)

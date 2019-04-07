@@ -1032,4 +1032,289 @@ QString DatabaseManager::getArchiveFolderPathForAccount(QString emailAddress)
     return path;
 }
 
+QFuture<QList<unsigned long>> DatabaseManager::getUidsOfSeenMessagesOnServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase)
+{
+    auto getUidsOfSeenMessagesOnServerWorker = []
+            (const QList<MessageMetadata> messagesFromServer,
+             const QList<MessageMetadata> messagesFromDatabase)
+    {
+        QList<unsigned long> uidsOfUnseenMsgsFromDatabase;
+        QList<unsigned long> uidsOfSeenMsgsSinceLastUpdate;
+
+        for (MessageMetadata message : messagesFromDatabase)
+        {
+            if (!message.isSeen())
+            {
+                uidsOfUnseenMsgsFromDatabase << message.uid();
+            }
+        }
+
+        for (unsigned long uid : uidsOfUnseenMsgsFromDatabase)
+        {
+            for (MessageMetadata message : messagesFromServer)
+            {
+                if (message.uid() == uid)
+                {
+                    if (message.isSeen())
+                    {
+                        uidsOfSeenMsgsSinceLastUpdate << uid;
+                    }
+                    break;
+                }
+            }
+        }
+
+        return uidsOfSeenMsgsSinceLastUpdate;
+    };
+
+    return QtConcurrent::run(getUidsOfSeenMessagesOnServerWorker, messagesFromServer, messagesFromDatabase);
+}
+
+QFuture<QList<unsigned long>> DatabaseManager::getUidsOfMessagesDeletedFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase)
+{
+    auto getUidsOfMessagesDeletedFromServerWorker = []
+            (const QList<MessageMetadata> messagesFromServer,
+             const QList<MessageMetadata> messagesFromDatabase)
+    {
+        QList<unsigned long> uidsOfDeletedMessages;
+
+        for (MessageMetadata messageFromDatabase : messagesFromDatabase)
+        {
+            bool found = false;
+
+            for (MessageMetadata messageFromServer : messagesFromServer)
+            {
+                if (messageFromServer.uid() == messageFromDatabase.uid())
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                uidsOfDeletedMessages << messageFromDatabase.uid();
+            }
+        }
+
+        return uidsOfDeletedMessages;
+    };
+
+    return QtConcurrent::run(getUidsOfMessagesDeletedFromServerWorker, messagesFromServer, messagesFromDatabase);
+}
+
+QFuture<QList<MessageMetadata>> DatabaseManager::getMissingMessagesFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase)
+{
+    auto getMissingMessagesFromServerWorker = []
+            (const QList<MessageMetadata> messagesFromServer,
+             const QList<MessageMetadata> messagesFromDatabase)
+    {
+        QList<MessageMetadata> newMessages;
+
+        for (MessageMetadata messageFromServer : messagesFromServer)
+        {
+            bool found = false;
+
+            for (MessageMetadata messageFromDatabase : messagesFromDatabase)
+            {
+                if (messageFromServer.uid() == messageFromDatabase.uid())
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                newMessages << messageFromServer;
+            }
+        }
+
+        return newMessages;
+    };
+
+    return QtConcurrent::run(getMissingMessagesFromServerWorker, messagesFromServer, messagesFromDatabase);
+}
+
+void DatabaseManager::updateMessageMetadata(const QList<MessageMetadata> freshMetadataFromServer, const QString emailAddress)
+{
+    QList<MessageMetadata> messagesFromDatabase = getMessageMetadataForAccount(emailAddress);
+
+    // update status about unread messages
+
+    QFuture<QList<unsigned long>> getUidsOfSeenMessagesOnServerFuture = getUidsOfSeenMessagesOnServer(freshMetadataFromServer, messagesFromDatabase);
+    QFutureWatcher<QList<unsigned long>> *getUidsOfSeenMessagesOnServerFutureWatcher = new QFutureWatcher<QList<unsigned long>>();
+
+    connect(getUidsOfSeenMessagesOnServerFutureWatcher, &QFutureWatcher<QList<unsigned long>>::finished, [=](){
+        for (unsigned long uid : getUidsOfSeenMessagesOnServerFuture.result())
+        {
+            DatabaseManager::setMessageAsSeen(uid, emailAddress);
+        }
+        // TODO: refresh GUI
+    });
+
+    getUidsOfSeenMessagesOnServerFutureWatcher->setFuture(getUidsOfSeenMessagesOnServerFuture);
+
+    // delete messages from database which are deleted from server
+
+    QFuture<QList<unsigned long>> getUidsOfMessagesDeletedFromServerFuture = getUidsOfMessagesDeletedFromServer(freshMetadataFromServer, messagesFromDatabase);
+    QFutureWatcher<QList<unsigned long>> *getUidsOfMessagesDeletedFromServerFutureWatcher = new QFutureWatcher<QList<unsigned long>>();
+
+    connect(getUidsOfMessagesDeletedFromServerFutureWatcher, &QFutureWatcher<QList<unsigned long>>::finished, [=](){
+        for (unsigned long uid : getUidsOfMessagesDeletedFromServerFuture.result())
+        {
+            DatabaseManager::deleteMessageFromDatabase(uid, emailAddress);
+        }
+        // TODO: refresh GUI
+    });
+
+    getUidsOfMessagesDeletedFromServerFutureWatcher->setFuture(getUidsOfMessagesDeletedFromServerFuture);
+
+    // add new messages to database
+
+    QFuture<QList<MessageMetadata>> getMissingMessagesFromServerFuture = getMissingMessagesFromServer(freshMetadataFromServer, messagesFromDatabase);
+    QFutureWatcher<QList<MessageMetadata>> *getMissingMessagesFromServerFutureWatcher = new QFutureWatcher<QList<MessageMetadata>>();
+
+    connect(getMissingMessagesFromServerFutureWatcher, &QFutureWatcher<QList<MessageMetadata>>::finished, [=](){
+        int newMessagesCount = 0;
+
+        for (MessageMetadata message : getMissingMessagesFromServerFuture.result())
+        {
+            if (!message.isSeen())
+            {
+                newMessagesCount++;
+            }
+        }
+
+        DatabaseManager::addMessagesMetadataToDatabase(getMissingMessagesFromServerFuture.result());
+
+        // TODO: refresh GUI
+    });
+
+    getMissingMessagesFromServerFutureWatcher->setFuture(getMissingMessagesFromServerFuture);
+}
+
+void DatabaseManager::setMessageAsSeen(const unsigned long uid, const QString emailAddress)
+{
+    QList<int> folderIds;
+
+    QSqlQuery folderIdsQuery;
+
+    folderIdsQuery.prepare("SELECT"
+                  " id "
+                  "FROM Folders"
+                  " WHERE "
+                  " emailAddress = :emailAddress ");
+
+    folderIdsQuery.bindValue(":emailAddress", emailAddress);
+    folderIdsQuery.exec();
+
+    while (folderIdsQuery.next())
+    {
+        folderIds << folderIdsQuery.value(0).toInt();
+    }
+
+    for (int folderId : folderIds)
+    {
+        QSqlQuery updateQuery;
+
+
+        updateQuery.prepare("UPDATE MessageData "
+                            "SET isSeen = :isSeen "
+                            "WHERE folderId = :folderId AND uid = :uid");
+
+        updateQuery.bindValue(":folderId", folderId);
+        updateQuery.bindValue(":isSeen", true);
+        updateQuery.bindValue(":uid", static_cast<int>(uid));
+
+        updateQuery.exec();
+    }
+}
+
+void DatabaseManager::deleteMessageFromDatabase(const unsigned long uid, const QString emailAddress)
+{
+    QList<int> folderIds;
+
+    QSqlQuery folderIdsQuery;
+
+    folderIdsQuery.prepare("SELECT"
+                  " id "
+                  "FROM Folders"
+                  " WHERE "
+                  " emailAddress = :emailAddress ");
+
+    folderIdsQuery.bindValue(":emailAddress", emailAddress);
+    folderIdsQuery.exec();
+
+    while (folderIdsQuery.next())
+    {
+        folderIds << folderIdsQuery.value(0).toInt();
+    }
+
+    for (int folderId : folderIds)
+    {
+        QSqlQuery deleteQuery;
+
+        deleteQuery.prepare("DELETE FROM MessageData"
+                            " WHERE "
+                            "folderId = :folderId AND uid = :uid");
+
+        deleteQuery.bindValue(":folderId", folderId);
+        deleteQuery.bindValue(":uid", static_cast<int>(uid));
+
+        deleteQuery.exec();
+    }
+
+
+}
+
+QList<MessageMetadata> DatabaseManager::getMessageMetadataForAccount(const QString emailAddress)
+{
+    QList<int> folderIds;
+
+    QSqlQuery folderIdsQuery;
+
+    folderIdsQuery.prepare("SELECT"
+                  " id "
+                  "FROM Folders"
+                  " WHERE "
+                  " emailAddress = :emailAddress ");
+
+    folderIdsQuery.bindValue(":emailAddress", emailAddress);
+    folderIdsQuery.exec();
+
+    while (folderIdsQuery.next())
+    {
+        folderIds << folderIdsQuery.value(0).toInt();
+    }
+
+
+    QList<MessageMetadata> result;
+
+    for (int folderId : folderIds)
+    {
+        QSqlQuery metadataQuery;
+
+        metadataQuery.prepare("SELECT"
+                      " uid, isSeen "
+                      "FROM MessageData"
+                      " WHERE "
+                      " folderId = :folderId ");
+
+        metadataQuery.bindValue(":folderId", folderId);
+        metadataQuery.exec();
+
+        while (metadataQuery.next())
+        {
+            MessageMetadata metadata;
+            metadata.setUid(metadataQuery.value(0).toULongLong());
+            metadata.setIsSeen(metadataQuery.value(1).toBool());
+
+            result << metadata;
+        }
+    }
+
+    return result;
+}
+
 }

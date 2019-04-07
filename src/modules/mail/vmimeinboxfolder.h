@@ -49,6 +49,7 @@ public:
     void setData(const InboxFolder data);
 
     QList<MessageMetadata> getMessagesMetadataFromPosition(int position) const;
+    QList<MessageMetadata> getMessagesMetadata() const;
 signals:
 
 public slots:

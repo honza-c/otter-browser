@@ -30,6 +30,9 @@
 #include <QSqlField>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
+#include <QFutureWatcher>
 #include "attachment.h"
 #include "messagemetadata.h"
 #include "inboxfolder.h"
@@ -82,8 +85,17 @@ public:
     static QString getFolderPath(int folderId);
     static QString getEmailAddress(int folderId);
 
+    static void updateMessageMetadata(const QList<MessageMetadata> freshMetadataFromServer, const QString emailAddress);
+    static QList<MessageMetadata> getMessageMetadataForAccount(const QString emailAddress);
+    static void setMessageAsSeen(const unsigned long uid, const QString emailAddress);
+    static void deleteMessageFromDatabase(const unsigned long uid, const QString emailAddress);
+
     static QString getArchiveFolderPathForAccount(QString emailAddress);
     void clearDatabase();
+
+    static QFuture<QList<unsigned long>> getUidsOfSeenMessagesOnServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
+    static QFuture<QList<unsigned long>> getUidsOfMessagesDeletedFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
+    static QFuture<QList<MessageMetadata>> getMissingMessagesFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
 signals:
 
 public slots:
