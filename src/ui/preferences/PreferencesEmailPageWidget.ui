@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>876</width>
-    <height>587</height>
+    <height>806</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,191 +15,182 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QListView" name="emailAccountsListView"/>
-       </item>
-       <item>
-        <widget class="QWidget" name="accountListAndActionButtonsWidget" native="true">
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="1">
-           <widget class="QPushButton" name="removeAccountButton">
-            <property name="text">
-             <string>Remove account</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="addAccountButton">
-            <property name="text">
-             <string>Add account</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="saveChangesButton">
-            <property name="text">
-             <string>Save changes</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="discardChangesButton">
-            <property name="text">
-             <string>Discard changes</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QWidget" name="accountListAndActionButtonsWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QListView" name="emailAccountsListView"/>
+        </item>
+        <item>
+         <widget class="QWidget" name="saveAndDiscardChangesButtons" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QPushButton" name="saveChangesButton">
+             <property name="text">
+              <string>Save changes</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="discardChangesButton">
+             <property name="text">
+              <string>Discard changes</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="addAndRemoveAccountButtons" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QPushButton" name="addAccountButton">
+             <property name="text">
+              <string>Add account</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="removeAccountButton">
+             <property name="text">
+              <string>Remove account</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item>
       <widget class="QWidget" name="emailAccountDetailsWidget" native="true">
-       <layout class="QGridLayout" name="emailAccountsDetailsGridBox">
-        <item row="5" column="2">
-         <widget class="QComboBox" name="incomingServerTypeApplicationComboBox"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="accountNameLabel">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="4" column="0">
+         <widget class="QLabel" name="imapServerUrlLabel">
           <property name="text">
-           <string>Account name:</string>
+           <string>IMAP server URL:</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="2">
-         <widget class="Otter::LineEditWidget" name="incomingServerUrlLineEditWidget"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="emailAddressLabel">
-          <property name="text">
-           <string>Email address:</string>
-          </property>
-         </widget>
+        <item row="4" column="1">
+         <widget class="Otter::LineEditWidget" name="imapServerUrlLineEditWidget"/>
         </item>
         <item row="5" column="0">
-         <widget class="QLabel" name="incomingServerTypeLabel">
+         <widget class="QLabel" name="imapServerPortLabel">
           <property name="text">
-           <string>Incoming server type:</string>
+           <string>IMAP server port:</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="2">
-         <widget class="Otter::LineEditWidget" name="passwordLineEditWidget">
-          <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="smtpServerUrlLabel">
-          <property name="text">
-           <string>SMTP server URL:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="2">
-         <widget class="QSpinBox" name="incomingServerPortSpinBox">
-          <property name="maximum">
-           <number>65535</number>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="2">
-         <widget class="Otter::LineEditWidget" name="smtpServerUrlLineEditWidget"/>
-        </item>
-        <item row="1" column="2">
-         <widget class="Otter::LineEditWidget" name="yourNameLineEditWidget"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="userNameLabel">
-          <property name="text">
-           <string>User name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="Otter::LineEditWidget" name="userNameLineEditWidget">
-          <property name="placeholderText">
-           <string>Mostly same as the email address</string>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="0" colspan="2">
-         <widget class="QLabel" name="smtpServerPortLabel">
-          <property name="text">
-           <string>SMTP server port:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="incomingServerPort">
-          <property name="text">
-           <string>Incoming server port:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="yourNameLabel">
-          <property name="text">
-           <string>Your name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="2">
-         <widget class="Otter::LineEditWidget" name="emailAddressLineEditWidget"/>
-        </item>
-        <item row="9" column="2">
-         <widget class="QSpinBox" name="smtpServerPortSpinBox">
+        <item row="5" column="1">
+         <widget class="QSpinBox" name="imapServerPortSpinBox">
           <property name="maximum">
            <number>65535</number>
           </property>
          </widget>
         </item>
         <item row="6" column="0">
-         <widget class="QLabel" name="incomingServerUrlLabel">
+         <widget class="QLabel" name="smtpServerUrlLabel">
           <property name="text">
-           <string>Incoming server URL:</string>
+           <string>SMTP server URL:</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
+        <item row="7" column="0">
+         <widget class="QLabel" name="smtpServerPortLabel">
+          <property name="text">
+           <string>SMTP server port:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QSpinBox" name="smtpServerPortSpinBox">
+          <property name="maximum">
+           <number>65535</number>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="Otter::LineEditWidget" name="smtpServerUrlLineEditWidget"/>
+        </item>
+        <item row="3" column="1">
+         <widget class="Otter::LineEditWidget" name="passwordLineEditWidget">
+          <property name="echoMode">
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="Otter::LineEditWidget" name="yourNameLineEditWidget"/>
+        </item>
+        <item row="3" column="0">
          <widget class="QLabel" name="passwordLabel">
           <property name="text">
            <string>Password:</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="2">
+        <item row="2" column="1">
+         <widget class="Otter::LineEditWidget" name="userNameLineEditWidget">
+          <property name="placeholderText">
+           <string>Mostly same as the email address</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="Otter::LineEditWidget" name="emailAddressLineEditWidget"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="emailAddressLabel">
+          <property name="text">
+           <string>Email address:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="yourNameLabel">
+          <property name="text">
+           <string>Your name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="userNameLabel">
+          <property name="text">
+           <string>User name:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -211,9 +202,6 @@
            </size>
           </property>
          </spacer>
-        </item>
-        <item row="0" column="2">
-         <widget class="Otter::LineEditWidget" name="accountNameLineEditWidget"/>
         </item>
        </layout>
       </widget>

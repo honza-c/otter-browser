@@ -42,7 +42,9 @@ public:
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
     bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
 
-    void addAccount(UserAccount account);
+    void addAccount(const UserAccount account);
+    void removeAccount(const int row);
+    void replaceAccount(const UserAccount account, const QModelIndex index);
 
 private:
 

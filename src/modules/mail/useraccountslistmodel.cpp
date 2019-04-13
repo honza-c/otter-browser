@@ -64,8 +64,6 @@ bool UserAccountsListModel::removeRows(int position, int rows, const QModelIndex
 
     m_data->removeAt(position);
 
-    // TODO: save changes and reinitialize accounts
-
     endRemoveRows();
 
     return true;
@@ -77,17 +75,29 @@ bool UserAccountsListModel::insertRows(int position, int rows, const QModelIndex
 
     m_data->insert(position, m_userAccountToAdd);
 
-    // TODO: save changes and reinitialize accounts
-
     endInsertRows();
 
     return true;
 }
 
-void UserAccountsListModel::addAccount(UserAccount account)
+void UserAccountsListModel::addAccount(const UserAccount account)
 {
     m_userAccountToAdd = account;
     insertRows(rowCount(), 1);
+}
+
+void UserAccountsListModel::removeAccount(const int row)
+{
+    removeRows(row, 1, QModelIndex());
+}
+
+void UserAccountsListModel::replaceAccount(const UserAccount account, const QModelIndex index)
+{
+    if (index.isValid() && index.row() <= rowCount())
+    {
+        m_data->replace(index.row(), account);
+        emit dataChanged(index, index);
+    }
 }
 
 }
