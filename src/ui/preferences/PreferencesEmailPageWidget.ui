@@ -217,6 +217,21 @@
    <header>src/ui/LineEditWidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>emailAccountsListView</tabstop>
+  <tabstop>saveChangesButton</tabstop>
+  <tabstop>discardChangesButton</tabstop>
+  <tabstop>addAccountButton</tabstop>
+  <tabstop>removeAccountButton</tabstop>
+  <tabstop>yourNameLineEditWidget</tabstop>
+  <tabstop>emailAddressLineEditWidget</tabstop>
+  <tabstop>userNameLineEditWidget</tabstop>
+  <tabstop>passwordLineEditWidget</tabstop>
+  <tabstop>imapServerUrlLineEditWidget</tabstop>
+  <tabstop>imapServerPortSpinBox</tabstop>
+  <tabstop>smtpServerUrlLineEditWidget</tabstop>
+  <tabstop>smtpServerPortSpinBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
