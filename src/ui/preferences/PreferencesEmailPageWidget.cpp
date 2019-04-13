@@ -123,13 +123,13 @@ void Otter::PreferencesEmailPageWidget::on_saveChangesButton_clicked()
         m_emailAccountsListModel->addAccount(account);
         m_creatingNewAccountMode = false;
         m_ui->emailAccountsListView->setCurrentIndex(m_emailAccountsListModel->index(m_emailAccountsListModel->rowCount() - 1, 0, QModelIndex()));
-        // TODO: apply change in EmailAccountsManager class
+        EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
     }
     else
     {
         QModelIndex index = m_ui->emailAccountsListView->selectionModel()->selectedIndexes().first();
         m_emailAccountsListModel->replaceAccount(account, index);
-        // TODO: apply change in EmailAccountsManager class
+        EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
     }
 
     deactivateEditMode();
@@ -156,7 +156,7 @@ void Otter::PreferencesEmailPageWidget::on_discardChangesButton_clicked()
     {
         m_creatingNewAccountMode = false;
         m_emailAccountsListModel->removeAccount(m_emailAccountsListModel->rowCount() - 1);
-        // TODO: apply change in EmailAccountsManager class
+        EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
 
         if (m_emailAccountsListModel->rowCount() > 0)
         {
@@ -231,7 +231,7 @@ void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
         if (messageBox.exec())
         {
             m_emailAccountsListModel->removeRows(accountIndex, 1);
-            // TODO: apply change in EmailAccountsManager class
+            EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
         }
 
         if (m_emailAccountsListModel->rowCount() > 0)

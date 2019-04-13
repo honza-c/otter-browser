@@ -40,6 +40,7 @@ public:
     static void createInstance();
     static EmailAccountsManager* getInstance();
     static QList<UserAccount>& getEmailAccounts();
+    static void updateEmailAccountsConfiguration(const QList<UserAccount> accounts);
 
 protected:
     explicit EmailAccountsManager(QObject *parent);

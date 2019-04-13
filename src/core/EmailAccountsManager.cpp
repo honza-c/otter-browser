@@ -76,10 +76,15 @@ bool EmailAccountsManager::loadEmailAccounts(const QString &path)
         m_emailAccounts << readFromJson(jsonArray[i].toObject());
     }
 
+    QList<QString> emailAddresses;
+
     for (UserAccount &account : m_emailAccounts)
     {
         account.initializeInbox();
+        emailAddresses << account.emailAddress();
     }
+
+    DatabaseManager::cleanUnusedDataFromDatabase(emailAddresses);
 
     return true;
 }
@@ -165,6 +170,25 @@ UserAccount EmailAccountsManager::readFromJson(const QJsonObject json)
     }
 
     return account;
+}
+
+void EmailAccountsManager::updateEmailAccountsConfiguration(const QList<UserAccount> accounts)
+{
+    if (m_instance)
+    {
+        m_emailAccounts = accounts;
+        saveEmailAccounts(SessionsManager::getWritableDataPath(QLatin1String("emailAccounts.json")));
+
+        QList<QString> emailAddresses;
+
+        for (UserAccount &account : m_emailAccounts)
+        {
+            account.initializeInbox();
+            emailAddresses << account.emailAddress();
+        }
+
+        DatabaseManager::cleanUnusedDataFromDatabase(emailAddresses);
+    }
 }
 
 }
