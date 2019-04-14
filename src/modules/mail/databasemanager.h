@@ -46,7 +46,9 @@ class DatabaseManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit DatabaseManager(QString databaseFileName, QObject *parent = nullptr);
+    static void createInstance();
+    static DatabaseManager *getInstance();
+
     static int getFolderId(const QString emailAddress, const QString folderPath);
     static QString getHtmlContent(const int messageId);
     static QString getTextContent(const int messageId);
@@ -91,26 +93,31 @@ public:
     static void deleteMessageFromDatabase(const unsigned long uid, const QString emailAddress);
 
     static QString getArchiveFolderPathForAccount(QString emailAddress);
-    void clearDatabase();
+    static void clearDatabase();
 
     static QFuture<QList<unsigned long>> getUidsOfSeenMessagesOnServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
     static QFuture<QList<unsigned long>> getUidsOfMessagesDeletedFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
     static QFuture<QList<MessageMetadata>> getMissingMessagesFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
 signals:
+    void inboxFoldersStructureChanged();
 
 public slots:
 
 private:
-    bool checkDatabaseStructure();
-    bool checkTableStructure(QString tableName);
-    bool checkTableStructure(QSqlRecord tableRecord, QStringList tableFields);
-    void initializeDatabaseStructure();
+    explicit DatabaseManager(QObject *parent = nullptr);
 
-    QSqlDatabase m_database;
-    QString m_databaseFileName;
-    QStringList m_tableNames;
-    QStringList m_mailFolderTableFields;
-    QStringList m_messageDataTableFields;
+    static bool checkDatabaseStructure();
+    static bool checkTableStructure(QString tableName);
+    static bool checkTableStructure(QSqlRecord tableRecord, QStringList tableFields);
+    static void initializeDatabaseStructure();
+
+    static DatabaseManager *m_instance;
+
+    static QSqlDatabase m_database;
+    static QString m_databaseFileName;
+    static QStringList m_tableNames;
+    static QStringList m_mailFolderTableFields;
+    static QStringList m_messageDataTableFields;
 };
 
 }

@@ -20,31 +20,58 @@
 **************************************************************************/
 
 #include "databasemanager.h"
+#include "../../core/SessionsManager.h"
 
 namespace Otter
 {
 
-DatabaseManager::DatabaseManager(QString databaseFileName, QObject *parent)
-    : QObject(parent)
+DatabaseManager* DatabaseManager::m_instance = nullptr;
+QSqlDatabase DatabaseManager::m_database = QSqlDatabase();
+QString DatabaseManager::m_databaseFileName = QString();
+QStringList DatabaseManager::m_tableNames = QStringList();
+QStringList DatabaseManager::m_mailFolderTableFields = QStringList();
+QStringList DatabaseManager::m_messageDataTableFields = QStringList();
+
+DatabaseManager::DatabaseManager(QObject *parent) : QObject(parent)
 {
-    m_databaseFileName = databaseFileName;
+}
 
-    m_tableNames << "Folders" << "MessageData";
-
-    m_mailFolderTableFields << "id" << "emailAddress" << "path" << "isAllMessages" << "isArchive"
-                            << "isDrafts" << "isJunk" << "isSent" << "isTrash";
-
-    m_messageDataTableFields << "id" << "folderId" << "uid" << "isSeen" << "isDraft"
-                              << "date" << "sender" << "size" << "subject"
-                              << "recipients" << "copyRecipients" << "plainTextContent" << "htmlContent"
-                              << "attachments" << "embeddedObjects" << "replyToRecipients";
-
-    if (!checkDatabaseStructure())
+void DatabaseManager::createInstance()
+{
+    if (!m_instance)
     {
-        initializeDatabaseStructure();
+        m_instance = new DatabaseManager();
+        m_databaseFileName = SessionsManager::getWritableDataPath(QLatin1String("emailDatabase.sqlite"));
+
+        m_tableNames << "Folders" << "MessageData";
+
+        m_mailFolderTableFields << "id" << "emailAddress" << "path" << "isAllMessages" << "isArchive"
+                                << "isDrafts" << "isJunk" << "isSent" << "isTrash";
+
+        m_messageDataTableFields << "id" << "folderId" << "uid" << "isSeen" << "isDraft"
+                                  << "date" << "sender" << "size" << "subject"
+                                  << "recipients" << "copyRecipients" << "plainTextContent" << "htmlContent"
+                                  << "attachments" << "embeddedObjects" << "replyToRecipients";
+
+        if (!checkDatabaseStructure())
+        {
+            initializeDatabaseStructure();
+        }
     }
 }
 
+DatabaseManager* DatabaseManager::getInstance()
+{
+    if (m_instance == nullptr)
+    {
+        createInstance();
+        return m_instance;
+    }
+    else
+    {
+        return m_instance;
+    }
+}
 
 void DatabaseManager::initializeDatabaseStructure()
 {
@@ -97,6 +124,11 @@ void DatabaseManager::initializeDatabaseStructure()
 
 bool DatabaseManager::checkDatabaseStructure()
 {
+    if (!m_instance)
+    {
+        createInstance();
+    }
+
     if (!QFile::exists(m_databaseFileName))
     {
         return false;
@@ -602,6 +634,8 @@ void DatabaseManager::deleteFolderFromDatabase(const QString emailAddress, const
     deleteFolderQuery.bindValue(":path", path);
 
     deleteFolderQuery.exec();
+
+    emit getInstance()->inboxFoldersStructureChanged();
 }
 
 void DatabaseManager::addFolderToDatabase(const InboxFolder folder)
@@ -623,6 +657,8 @@ void DatabaseManager::addFolderToDatabase(const InboxFolder folder)
     query.bindValue(":isTrash", folder.isTrash());
 
     query.exec();
+
+    emit getInstance()->inboxFoldersStructureChanged();
 }
 
 int DatabaseManager::getMessagesCountForFolder(const QString emailAddress, const QString path)
@@ -790,6 +826,11 @@ void DatabaseManager::cleanUnusedDataFromDatabase(const QStringList emailAddress
                              "id = :folderId");
         foldersQuery.bindValue(":folderId", folderId);
         foldersQuery.exec();
+    }
+
+    if (!unusedFolderIds.empty())
+    {
+        emit getInstance()->inboxFoldersStructureChanged();
     }
 }
 

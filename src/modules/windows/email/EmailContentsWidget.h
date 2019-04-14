@@ -67,7 +67,7 @@ private slots:
     void renameFolderActionTriggered(bool);
     void returnToInboxRequested();
     void replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int);
-
+    void inboxFoldersStructureChanged();
 
     void on_getMessagesButton_clicked();
     void on_writeMessageButton_clicked();

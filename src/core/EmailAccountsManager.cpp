@@ -38,7 +38,7 @@ void EmailAccountsManager::createInstance()
     if (!m_instance)
     {
         m_instance = new EmailAccountsManager(QCoreApplication::instance());
-        m_databaseManager = new DatabaseManager(SessionsManager::getWritableDataPath(QLatin1String("emailDatabase.sqlite")));
+        m_databaseManager = DatabaseManager::getInstance();
         loadEmailAccounts(SessionsManager::getWritableDataPath(QLatin1String("emailAccounts.json")));
     }
 }

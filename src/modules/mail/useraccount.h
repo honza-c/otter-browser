@@ -129,7 +129,6 @@ private:
     VmimeInboxService *m_inboxService;
 
 signals:
-    void inboxStructureChanged();
     void messageContentFetched(int);
     void newMessagesReceived(QString, int);
 

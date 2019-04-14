@@ -53,6 +53,8 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     m_ui->getMessagesButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send-receive"), false));
     m_ui->writeMessageButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send"), false));
 
+    connect(DatabaseManager::getInstance(), SIGNAL(inboxFoldersStructureChanged()), this, SLOT(inboxFoldersStructureChanged()));
+
     if (isSidebarPanel())
     {
         m_ui->emailTabWidget->setVisible(false);
@@ -103,6 +105,14 @@ void EmailContentsWidget::on_getMessagesButton_clicked()
     {
         account.initializeInbox();
     }
+}
+
+void EmailContentsWidget::inboxFoldersStructureChanged()
+{
+    InboxFolderTreeModel *model = new InboxFolderTreeModel(DatabaseManager::getInboxFolders());
+    m_ui->inboxFoldersTreeView->setModel(model);
+    m_ui->inboxFoldersTreeView->expandAll();
+    connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
 }
 
 void EmailContentsWidget::on_writeMessageButton_clicked()

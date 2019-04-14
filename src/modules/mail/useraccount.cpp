@@ -210,8 +210,6 @@ void UserAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
             DatabaseManager::addFolderToDatabase(folder);
         }
     }
-
-    emit inboxStructureChanged();
 }
 
 void UserAccount::initializeInbox()
