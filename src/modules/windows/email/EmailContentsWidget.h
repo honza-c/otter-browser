@@ -80,6 +80,8 @@ private:
     QString getFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);
     QString getFullFolderPathFromFolderTreeItemIndex(QModelIndex currentIndex);
 
+    int m_unreadMessagesCount = 0;
+
     Window *m_window;
     Ui::EmailContentsWidget *m_ui;
 };
