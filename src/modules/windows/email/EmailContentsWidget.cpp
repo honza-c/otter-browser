@@ -71,6 +71,7 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
         connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
         connect(m_ui->writeEmailWidget, SIGNAL(returnToInboxRequested()), this, SLOT(returnToInboxRequested()));
         connect(m_ui->emailContentReaderWidget, SIGNAL(replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int)), this, SLOT(replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int)));
+        connect(DatabaseManager::getInstance(), SIGNAL(messagesMetadataStructureChanged()), this, SLOT(messagesMetadataStructureChanged()));
     }
 }
 
@@ -113,6 +114,11 @@ void EmailContentsWidget::inboxFoldersStructureChanged()
     m_ui->inboxFoldersTreeView->setModel(model);
     m_ui->inboxFoldersTreeView->expandAll();
     connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
+}
+
+void EmailContentsWidget::messagesMetadataStructureChanged()
+{
+    m_ui->emailContentReaderWidget->messagesMetadataStructureChanged();
 }
 
 void EmailContentsWidget::on_writeMessageButton_clicked()

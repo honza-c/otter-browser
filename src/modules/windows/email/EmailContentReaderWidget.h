@@ -48,6 +48,8 @@ public:
     explicit EmailContentReaderWidget(QWidget *parent = 0);
     ~EmailContentReaderWidget();
 
+    void messagesMetadataStructureChanged();
+
 signals:
     void replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int);
 

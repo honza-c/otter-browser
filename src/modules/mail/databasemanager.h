@@ -100,6 +100,7 @@ public:
     static QFuture<QList<MessageMetadata>> getMissingMessagesFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
 signals:
     void inboxFoldersStructureChanged();
+    void messagesMetadataStructureChanged();
 
 public slots:
 

@@ -1191,7 +1191,11 @@ void DatabaseManager::updateMessageMetadata(const QList<MessageMetadata> freshMe
         {
             DatabaseManager::setMessageAsSeen(uid, emailAddress);
         }
-        // TODO: refresh GUI
+
+        if (!getUidsOfSeenMessagesOnServerFuture.result().isEmpty())
+        {
+            emit m_instance->messagesMetadataStructureChanged();
+        }
     });
 
     getUidsOfSeenMessagesOnServerFutureWatcher->setFuture(getUidsOfSeenMessagesOnServerFuture);
@@ -1206,7 +1210,11 @@ void DatabaseManager::updateMessageMetadata(const QList<MessageMetadata> freshMe
         {
             DatabaseManager::deleteMessageFromDatabase(uid, emailAddress);
         }
-        // TODO: refresh GUI
+
+        if (!getUidsOfMessagesDeletedFromServerFuture.result().isEmpty())
+        {
+            emit m_instance->messagesMetadataStructureChanged();
+        }
     });
 
     getUidsOfMessagesDeletedFromServerFutureWatcher->setFuture(getUidsOfMessagesDeletedFromServerFuture);
@@ -1229,7 +1237,10 @@ void DatabaseManager::updateMessageMetadata(const QList<MessageMetadata> freshMe
 
         DatabaseManager::addMessagesMetadataToDatabase(getMissingMessagesFromServerFuture.result());
 
-        // TODO: refresh GUI
+        if (!getMissingMessagesFromServerFuture.result().isEmpty())
+        {
+            emit m_instance->messagesMetadataStructureChanged();
+        }
     });
 
     getMissingMessagesFromServerFutureWatcher->setFuture(getMissingMessagesFromServerFuture);

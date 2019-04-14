@@ -597,5 +597,10 @@ void EmailContentReaderWidget::deleteMessageActionTriggered(bool)
     // TODO:
 }
 
+void EmailContentReaderWidget::messagesMetadataStructureChanged()
+{
+    static_cast<QSqlTableModel>(m_ui->messageMetadataTableView->model()).select();
+}
+
 }
 

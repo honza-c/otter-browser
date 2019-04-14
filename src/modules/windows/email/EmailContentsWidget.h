@@ -68,6 +68,7 @@ private slots:
     void returnToInboxRequested();
     void replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int);
     void inboxFoldersStructureChanged();
+    void messagesMetadataStructureChanged();
 
     void on_getMessagesButton_clicked();
     void on_writeMessageButton_clicked();
