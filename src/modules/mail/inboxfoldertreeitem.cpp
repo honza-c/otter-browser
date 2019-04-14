@@ -80,4 +80,9 @@ InboxFolderTreeItem *InboxFolderTreeItem::parentItem()
     return m_parentItem;
 }
 
+void InboxFolderTreeItem::setData(QList<QVariant> data)
+{
+    m_itemData = data;
+}
+
 }

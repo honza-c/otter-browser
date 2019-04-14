@@ -119,6 +119,7 @@ void EmailContentsWidget::inboxFoldersStructureChanged()
 void EmailContentsWidget::messagesMetadataStructureChanged()
 {
     m_ui->emailContentReaderWidget->messagesMetadataStructureChanged();
+    static_cast<InboxFolderTreeModel*>(m_ui->inboxFoldersTreeView->model())->updateCountOfUnreadMessages();
 }
 
 void EmailContentsWidget::on_writeMessageButton_clicked()

@@ -273,4 +273,76 @@ Qt::ItemFlags InboxFolderTreeModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index);
 }
 
+void InboxFolderTreeModel::updateCountOfUnreadMessages()
+{
+    QList<InboxFolderTreeItem*> leavesNodes = getListOfLeavesNodes(m_rootItem);
+
+    for (InboxFolderTreeItem* item : leavesNodes)
+    {
+        QString path;
+
+        path.append(item->data(0).toString());
+
+        InboxFolderTreeItem *parent = item;
+
+        while (parent->parentItem() != nullptr)
+        {
+            parent = parent->parentItem();
+            path.append("/");
+            path.append(parent->data(0).toString());
+        }
+
+        QString emailAddress;
+        QString pathInDatabase = "/";
+
+        QStringList tokens = path.split("/");
+        int tokensCount = tokens.count();
+
+        emailAddress = tokens.at(tokensCount - 2);
+
+
+        for (int i = tokensCount - 3; i >= 0; i--)
+        {
+            pathInDatabase.append(tokens.at(i));
+
+            if (i != 0)
+            {
+                pathInDatabase.append("/");
+            }
+
+        }
+
+        QList<QVariant> newData;
+        newData << item->data(0) << item->data(1) << DatabaseManager::getCountOfUnreadMessagesForFolder(emailAddress, pathInDatabase);
+        item->setData(newData);
+    }
+}
+
+QList<InboxFolderTreeItem*> InboxFolderTreeModel::getListOfLeavesNodes(InboxFolderTreeItem* parent)
+{
+    QList<InboxFolderTreeItem*> leaves;
+
+    for (int i = 0; i < parent->childCount(); i++)
+    {
+        if (parent->child(i)->childCount() == 0)
+        {
+            if (parent->child(i)->parentItem() != m_rootItem)
+            {
+                leaves << parent->child(i);
+            }
+        }
+        else
+        {
+            if (parent->child(i)->parentItem() != m_rootItem)
+            {
+                leaves << parent->child(i);
+            }
+
+            leaves << getListOfLeavesNodes(parent->child(i));
+        }
+    }
+
+    return leaves;
+}
+
 }

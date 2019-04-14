@@ -45,10 +45,14 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
+    void updateCountOfUnreadMessages();
+
 private:
     void createFolderTreeStructure(QList<InboxFolder> data);
     int getLevel(const QString path) const;
     QString getNameFromPath(const QString path) const;
+
+    QList<InboxFolderTreeItem*> getListOfLeavesNodes(InboxFolderTreeItem* parent);
 
     InboxFolderTreeItem *m_rootItem;
 };

@@ -42,6 +42,7 @@ public:
     QVariant data(int column) const;
     int row() const;
     InboxFolderTreeItem *parentItem();
+    void setData(QList<QVariant> data);
 
 signals:
 
