@@ -146,8 +146,8 @@ QJsonObject EmailAccountsManager::writeToJson(const EmailAccount account)
     json[QLatin1String("password")] = account.password();
     json[QLatin1String("smtpServerUrl")] = account.smtpServerUrl();
     json[QLatin1String("smtpServerPort")] = QString::number(account.smtpServerPort());
-    json[QLatin1String("imapServerAddress")] = account.incomingServerAddress();
-    json[QLatin1String("imapServerPort")] = QString::number(account.incomingServerPort());
+    json[QLatin1String("imapServerAddress")] = account.imapServerAddress();
+    json[QLatin1String("imapServerPort")] = QString::number(account.imapServerPort());
 
     return json;
 }
@@ -162,10 +162,8 @@ EmailAccount EmailAccountsManager::readFromJson(const QJsonObject json)
     account.setPassword(json[QLatin1String("password")].toString());
     account.setSmtpServerUrl(json[QLatin1String("smtpServerUrl")].toString());
     account.setSmtpServerPort(json[QLatin1String("smtpServerPort")].toString().toInt());
-    account.setIncomingServerAddress(json[QLatin1String("imapServerAddress")].toString());
-    account.setIncomingServerPort(json[QLatin1String("imapServerPort")].toString().toInt());
-
-    account.setIncomingServerType(EmailAccount::IncomingServerType::IMAP);
+    account.setImapServerAddress(json[QLatin1String("imapServerAddress")].toString());
+    account.setImapServerPort(json[QLatin1String("imapServerPort")].toString().toInt());
 
     return account;
 }

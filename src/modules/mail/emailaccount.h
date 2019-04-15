@@ -34,7 +34,6 @@
 #include "message.h"
 #include "vmimesmtpservice.h"
 #include "messagecontent.h"
-#include "vmimepop3service.h"
 
 namespace Otter
 {
@@ -47,8 +46,6 @@ public:
     EmailAccount(const EmailAccount &other);
     EmailAccount &operator=(const EmailAccount &other);
 
-    enum IncomingServerType { POP3, IMAP };
-
     struct connectionSettingsHolder
     {
         QString contactName;
@@ -57,13 +54,9 @@ public:
         QString password;
         QString smtpServerUrl;
         int smtpServerPort;
-        IncomingServerType incomingServerType;
-        QString incomingServerAddress;
-        int incomingServerPort;
+        QString imapServerAddress;
+        int imapServerPort;
     };
-
-    QString accountName() const;
-    void setAccountName(const QString accountName);
 
     QString contactName() const;
     void setContactName(const QString contactName);
@@ -83,14 +76,11 @@ public:
     int smtpServerPort() const;
     void setSmtpServerPort(const int smtpServerPort);
 
-    IncomingServerType incomingServerType() const;
-    void setIncomingServerType(const IncomingServerType type);
+    QString imapServerAddress() const;
+    void setImapServerAddress(const QString imapServerAddress);
 
-    QString incomingServerAddress() const;
-    void setIncomingServerAddress(const QString incomingServerAddress);
-
-    int incomingServerPort() const;
-    void setIncomingServerPort(const int incomingServerPort);
+    int imapServerPort() const;
+    void setImapServerPort(const int imapServerPort);
 
     void fetchStoreContent();
     QFuture<QList<InboxFolder>> fetchInboxFolders();
@@ -106,14 +96,12 @@ public:
     void moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
 
 private:
-    QFuture<QList<MessageMetadata>> fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb);
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
     void updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent);
 
     connectionSettingsHolder getConnectionSettings() const;
 
-    QString m_accountName;
     QString m_contactName;
     QString m_userName;
     QString m_emailAddress;
@@ -122,11 +110,10 @@ private:
     QString m_smtpServerUrl;
     int m_smtpServerPort;
 
-    IncomingServerType m_incomingServerType;
-    QString m_incomingServerAddress;
-    int m_incomingServerPort;
+    QString m_imapServerAddress;
+    int m_imapServerPort;
 
-    VmimeInboxService *m_inboxService;
+    VmimeImapService *m_imapService;
 
 signals:
     void messageContentFetched(int);

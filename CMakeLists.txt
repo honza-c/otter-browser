@@ -263,7 +263,6 @@ set(otter_src
         src/modules/mail/vmimeinboxservice.cpp
         src/modules/mail/vmimemessagecontentparser.cpp
         src/modules/mail/vmimemessagemetadataparser.cpp
-        src/modules/mail/vmimepop3service.cpp
         src/modules/mail/vmimesmtpservice.cpp
 	src/modules/widgets/action/ActionWidget.cpp
 	src/modules/widgets/address/AddressWidget.cpp

@@ -28,55 +28,36 @@ EmailAccount::EmailAccount(QObject *parent)
     : QObject (parent)
 {
     m_smtpServerPort = 0;
-    m_incomingServerPort = 0;
+    m_imapServerPort = 0;
 }
 
 EmailAccount::EmailAccount(const EmailAccount &other)
 {
-    m_accountName = other.m_accountName;
     m_contactName = other.m_contactName;
     m_emailAddress = other.m_emailAddress;
     m_userName = other.m_userName;
     m_password = other.m_password;
-
     m_smtpServerUrl = other.m_smtpServerUrl;
     m_smtpServerPort = other.m_smtpServerPort;
+    m_imapServerAddress = other.m_imapServerAddress;
+    m_imapServerPort = other.m_imapServerPort;
 
-    m_incomingServerType = other.m_incomingServerType;
-    m_incomingServerAddress = other.m_incomingServerAddress;
-    m_incomingServerPort = other.m_incomingServerPort;
-
-    m_inboxService = other.m_inboxService;
+    m_imapService = other.m_imapService;
 }
 
 EmailAccount& EmailAccount::operator=(const EmailAccount &other)
 {
-    m_accountName = other.m_accountName;
     m_contactName = other.m_contactName;
     m_emailAddress = other.m_emailAddress;
     m_userName = other.m_userName;
     m_password = other.m_password;
-
     m_smtpServerUrl = other.m_smtpServerUrl;
     m_smtpServerPort = other.m_smtpServerPort;
-
-    m_incomingServerType = other.m_incomingServerType;
-    m_incomingServerAddress = other.m_incomingServerAddress;
-    m_incomingServerPort = other.m_incomingServerPort;
-
-    m_inboxService = other.m_inboxService;
+    m_imapServerAddress = other.m_imapServerAddress;
+    m_imapServerPort = other.m_imapServerPort;
+    m_imapService = other.m_imapService;
 
     return *this;
-}
-
-QString EmailAccount::accountName() const
-{
-    return m_accountName;
-}
-
-void EmailAccount::setAccountName(QString accountName)
-{
-    m_accountName = accountName;
 }
 
 QString EmailAccount:: contactName() const
@@ -139,34 +120,24 @@ void EmailAccount::setSmtpServerPort(int smtpServerPort)
     m_smtpServerPort = smtpServerPort;
 }
 
-EmailAccount::IncomingServerType EmailAccount::incomingServerType() const
+QString EmailAccount::imapServerAddress() const
 {
-    return m_incomingServerType;
+    return m_imapServerAddress;
 }
 
-void EmailAccount::setIncomingServerType(IncomingServerType type)
+void EmailAccount:: setImapServerAddress(QString incomingServerAddress)
 {
-    m_incomingServerType = type;
+    m_imapServerAddress = incomingServerAddress;
 }
 
-QString EmailAccount::incomingServerAddress() const
+int EmailAccount::imapServerPort() const
 {
-    return m_incomingServerAddress;
+    return m_imapServerPort;
 }
 
-void EmailAccount:: setIncomingServerAddress(QString incomingServerAddress)
+void EmailAccount::setImapServerPort(int incomingServerPort)
 {
-    m_incomingServerAddress = incomingServerAddress;
-}
-
-int EmailAccount::incomingServerPort() const
-{
-    return m_incomingServerPort;
-}
-
-void EmailAccount::setIncomingServerPort(int incomingServerPort)
-{
-    m_incomingServerPort = incomingServerPort;
+    m_imapServerPort = incomingServerPort;
 }
 
 void EmailAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
@@ -222,31 +193,15 @@ QFuture<QList<InboxFolder>> EmailAccount::fetchInboxFolders()
     auto fetchInboxFoldersWorker = [](
             const connectionSettingsHolder settings)
     {
-        VmimeInboxService *inboxService = nullptr;
+        VmimeInboxService *inboxService = new VmimeImapService();
 
-        if (settings.incomingServerType == EmailAccount::IMAP)
-        {
-            inboxService = new VmimeImapService();
-        }
-        else if (settings.incomingServerType == EmailAccount::POP3)
-        {
-            inboxService = new VmimePop3Service();
-        }
+        inboxService->setEmailAddress(settings.emailAddress);
+        inboxService->setUserName(settings.userName);
+        inboxService->setPassword(settings.password);
+        inboxService->setServerUrl(settings.imapServerAddress);
+        inboxService->setPort(settings.imapServerPort);
 
-        if (inboxService != nullptr)
-        {
-            inboxService->setEmailAddress(settings.emailAddress);
-            inboxService->setUserName(settings.userName);
-            inboxService->setPassword(settings.password);
-            inboxService->setServerUrl(settings.incomingServerAddress);
-            inboxService->setPort(settings.incomingServerPort);
-
-            return inboxService->fetchInboxFolders();
-        }
-        else
-        {
-            return QList<InboxFolder>();
-        }
+        return inboxService->fetchInboxFolders();
     };
 
     return QtConcurrent::run(fetchInboxFoldersWorker, getConnectionSettings());
@@ -260,30 +215,17 @@ QFuture<bool> EmailAccount::moveMessageThread(const QString sourceFolderPath, co
             const int messageId,
             const QString destinationFolderPath)
     {
-        VmimeInboxService *inboxService = nullptr;
+        VmimeInboxService *inboxService = new VmimeImapService();
 
-        if (settings.incomingServerType == EmailAccount::IMAP)
-        {
-            inboxService = new VmimeImapService();
-        }
-        else if (settings.incomingServerType == EmailAccount::POP3)
-        {
-            inboxService = new VmimePop3Service();
-        }
+        inboxService->setEmailAddress(settings.emailAddress);
+        inboxService->setUserName(settings.userName);
+        inboxService->setPassword(settings.password);
+        inboxService->setServerUrl(settings.imapServerAddress);
+        inboxService->setPort(settings.imapServerPort);
 
-        if (inboxService != nullptr)
-        {
-            inboxService->setEmailAddress(settings.emailAddress);
-            inboxService->setUserName(settings.userName);
-            inboxService->setPassword(settings.password);
-            inboxService->setServerUrl(settings.incomingServerAddress);
-            inboxService->setPort(settings.incomingServerPort);
+        inboxService->moveMessage(sourceFolderPath, messageId, destinationFolderPath);
 
-            inboxService->moveMessage(sourceFolderPath, messageId, destinationFolderPath);
-
-            return true;
-        }
-        return false;
+        return true;
     };
 
     return QtConcurrent::run(moveMessageWorker, getConnectionSettings(), sourceFolderPath, messageId, destinationFolderPath);
@@ -337,8 +279,8 @@ QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadata()
         imapService.setEmailAddress(settings.emailAddress);
         imapService.setUserName(settings.userName);
         imapService.setPassword(settings.password);
-        imapService.setServerUrl(settings.incomingServerAddress);
-        imapService.setPort(settings.incomingServerPort);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
 
         return imapService.fetchMessagesMetadata();
     };
@@ -387,31 +329,15 @@ QFuture<MessageContent> EmailAccount::fetchMessageContent(QString folderPath, in
             const QString folderPath,
             const int positionInFolder)
     {
-        VmimeInboxService *inboxService = nullptr;
+        VmimeInboxService *inboxService = new VmimeImapService();
 
-        if (settings.incomingServerType == EmailAccount::IMAP)
-        {
-            inboxService = new VmimeImapService();
-        }
-        else if (settings.incomingServerType == EmailAccount::POP3)
-        {
-            inboxService = new VmimePop3Service();
-        }
+        inboxService->setEmailAddress(settings.emailAddress);
+        inboxService->setUserName(settings.userName);
+        inboxService->setPassword(settings.password);
+        inboxService->setServerUrl(settings.imapServerAddress);
+        inboxService->setPort(settings.imapServerPort);
 
-        if (inboxService != nullptr)
-        {
-            inboxService->setEmailAddress(settings.emailAddress);
-            inboxService->setUserName(settings.userName);
-            inboxService->setPassword(settings.password);
-            inboxService->setServerUrl(settings.incomingServerAddress);
-            inboxService->setPort(settings.incomingServerPort);
-
-            return inboxService->fetchMessageContent(folderPath, positionInFolder);
-        }
-        else
-        {
-            return MessageContent();
-        }
+        return inboxService->fetchMessageContent(folderPath, positionInFolder);
     };
 
     return QtConcurrent::run(fetchMessageContentWorker, getConnectionSettings(), folderPath, positionInFolder);
@@ -427,47 +353,10 @@ EmailAccount::connectionSettingsHolder EmailAccount::getConnectionSettings() con
     settings.password = m_password;
     settings.smtpServerUrl = m_smtpServerUrl;
     settings.smtpServerPort = m_smtpServerPort;
-    settings.incomingServerType = m_incomingServerType;
-    settings.incomingServerAddress = m_incomingServerAddress;
-    settings.incomingServerPort = m_incomingServerPort;
+    settings.imapServerAddress = m_imapServerAddress;
+    settings.imapServerPort = m_imapServerPort;
 
     return settings;
-}
-
-QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb)
-{
-    auto fetchMessageMetadataWorker = [](
-            const connectionSettingsHolder settings,
-            const QMap<QString, int> folderPathsWithMessagesCountInDb)
-    {
-        VmimeInboxService *inboxService = nullptr;
-
-        if (settings.incomingServerType == EmailAccount::IMAP)
-        {
-            inboxService = new VmimeImapService();
-        }
-        else if (settings.incomingServerType == EmailAccount::POP3)
-        {
-            inboxService = new VmimePop3Service();
-        }
-
-        if (inboxService != nullptr)
-        {
-            inboxService->setEmailAddress(settings.emailAddress);
-            inboxService->setUserName(settings.userName);
-            inboxService->setPassword(settings.password);
-            inboxService->setServerUrl(settings.incomingServerAddress);
-            inboxService->setPort(settings.incomingServerPort);
-
-            return inboxService->fetchMessagesMetadata(folderPathsWithMessagesCountInDb);
-        }
-        else
-        {
-            return QList<MessageMetadata>();
-        }
-    };
-
-    return QtConcurrent::run(fetchMessageMetadataWorker, getConnectionSettings(), folderPathsWithMessagesCountsInDb);
 }
 
 void EmailAccount::updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent)
@@ -490,22 +379,9 @@ void EmailAccount::updateMessageContentInDatabase(const QString emailAddress, co
 
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
-    QString incomingServerType;
-
-    if (account.incomingServerType() == EmailAccount::IMAP)
-    {
-        incomingServerType = "IMAP";
-    }
-    else
-    {
-        incomingServerType = "POP3";
-    }
-
     QDebugStateSaver saver(debug);
 
-    debug.noquote() << "Account name: "
-                    << account.accountName()
-                    << "\nContact name: "
+    debug.noquote() << "\nContact name: "
                     << account.contactName()
                     << "\nEmail address: "
                     << account.emailAddress()
@@ -517,12 +393,10 @@ QDebug operator<<(QDebug debug, const EmailAccount &account)
                     << account.smtpServerUrl()
                     << "\nSMTP server port: "
                     << account.smtpServerPort()
-                    << "\nIncoming server type: "
-                    << incomingServerType
                     << "\nIncoming server address: "
-                    << account.incomingServerAddress()
+                    << account.imapServerAddress()
                     << "\nIncoming server port: "
-                    << account.incomingServerPort();
+                    << account.imapServerPort();
 
     return debug;
 }

@@ -81,8 +81,8 @@ void PreferencesEmailPageWidget::emailAccountsListViewSelectionChanged(const QIt
             m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
             m_ui->userNameLineEditWidget->setText(account.userName());
             m_ui->passwordLineEditWidget->setText(account.password());
-            m_ui->imapServerUrlLineEditWidget->setText(account.incomingServerAddress());
-            m_ui->imapServerPortSpinBox->setValue(account.incomingServerPort());
+            m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
+            m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
             m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
             m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
 
@@ -112,8 +112,8 @@ void Otter::PreferencesEmailPageWidget::on_saveChangesButton_clicked()
     account.setEmailAddress(m_ui->emailAddressLineEditWidget->text());
     account.setUserName(m_ui->userNameLineEditWidget->text());
     account.setPassword(m_ui->passwordLineEditWidget->text());
-    account.setIncomingServerAddress(m_ui->imapServerUrlLineEditWidget->text());
-    account.setIncomingServerPort(m_ui->imapServerPortSpinBox->value());
+    account.setImapServerAddress(m_ui->imapServerUrlLineEditWidget->text());
+    account.setImapServerPort(m_ui->imapServerPortSpinBox->value());
     account.setSmtpServerUrl(m_ui->smtpServerUrlLineEditWidget->text());
     account.setSmtpServerPort(m_ui->smtpServerPortSpinBox->value());
 
@@ -147,8 +147,8 @@ void Otter::PreferencesEmailPageWidget::on_discardChangesButton_clicked()
         m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
         m_ui->userNameLineEditWidget->setText(account.userName());
         m_ui->passwordLineEditWidget->setText(account.password());
-        m_ui->imapServerUrlLineEditWidget->setText(account.incomingServerAddress());
-        m_ui->imapServerPortSpinBox->setValue(account.incomingServerPort());
+        m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
+        m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
         m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
         m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
     }
@@ -168,8 +168,8 @@ void Otter::PreferencesEmailPageWidget::on_discardChangesButton_clicked()
             m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
             m_ui->userNameLineEditWidget->setText(account.userName());
             m_ui->passwordLineEditWidget->setText(account.password());
-            m_ui->imapServerUrlLineEditWidget->setText(account.incomingServerAddress());
-            m_ui->imapServerPortSpinBox->setValue(account.incomingServerPort());
+            m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
+            m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
             m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
             m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
 
@@ -245,8 +245,8 @@ void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
                 m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
                 m_ui->userNameLineEditWidget->setText(account.userName());
                 m_ui->passwordLineEditWidget->setText(account.password());
-                m_ui->imapServerUrlLineEditWidget->setText(account.incomingServerAddress());
-                m_ui->imapServerPortSpinBox->setValue(account.incomingServerPort());
+                m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
+                m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
                 m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
                 m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
 
@@ -261,8 +261,8 @@ void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
                 m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
                 m_ui->userNameLineEditWidget->setText(account.userName());
                 m_ui->passwordLineEditWidget->setText(account.password());
-                m_ui->imapServerUrlLineEditWidget->setText(account.incomingServerAddress());
-                m_ui->imapServerPortSpinBox->setValue(account.incomingServerPort());
+                m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
+                m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
                 m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
                 m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
 
