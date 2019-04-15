@@ -76,7 +76,7 @@ public:
 	{
 		FeedUpdatedEvent = 0,
 		TransferCompletedEvent,
-		UpdateAvailableEvent
+        UpdateAvailableEvent
 	};
 
 	struct EventDefinition final

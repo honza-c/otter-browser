@@ -21,6 +21,7 @@
 
 #include "databasemanager.h"
 #include "../../core/SessionsManager.h"
+#include "../../core/NotificationsManager.h"
 
 namespace Otter
 {
@@ -1233,6 +1234,17 @@ void DatabaseManager::updateMessageMetadata(const QList<MessageMetadata> freshMe
             {
                 newMessagesCount++;
             }
+        }
+
+        if (newMessagesCount > 0)
+        {
+            QString notificationText = "Email account ";
+            notificationText.append(getMissingMessagesFromServerFuture.result().first().emailAddress());
+            notificationText.append(" has ");
+            notificationText.append(QString::number(newMessagesCount));
+            notificationText.append(" new unread message(s).");
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
 
         DatabaseManager::addMessagesMetadataToDatabase(getMissingMessagesFromServerFuture.result());

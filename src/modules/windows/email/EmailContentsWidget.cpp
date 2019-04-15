@@ -84,8 +84,6 @@ QString EmailContentsWidget::getTitle() const
     title.append(") Email");
 
     return title;
-
-    //return tr("Email");
 }
 
 QLatin1String EmailContentsWidget::getType() const
