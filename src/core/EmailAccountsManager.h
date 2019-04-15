@@ -51,6 +51,9 @@ protected:
     static QJsonObject writeToJson(const UserAccount account);
     static UserAccount readFromJson(const QJsonObject json);
 
+private slots:
+    void updateInboxes();
+
 private:
     static EmailAccountsManager *m_instance;
     static DatabaseManager *m_databaseManager;

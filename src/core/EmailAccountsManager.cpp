@@ -40,6 +40,10 @@ void EmailAccountsManager::createInstance()
         m_instance = new EmailAccountsManager(QCoreApplication::instance());
         m_databaseManager = DatabaseManager::getInstance();
         loadEmailAccounts(SessionsManager::getWritableDataPath(QLatin1String("emailAccounts.json")));
+
+        QTimer *updateInboxesTimer = new QTimer(m_instance);
+        connect(updateInboxesTimer, SIGNAL(timeout()), m_instance, SLOT(updateInboxes()));
+        updateInboxesTimer->start(15 * 60 * 1000);
     }
 }
 
@@ -51,6 +55,19 @@ EmailAccountsManager* EmailAccountsManager::getInstance()
 QList<UserAccount>& EmailAccountsManager::getEmailAccounts()
 {
     return m_emailAccounts;
+}
+
+void EmailAccountsManager::updateInboxes()
+{
+    QList<QString> emailAddresses;
+
+    for (UserAccount &account : m_emailAccounts)
+    {
+        account.initializeInbox();
+        emailAddresses << account.emailAddress();
+    }
+
+    DatabaseManager::cleanUnusedDataFromDatabase(emailAddresses);
 }
 
 bool EmailAccountsManager::loadEmailAccounts(const QString &path)
