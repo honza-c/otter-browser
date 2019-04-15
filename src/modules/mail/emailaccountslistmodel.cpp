@@ -19,17 +19,17 @@
 *
 **************************************************************************/
 
-#include "useraccountslistmodel.h"
+#include "emailaccountslistmodel.h"
 
 namespace Otter
 {
 
-int UserAccountsListModel::rowCount(const QModelIndex &parent) const
+int EmailAccountsListModel::rowCount(const QModelIndex &parent) const
 {
     return m_data->size();
 }
 
-QVariant UserAccountsListModel::data(const QModelIndex &index, int role) const
+QVariant EmailAccountsListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
     {
@@ -58,7 +58,7 @@ QVariant UserAccountsListModel::data(const QModelIndex &index, int role) const
     }
 }
 
-bool UserAccountsListModel::removeRows(int position, int rows, const QModelIndex &parent)
+bool EmailAccountsListModel::removeRows(int position, int rows, const QModelIndex &parent)
 {
     beginRemoveRows(parent, position, position + rows - 1);
 
@@ -69,7 +69,7 @@ bool UserAccountsListModel::removeRows(int position, int rows, const QModelIndex
     return true;
 }
 
-bool UserAccountsListModel::insertRows(int position, int rows, const QModelIndex &parent)
+bool EmailAccountsListModel::insertRows(int position, int rows, const QModelIndex &parent)
 {
     beginInsertRows(parent, position, position + rows - 1);
 
@@ -80,18 +80,18 @@ bool UserAccountsListModel::insertRows(int position, int rows, const QModelIndex
     return true;
 }
 
-void UserAccountsListModel::addAccount(const UserAccount account)
+void EmailAccountsListModel::addAccount(const EmailAccount account)
 {
     m_userAccountToAdd = account;
     insertRows(rowCount(), 1);
 }
 
-void UserAccountsListModel::removeAccount(const int row)
+void EmailAccountsListModel::removeAccount(const int row)
 {
     removeRows(row, 1, QModelIndex());
 }
 
-void UserAccountsListModel::replaceAccount(const UserAccount account, const QModelIndex index)
+void EmailAccountsListModel::replaceAccount(const EmailAccount account, const QModelIndex index)
 {
     if (index.isValid() && index.row() <= rowCount())
     {

@@ -19,8 +19,8 @@
 *
 **************************************************************************/
 
-#ifndef NEWUSERACCOUNT_H
-#define NEWUSERACCOUNT_H
+#ifndef EMAILACCOUNT_H
+#define EMAILACCOUNT_H
 
 #include <QObject>
 #include <QDebug>
@@ -39,13 +39,13 @@
 namespace Otter
 {
 
-class UserAccount : public QObject
+class EmailAccount : public QObject
 {
     Q_OBJECT
 public:
-    explicit UserAccount(QObject *parent = nullptr);
-    UserAccount(const UserAccount &other);
-    UserAccount &operator=(const UserAccount &other);
+    explicit EmailAccount(QObject *parent = nullptr);
+    EmailAccount(const EmailAccount &other);
+    EmailAccount &operator=(const EmailAccount &other);
 
     enum IncomingServerType { POP3, IMAP };
 
@@ -135,8 +135,8 @@ signals:
 public slots:
 };
 
-QDebug operator<<(QDebug debug, const UserAccount &account);
+QDebug operator<<(QDebug debug, const EmailAccount &account);
 
 }
 
-#endif // NEWUSERACCOUNT_H
+#endif // EMAILACCOUNT_H

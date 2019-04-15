@@ -27,7 +27,7 @@ namespace Otter
 
 EmailAccountsManager* EmailAccountsManager::m_instance = nullptr;
 DatabaseManager* EmailAccountsManager::m_databaseManager = nullptr;
-QList<UserAccount> EmailAccountsManager::m_emailAccounts = QList<UserAccount>();
+QList<EmailAccount> EmailAccountsManager::m_emailAccounts = QList<EmailAccount>();
 
 EmailAccountsManager::EmailAccountsManager(QObject *parent) : QObject (parent)
 {
@@ -52,7 +52,7 @@ EmailAccountsManager* EmailAccountsManager::getInstance()
     return m_instance;
 }
 
-QList<UserAccount>& EmailAccountsManager::getEmailAccounts()
+QList<EmailAccount>& EmailAccountsManager::getEmailAccounts()
 {
     return m_emailAccounts;
 }
@@ -61,7 +61,7 @@ void EmailAccountsManager::updateInboxes()
 {
     QList<QString> emailAddresses;
 
-    for (UserAccount &account : m_emailAccounts)
+    for (EmailAccount &account : m_emailAccounts)
     {
         account.initializeInbox();
         emailAddresses << account.emailAddress();
@@ -95,7 +95,7 @@ bool EmailAccountsManager::loadEmailAccounts(const QString &path)
 
     QList<QString> emailAddresses;
 
-    for (UserAccount &account : m_emailAccounts)
+    for (EmailAccount &account : m_emailAccounts)
     {
         account.initializeInbox();
         emailAddresses << account.emailAddress();
@@ -116,7 +116,7 @@ bool EmailAccountsManager::saveEmailAccounts(const QString &path)
     QJsonDocument jsonDocument;
     QJsonArray jsonArray;
 
-    for (UserAccount account : m_emailAccounts)
+    for (EmailAccount account : m_emailAccounts)
     {
         jsonArray.append(writeToJson(account));
     }
@@ -136,7 +136,7 @@ bool EmailAccountsManager::saveEmailAccounts(const QString &path)
     return file.commit();
 }
 
-QJsonObject EmailAccountsManager::writeToJson(const UserAccount account)
+QJsonObject EmailAccountsManager::writeToJson(const EmailAccount account)
 {
     QJsonObject json;
 
@@ -152,9 +152,9 @@ QJsonObject EmailAccountsManager::writeToJson(const UserAccount account)
     return json;
 }
 
-UserAccount EmailAccountsManager::readFromJson(const QJsonObject json)
+EmailAccount EmailAccountsManager::readFromJson(const QJsonObject json)
 {
-    UserAccount account;
+    EmailAccount account;
 
     account.setContactName(json[QLatin1String("contactName")].toString());
     account.setEmailAddress(json[QLatin1String("emailAddress")].toString());
@@ -165,12 +165,12 @@ UserAccount EmailAccountsManager::readFromJson(const QJsonObject json)
     account.setIncomingServerAddress(json[QLatin1String("imapServerAddress")].toString());
     account.setIncomingServerPort(json[QLatin1String("imapServerPort")].toString().toInt());
 
-    account.setIncomingServerType(UserAccount::IncomingServerType::IMAP);
+    account.setIncomingServerType(EmailAccount::IncomingServerType::IMAP);
 
     return account;
 }
 
-void EmailAccountsManager::updateEmailAccountsConfiguration(const QList<UserAccount> accounts)
+void EmailAccountsManager::updateEmailAccountsConfiguration(const QList<EmailAccount> accounts)
 {
     if (m_instance)
     {
@@ -179,7 +179,7 @@ void EmailAccountsManager::updateEmailAccountsConfiguration(const QList<UserAcco
 
         QList<QString> emailAddresses;
 
-        for (UserAccount &account : m_emailAccounts)
+        for (EmailAccount &account : m_emailAccounts)
         {
             account.initializeInbox();
             emailAddresses << account.emailAddress();

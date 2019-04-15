@@ -29,8 +29,8 @@
 #include "src/modules/mail/databasemanager.h"
 #include "ui_WriteEmailMessageWidget.h"
 
-#include "src/modules/mail/useraccount.h"
-#include "src/modules/mail/useraccountslistmodel.h"
+#include "src/modules/mail/emailaccount.h"
+#include "src/modules/mail/emailaccountslistmodel.h"
 #include "src/modules/mail/attachment.h"
 #include "src/modules/mail/attachmentslistmodel.h"
 #include "src/modules/mail/message.h"

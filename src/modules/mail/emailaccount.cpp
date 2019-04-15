@@ -19,19 +19,19 @@
 *
 **************************************************************************/
 
-#include "useraccount.h"
+#include "emailaccount.h"
 
 namespace Otter
 {
 
-UserAccount::UserAccount(QObject *parent)
+EmailAccount::EmailAccount(QObject *parent)
     : QObject (parent)
 {
     m_smtpServerPort = 0;
     m_incomingServerPort = 0;
 }
 
-UserAccount::UserAccount(const UserAccount &other)
+EmailAccount::EmailAccount(const EmailAccount &other)
 {
     m_accountName = other.m_accountName;
     m_contactName = other.m_contactName;
@@ -49,7 +49,7 @@ UserAccount::UserAccount(const UserAccount &other)
     m_inboxService = other.m_inboxService;
 }
 
-UserAccount& UserAccount::operator=(const UserAccount &other)
+EmailAccount& EmailAccount::operator=(const EmailAccount &other)
 {
     m_accountName = other.m_accountName;
     m_contactName = other.m_contactName;
@@ -69,107 +69,107 @@ UserAccount& UserAccount::operator=(const UserAccount &other)
     return *this;
 }
 
-QString UserAccount::accountName() const
+QString EmailAccount::accountName() const
 {
     return m_accountName;
 }
 
-void UserAccount::setAccountName(QString accountName)
+void EmailAccount::setAccountName(QString accountName)
 {
     m_accountName = accountName;
 }
 
-QString UserAccount:: contactName() const
+QString EmailAccount:: contactName() const
 {
     return m_contactName;
 }
 
-void UserAccount::setContactName(QString userName)
+void EmailAccount::setContactName(QString userName)
 {
     m_contactName = userName;
 }
 
-QString UserAccount::emailAddress() const
+QString EmailAccount::emailAddress() const
 {
     return m_emailAddress;
 }
 
-void UserAccount::setEmailAddress(QString emailAddress)
+void EmailAccount::setEmailAddress(QString emailAddress)
 {
     m_emailAddress = emailAddress;
 }
 
-QString UserAccount::userName() const
+QString EmailAccount::userName() const
 {
     return m_userName;
 }
 
-void UserAccount::setUserName(const QString userName)
+void EmailAccount::setUserName(const QString userName)
 {
     m_userName = userName;
 }
 
-QString UserAccount::password() const
+QString EmailAccount::password() const
 {
     return m_password;
 }
 
-void UserAccount::setPassword(QString password)
+void EmailAccount::setPassword(QString password)
 {
     m_password = password;
 }
 
-QString UserAccount::smtpServerUrl() const
+QString EmailAccount::smtpServerUrl() const
 {
     return m_smtpServerUrl;
 }
 
-void UserAccount::setSmtpServerUrl(QString smtpServerUrl)
+void EmailAccount::setSmtpServerUrl(QString smtpServerUrl)
 {
     m_smtpServerUrl = smtpServerUrl;
 }
 
-int UserAccount::smtpServerPort() const
+int EmailAccount::smtpServerPort() const
 {
     return m_smtpServerPort;
 }
 
-void UserAccount::setSmtpServerPort(int smtpServerPort)
+void EmailAccount::setSmtpServerPort(int smtpServerPort)
 {
     m_smtpServerPort = smtpServerPort;
 }
 
-UserAccount::IncomingServerType UserAccount::incomingServerType() const
+EmailAccount::IncomingServerType EmailAccount::incomingServerType() const
 {
     return m_incomingServerType;
 }
 
-void UserAccount::setIncomingServerType(IncomingServerType type)
+void EmailAccount::setIncomingServerType(IncomingServerType type)
 {
     m_incomingServerType = type;
 }
 
-QString UserAccount::incomingServerAddress() const
+QString EmailAccount::incomingServerAddress() const
 {
     return m_incomingServerAddress;
 }
 
-void UserAccount:: setIncomingServerAddress(QString incomingServerAddress)
+void EmailAccount:: setIncomingServerAddress(QString incomingServerAddress)
 {
     m_incomingServerAddress = incomingServerAddress;
 }
 
-int UserAccount::incomingServerPort() const
+int EmailAccount::incomingServerPort() const
 {
     return m_incomingServerPort;
 }
 
-void UserAccount::setIncomingServerPort(int incomingServerPort)
+void EmailAccount::setIncomingServerPort(int incomingServerPort)
 {
     m_incomingServerPort = incomingServerPort;
 }
 
-void UserAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
+void EmailAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
 {
     QStringList folderPathsFromDatabase = DatabaseManager::getFoldersPathForAccount(m_emailAddress);
 
@@ -212,23 +212,23 @@ void UserAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
     }
 }
 
-void UserAccount::initializeInbox()
+void EmailAccount::initializeInbox()
 {
     fetchStoreContent();
 }
 
-QFuture<QList<InboxFolder>> UserAccount::fetchInboxFolders()
+QFuture<QList<InboxFolder>> EmailAccount::fetchInboxFolders()
 {
     auto fetchInboxFoldersWorker = [](
             const connectionSettingsHolder settings)
     {
         VmimeInboxService *inboxService = nullptr;
 
-        if (settings.incomingServerType == UserAccount::IMAP)
+        if (settings.incomingServerType == EmailAccount::IMAP)
         {
             inboxService = new VmimeImapService();
         }
-        else if (settings.incomingServerType == UserAccount::POP3)
+        else if (settings.incomingServerType == EmailAccount::POP3)
         {
             inboxService = new VmimePop3Service();
         }
@@ -252,7 +252,7 @@ QFuture<QList<InboxFolder>> UserAccount::fetchInboxFolders()
     return QtConcurrent::run(fetchInboxFoldersWorker, getConnectionSettings());
 }
 
-QFuture<bool> UserAccount::moveMessageThread(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
+QFuture<bool> EmailAccount::moveMessageThread(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
 {
     auto moveMessageWorker = [](
             const connectionSettingsHolder settings,
@@ -262,11 +262,11 @@ QFuture<bool> UserAccount::moveMessageThread(const QString sourceFolderPath, con
     {
         VmimeInboxService *inboxService = nullptr;
 
-        if (settings.incomingServerType == UserAccount::IMAP)
+        if (settings.incomingServerType == EmailAccount::IMAP)
         {
             inboxService = new VmimeImapService();
         }
-        else if (settings.incomingServerType == UserAccount::POP3)
+        else if (settings.incomingServerType == EmailAccount::POP3)
         {
             inboxService = new VmimePop3Service();
         }
@@ -289,7 +289,7 @@ QFuture<bool> UserAccount::moveMessageThread(const QString sourceFolderPath, con
     return QtConcurrent::run(moveMessageWorker, getConnectionSettings(), sourceFolderPath, messageId, destinationFolderPath);
 }
 
-void UserAccount::moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
+void EmailAccount::moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
 {
     QFuture<bool> future = moveMessageThread(sourceFolderPath, messageId, destinationFolderPath);
     QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
@@ -301,7 +301,7 @@ void UserAccount::moveMessage(const QString sourceFolderPath, const int messageI
     watcher->setFuture(future);
 }
 
-void UserAccount::fetchStoreContent()
+void EmailAccount::fetchStoreContent()
 {
     QFuture<QList<InboxFolder>> future = fetchInboxFolders();
 
@@ -315,7 +315,7 @@ void UserAccount::fetchStoreContent()
     watcher->setFuture(future);
 }
 
-void UserAccount::fetchMessageMetadata()
+void EmailAccount::fetchMessageMetadata()
 {
     QFuture<QList<MessageMetadata>> future = fetchMessagesMetadata();
     QFutureWatcher<QList<MessageMetadata>> *watcher = new QFutureWatcher<QList<MessageMetadata>>();
@@ -328,7 +328,7 @@ void UserAccount::fetchMessageMetadata()
     watcher->setFuture(future);
 }
 
-QFuture<QList<MessageMetadata>> UserAccount::fetchMessagesMetadata()
+QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadata()
 {
     auto fetchMessageMetadataWorker = [](const connectionSettingsHolder settings)
     {
@@ -346,7 +346,7 @@ QFuture<QList<MessageMetadata>> UserAccount::fetchMessagesMetadata()
     return QtConcurrent::run(fetchMessageMetadataWorker, getConnectionSettings());
 }
 
-void UserAccount::sendMessage(Message message) const
+void EmailAccount::sendMessage(Message message) const
 {
     auto sendMessageWorker = [](
             const connectionSettingsHolder settings,
@@ -366,7 +366,7 @@ void UserAccount::sendMessage(Message message) const
     QtConcurrent::run(sendMessageWorker, getConnectionSettings(),message);
 }
 
-void UserAccount::fetchMissingMessageContent(const QString folderPath, const int positionInFolder)
+void EmailAccount::fetchMissingMessageContent(const QString folderPath, const int positionInFolder)
 {
     QFuture<MessageContent> future = fetchMessageContent(folderPath, positionInFolder);
     QFutureWatcher<MessageContent> *watcher = new QFutureWatcher<MessageContent>();
@@ -380,7 +380,7 @@ void UserAccount::fetchMissingMessageContent(const QString folderPath, const int
     watcher->setFuture(future);
 }
 
-QFuture<MessageContent> UserAccount::fetchMessageContent(QString folderPath, int positionInFolder)
+QFuture<MessageContent> EmailAccount::fetchMessageContent(QString folderPath, int positionInFolder)
 {
     auto fetchMessageContentWorker = [](
             const connectionSettingsHolder settings,
@@ -389,11 +389,11 @@ QFuture<MessageContent> UserAccount::fetchMessageContent(QString folderPath, int
     {
         VmimeInboxService *inboxService = nullptr;
 
-        if (settings.incomingServerType == UserAccount::IMAP)
+        if (settings.incomingServerType == EmailAccount::IMAP)
         {
             inboxService = new VmimeImapService();
         }
-        else if (settings.incomingServerType == UserAccount::POP3)
+        else if (settings.incomingServerType == EmailAccount::POP3)
         {
             inboxService = new VmimePop3Service();
         }
@@ -417,7 +417,7 @@ QFuture<MessageContent> UserAccount::fetchMessageContent(QString folderPath, int
     return QtConcurrent::run(fetchMessageContentWorker, getConnectionSettings(), folderPath, positionInFolder);
 }
 
-UserAccount::connectionSettingsHolder UserAccount::getConnectionSettings() const
+EmailAccount::connectionSettingsHolder EmailAccount::getConnectionSettings() const
 {
     connectionSettingsHolder settings;
 
@@ -434,7 +434,7 @@ UserAccount::connectionSettingsHolder UserAccount::getConnectionSettings() const
     return settings;
 }
 
-QFuture<QList<MessageMetadata>> UserAccount::fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb)
+QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb)
 {
     auto fetchMessageMetadataWorker = [](
             const connectionSettingsHolder settings,
@@ -442,11 +442,11 @@ QFuture<QList<MessageMetadata>> UserAccount::fetchMessagesMetadata(QMap<QString,
     {
         VmimeInboxService *inboxService = nullptr;
 
-        if (settings.incomingServerType == UserAccount::IMAP)
+        if (settings.incomingServerType == EmailAccount::IMAP)
         {
             inboxService = new VmimeImapService();
         }
-        else if (settings.incomingServerType == UserAccount::POP3)
+        else if (settings.incomingServerType == EmailAccount::POP3)
         {
             inboxService = new VmimePop3Service();
         }
@@ -470,7 +470,7 @@ QFuture<QList<MessageMetadata>> UserAccount::fetchMessagesMetadata(QMap<QString,
     return QtConcurrent::run(fetchMessageMetadataWorker, getConnectionSettings(), folderPathsWithMessagesCountsInDb);
 }
 
-void UserAccount::updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent)
+void EmailAccount::updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent)
 {
     if (messageContent != MessageContent())
     {
@@ -488,11 +488,11 @@ void UserAccount::updateMessageContentInDatabase(const QString emailAddress, con
     }
 }
 
-QDebug operator<<(QDebug debug, const UserAccount &account)
+QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
     QString incomingServerType;
 
-    if (account.incomingServerType() == UserAccount::IMAP)
+    if (account.incomingServerType() == EmailAccount::IMAP)
     {
         incomingServerType = "IMAP";
     }

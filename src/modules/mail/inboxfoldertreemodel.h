@@ -24,7 +24,7 @@
 
 #include <QObject>
 #include <QtWidgets>
-#include "useraccount.h"
+#include "emailaccount.h"
 #include "vmimeinboxservice.h"
 #include "vmimeinboxfolder.h"
 #include "inboxfoldertreeitem.h"

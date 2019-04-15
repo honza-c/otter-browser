@@ -24,8 +24,8 @@
 
 #include <QWidget>
 #include "../../core/EmailAccountsManager.h"
-#include "../../modules/mail/useraccount.h"
-#include "../../modules/mail/useraccountslistmodel.h"
+#include "../../modules/mail/emailaccount.h"
+#include "../../modules/mail/emailaccountslistmodel.h"
 
 namespace Otter
 {
@@ -53,8 +53,8 @@ protected slots:
 
 private:
     Ui::PreferencesEmailPageWidget *m_ui;
-    QList<UserAccount> m_emailAccounts;
-    UserAccountsListModel *m_emailAccountsListModel;
+    QList<EmailAccount> m_emailAccounts;
+    EmailAccountsListModel *m_emailAccountsListModel;
     bool m_editMode;
     bool m_creatingNewAccountMode;
 

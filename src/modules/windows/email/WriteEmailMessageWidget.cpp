@@ -44,7 +44,7 @@ WriteEmailMessageWidget::WriteEmailMessageWidget(QWidget *parent) :
     m_ui->messageContentSplitter->setStretchFactor(0, 1);
     m_ui->messageContentSplitter->setStretchFactor(1, 2);
 
-    UserAccountsListModel *model = new UserAccountsListModel(EmailAccountsManager::getEmailAccounts());
+    EmailAccountsListModel *model = new EmailAccountsListModel(EmailAccountsManager::getEmailAccounts());
     m_ui->senderComboBox->setModel(model);
 }
 

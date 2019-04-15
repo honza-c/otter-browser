@@ -33,7 +33,7 @@ PreferencesEmailPageWidget::PreferencesEmailPageWidget(QWidget *parent) :
     m_ui->setupUi(this);
     m_emailAccounts = EmailAccountsManager::getInstance()->getEmailAccounts();
 
-    m_emailAccountsListModel = new UserAccountsListModel(m_emailAccounts);
+    m_emailAccountsListModel = new EmailAccountsListModel(m_emailAccounts);
     m_editMode = false;
     m_creatingNewAccountMode = false;
 
@@ -75,7 +75,7 @@ void PreferencesEmailPageWidget::emailAccountsListViewSelectionChanged(const QIt
         if (index.isValid() && index != QModelIndex())
         {
             int row = index.row();
-            UserAccount account = m_emailAccounts.at(row);
+            EmailAccount account = m_emailAccounts.at(row);
 
             m_ui->yourNameLineEditWidget->setText(account.contactName());
             m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
@@ -106,7 +106,7 @@ void Otter::PreferencesEmailPageWidget::save()
 
 void Otter::PreferencesEmailPageWidget::on_saveChangesButton_clicked()
 {
-    UserAccount account;
+    EmailAccount account;
 
     account.setContactName(m_ui->yourNameLineEditWidget->text());
     account.setEmailAddress(m_ui->emailAddressLineEditWidget->text());
@@ -141,7 +141,7 @@ void Otter::PreferencesEmailPageWidget::on_discardChangesButton_clicked()
     {
         int index = m_ui->emailAccountsListView->selectionModel()->selectedIndexes().first().row();
 
-        UserAccount account = m_emailAccounts.at(index);
+        EmailAccount account = m_emailAccounts.at(index);
 
         m_ui->yourNameLineEditWidget->setText(account.contactName());
         m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
@@ -162,7 +162,7 @@ void Otter::PreferencesEmailPageWidget::on_discardChangesButton_clicked()
         {
             QModelIndex index = m_emailAccountsListModel->index(m_emailAccountsListModel->rowCount() - 1, 0, QModelIndex());
             int row = index.row();
-            UserAccount account = m_emailAccounts.at(row);
+            EmailAccount account = m_emailAccounts.at(row);
 
             m_ui->yourNameLineEditWidget->setText(account.contactName());
             m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
@@ -190,7 +190,7 @@ void Otter::PreferencesEmailPageWidget::on_addAccountButton_clicked()
 {
     m_creatingNewAccountMode = true;
 
-    UserAccount account;
+    EmailAccount account;
     account.setEmailAddress("new account");
 
     m_emailAccountsListModel->addAccount(account);
@@ -239,7 +239,7 @@ void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
             if (accountIndex >= 1)
             {
                 QModelIndex newIndex = m_emailAccountsListModel->index(accountIndex - 1, 0, QModelIndex());
-                UserAccount account = m_emailAccounts.at(newIndex.row());
+                EmailAccount account = m_emailAccounts.at(newIndex.row());
 
                 m_ui->yourNameLineEditWidget->setText(account.contactName());
                 m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
@@ -255,7 +255,7 @@ void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
             else
             {
                 QModelIndex newIndex = m_emailAccountsListModel->index(0, 0, QModelIndex());
-                UserAccount account = m_emailAccounts.at(newIndex.row());
+                EmailAccount account = m_emailAccounts.at(newIndex.row());
 
                 m_ui->yourNameLineEditWidget->setText(account.contactName());
                 m_ui->emailAddressLineEditWidget->setText(account.emailAddress());

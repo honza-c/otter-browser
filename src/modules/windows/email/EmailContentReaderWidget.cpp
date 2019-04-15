@@ -47,7 +47,7 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
 
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
 
-    for (UserAccount &account : EmailAccountsManager::getEmailAccounts())
+    for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
     {
         connect(&account, SIGNAL(messageContentFetched(int)), this, SLOT(messageContentFetched(int)));
     }
@@ -196,7 +196,7 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
 
                 if (positionInFolder > 0)
                 {
-                    for (UserAccount &userAccount : EmailAccountsManager::getEmailAccounts())
+                    for (EmailAccount &userAccount : EmailAccountsManager::getEmailAccounts())
                     {
                         if (userAccount.emailAddress() == emailAddress)
                         {

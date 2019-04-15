@@ -19,21 +19,21 @@
 *
 **************************************************************************/
 
-#ifndef NEWUSERACCOUNTSLISTMODEL_H
-#define NEWUSERACCOUNTSLISTMODEL_H
+#ifndef EMAILACCOUNTSLISTMODEL_H
+#define EMAILACCOUNTSLISTMODEL_H
 
 #include <QObject>
 #include <QAbstractListModel>
-#include "useraccount.h"
+#include "emailaccount.h"
 
 namespace Otter
 {
 
-class UserAccountsListModel : public QAbstractListModel
+class EmailAccountsListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    explicit UserAccountsListModel(QList<UserAccount> &data, QObject *parent = nullptr)
+    explicit EmailAccountsListModel(QList<EmailAccount> &data, QObject *parent = nullptr)
         : QAbstractListModel(parent), m_data(&data) {}
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -42,16 +42,16 @@ public:
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
     bool insertRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
 
-    void addAccount(const UserAccount account);
+    void addAccount(const EmailAccount account);
     void removeAccount(const int row);
-    void replaceAccount(const UserAccount account, const QModelIndex index);
+    void replaceAccount(const EmailAccount account, const QModelIndex index);
 
 private:
 
-    UserAccount m_userAccountToAdd;
-    QList<UserAccount> *m_data;
+    EmailAccount m_userAccountToAdd;
+    QList<EmailAccount> *m_data;
 };
 
 }
 
-#endif // NEWUSERACCOUNTSLISTMODEL_H
+#endif // EMAILACCOUNTSLISTMODEL_H

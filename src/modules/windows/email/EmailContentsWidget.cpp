@@ -108,7 +108,7 @@ EmailContentsWidget::~EmailContentsWidget()
 
 void EmailContentsWidget::on_getMessagesButton_clicked()
 {
-    for (UserAccount& account : EmailAccountsManager::getEmailAccounts())
+    for (EmailAccount& account : EmailAccountsManager::getEmailAccounts())
     {
         account.initializeInbox();
     }

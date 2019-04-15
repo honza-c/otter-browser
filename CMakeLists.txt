@@ -254,8 +254,8 @@ set(otter_src
         src/modules/mail/messagemetadatasqltablemodel.cpp
         src/modules/mail/multiselectcompleter.cpp
         src/modules/mail/qpushbuttonwithid.cpp
-        src/modules/mail/useraccount.cpp
-        src/modules/mail/useraccountslistmodel.cpp
+        src/modules/mail/emailaccount.cpp
+        src/modules/mail/emailaccountslistmodel.cpp
         src/modules/mail/vmimebasemessagingservice.cpp
         src/modules/mail/vmimeimapservice.cpp
         src/modules/mail/vmimeinboxfolder.cpp

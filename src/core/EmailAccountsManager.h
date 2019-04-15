@@ -26,7 +26,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
-#include "../modules/mail/useraccount.h"
+#include "../modules/mail/emailaccount.h"
 #include "../modules/mail/databasemanager.h"
 
 namespace Otter
@@ -39,8 +39,8 @@ class EmailAccountsManager final : public QObject
 public:
     static void createInstance();
     static EmailAccountsManager* getInstance();
-    static QList<UserAccount>& getEmailAccounts();
-    static void updateEmailAccountsConfiguration(const QList<UserAccount> accounts);
+    static QList<EmailAccount>& getEmailAccounts();
+    static void updateEmailAccountsConfiguration(const QList<EmailAccount> accounts);
 
 protected:
     explicit EmailAccountsManager(QObject *parent);
@@ -48,8 +48,8 @@ protected:
     static bool loadEmailAccounts(const QString &path);
     static bool saveEmailAccounts(const QString &path);
 
-    static QJsonObject writeToJson(const UserAccount account);
-    static UserAccount readFromJson(const QJsonObject json);
+    static QJsonObject writeToJson(const EmailAccount account);
+    static EmailAccount readFromJson(const QJsonObject json);
 
 private slots:
     void updateInboxes();
@@ -57,7 +57,7 @@ private slots:
 private:
     static EmailAccountsManager *m_instance;
     static DatabaseManager *m_databaseManager;
-    static QList<UserAccount> m_emailAccounts;
+    static QList<EmailAccount> m_emailAccounts;
 };
 
 }
