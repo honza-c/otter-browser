@@ -322,25 +322,25 @@ void EmailAccount::fetchMissingMessageContent(const QString folderPath, const in
     watcher->setFuture(future);
 }
 
-QFuture<MessageContent> EmailAccount::fetchMessageContent(QString folderPath, int positionInFolder)
+QFuture<MessageContent> EmailAccount::fetchMessageContent(QString folderPath, int uid)
 {
     auto fetchMessageContentWorker = [](
             const connectionSettingsHolder settings,
             const QString folderPath,
             const int positionInFolder)
     {
-        VmimeInboxService *inboxService = new VmimeImapService();
+        VmimeImapService imapService;
 
-        inboxService->setEmailAddress(settings.emailAddress);
-        inboxService->setUserName(settings.userName);
-        inboxService->setPassword(settings.password);
-        inboxService->setServerUrl(settings.imapServerAddress);
-        inboxService->setPort(settings.imapServerPort);
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
 
-        return inboxService->fetchMessageContent(folderPath, positionInFolder);
+        return imapService.fetchMessageContent(folderPath, positionInFolder);
     };
 
-    return QtConcurrent::run(fetchMessageContentWorker, getConnectionSettings(), folderPath, positionInFolder);
+    return QtConcurrent::run(fetchMessageContentWorker, getConnectionSettings(), folderPath, uid);
 }
 
 EmailAccount::connectionSettingsHolder EmailAccount::getConnectionSettings() const

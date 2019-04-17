@@ -98,9 +98,10 @@ QList<MessageMetadata> VmimeInboxService::fetchMessagesMetadata()
     return metadata;
 }
 
-MessageContent VmimeInboxService::fetchMessageContent(QString folderPath, int positionInFolder)
+MessageContent VmimeInboxService::fetchMessageContent(QString folderPath, int uid)
 {
     initializeStore();
+
     vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
     std::vector<vmime::shared_ptr<vmime::net::folder>> folders = rootFolder->getFolders(true);
     folders.push_back(rootFolder);
@@ -121,7 +122,7 @@ MessageContent VmimeInboxService::fetchMessageContent(QString folderPath, int po
 
             }
 
-            vmime::shared_ptr<vmime::net::message> message = folder->getMessage(static_cast<vmime::size_t>(positionInFolder));
+            vmime::shared_ptr<vmime::net::message> message = folder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
 
             try
             {
@@ -158,7 +159,21 @@ void VmimeInboxService::initializeStore()
 
     m_store = m_session->getStore(url);
     m_store->setCertificateVerifier(m_certificateVerifier);
-    m_store->connect();
+
+    int attempts = 0;
+
+    while (attempts < 10)
+    {
+        try
+        {
+            m_store->connect();
+            break;
+        }
+        catch (vmime::exception e)
+        {
+            attempts++;
+        }
+    }
 }
 
 void VmimeInboxService::moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
