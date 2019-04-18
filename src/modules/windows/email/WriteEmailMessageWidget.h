@@ -87,6 +87,7 @@ private:
     QList<EmbeddedObject> m_embeddedObjects;
     Mode m_mode;
     Message m_message;
+    MultiSelectCompleter *m_completer;
     Ui::WriteEmailMessageWidget *m_ui;
 };
 

@@ -33,7 +33,7 @@ QString MultiSelectCompleter::pathFromIndex(const QModelIndex &index) const
 
     if (position >= 0)
     {
-        path = path.left(position) + ", " + path;
+        path = text.left(position) + ", " + path;
     }
 
     return path;

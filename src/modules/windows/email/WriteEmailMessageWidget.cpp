@@ -46,6 +46,15 @@ WriteEmailMessageWidget::WriteEmailMessageWidget(QWidget *parent) :
 
     EmailAccountsListModel *model = new EmailAccountsListModel(EmailAccountsManager::getEmailAccounts());
     m_ui->senderComboBox->setModel(model);
+
+    QStringList contactsDataForCompleter = DatabaseManager::getDataForContactsCompleter();
+    m_completer = new MultiSelectCompleter(contactsDataForCompleter, this);
+    m_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    m_completer->setFilterMode(Qt::MatchContains);
+
+    m_ui->toLineEdit->setCompleter(m_completer);
+    m_ui->inCopyLineEdit->setCompleter(m_completer);
+    m_ui->inBlindCopyLineEdit->setCompleter(m_completer);
 }
 
 WriteEmailMessageWidget::~WriteEmailMessageWidget()
