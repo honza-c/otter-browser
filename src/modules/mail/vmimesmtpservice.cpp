@@ -48,7 +48,11 @@ void VmimeSmtpService::sendMessage(Message message) const
 vmime::shared_ptr<vmime::net::transport> VmimeSmtpService::getTransport() const
 {
     vmime::shared_ptr<vmime::net::transport> transport;
-    vmime::utility::url url(m_serverUrl);
+
+    std::string urlString = "smtp://";
+    urlString.append(m_serverUrl);
+
+    vmime::utility::url url(urlString);
 
     transport = m_session->getTransport(url);
 
