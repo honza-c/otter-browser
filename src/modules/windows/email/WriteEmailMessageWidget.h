@@ -75,10 +75,12 @@ private:
     void setRecipients(const Message message);
     void setAttachments(const Message message);
     void setEmbeddedObjects(const Message message);
+
     void addAttachment();
     QList<Contact> parseContacts(const QString rawdata) const;
     QRegExp getEmailAddressRegexPattern() const;
     void setHtmlContent(const QString content);
+    void setPlainTextContent(const QString content);
     void resetWidget();
 
     const QString dateTimeFormat = "dd.MM.yyyy HH:mm";

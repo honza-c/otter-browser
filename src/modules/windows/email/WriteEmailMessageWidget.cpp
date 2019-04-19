@@ -141,17 +141,22 @@ void WriteEmailMessageWidget::setSubject(const Message message)
 
 void WriteEmailMessageWidget::setPlainTextAndHtmlText(const Message message)
 {
-    if (m_mode == Mode::Reply || m_mode == Mode::ReplyAll || m_mode == Mode::Forward)
+    if (message.htmlContent() == QString())
     {
-        m_ui->messageContentTextBrowser->setVisible(true);
+        m_ui->messageContentTextBrowser->setVisible(false);
+        setPlainTextContent(message.plainTextContent());
 
-        if (message.htmlContent() != QString())
+    }
+    else
+    {
+        if (m_mode == Mode::Reply || m_mode == Mode::ReplyAll || m_mode == Mode::Forward)
         {
+            m_ui->messageContentTextBrowser->setVisible(true);
             setHtmlContent(message.htmlContent());
         }
         else
         {
-            setHtmlContent(message.plainTextContent());
+            m_ui->messageContentTextBrowser->setVisible(false);
         }
     }
 }
@@ -270,6 +275,75 @@ void WriteEmailMessageWidget::setHtmlContent(const QString content)
         replyHtmlContent.append("</div>");
 
         m_ui->messageContentTextBrowser->setHtml(replyHtmlContent);
+    }
+}
+
+void WriteEmailMessageWidget::setPlainTextContent(const QString content)
+{
+    if (m_mode == Mode::Forward)
+    {
+        QString forwardContent;
+
+        forwardContent.append('\n');
+        forwardContent.append('\n');
+        forwardContent.append("---------- Forwarded message ---------");
+        forwardContent.append('\n');
+
+        forwardContent.append("Subject: ");
+        forwardContent.append(m_message.subject());
+        forwardContent.append('\n');
+
+        forwardContent.append("Date: ");
+        forwardContent.append(m_message.dateTime().toString(dateTimeFormat));
+        forwardContent.append('\n');
+
+        forwardContent.append("From: ");
+        forwardContent.append(Contact::toString(m_message.sender()));
+        forwardContent.append('\n');
+
+        forwardContent.append("To: ");
+        forwardContent.append(Contact::toString(m_message.addressListTo()));
+        forwardContent.append('\n');
+
+        if (!m_message.addressListInCopy().isEmpty())
+        {
+            forwardContent.append("In copy: ");
+            forwardContent.append(Contact::toString(m_message.addressListInCopy()));
+            forwardContent.append('\n');
+        }
+
+        forwardContent.append('\n');
+        forwardContent.append(content);
+
+        m_ui->messageContentTextEdit->setText(forwardContent);
+    }
+    else if (m_mode == Mode::Reply || m_mode == Mode::ReplyAll)
+    {
+        QString replyContent;
+
+        replyContent.append("On ");
+        replyContent.append(m_message.dateTime().toString(dateTimeFormat));
+        replyContent.append(", ");
+        replyContent.append(Contact::toString(m_message.sender()));
+        replyContent.append(" wrote:\n\n");
+
+        QStringList lines = content.split('\n');
+
+        for (QString line : lines)
+        {
+            replyContent.append("> ");
+
+            if (line.length() >= 78)
+            {
+                int breakPosition = line.lastIndexOf(" ");
+                line.replace(breakPosition, 1, "\n> ");
+            }
+            replyContent.append(line);
+        }
+
+        replyContent.append("\n\n");
+
+        m_ui->messageContentTextEdit->setText(replyContent);
     }
 }
 
