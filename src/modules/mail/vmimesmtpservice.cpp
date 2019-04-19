@@ -128,18 +128,18 @@ vmime::shared_ptr<vmime::message> VmimeSmtpService::constructMessage(const Messa
     {
         for (Attachment attachment : message.attachments())
         {
-            QString attachmentData;
+            std::string attachmentData;
 
             for (int i = 0; i < attachment.data().size(); i++)
             {
-               attachmentData.append(attachment.data().at(i));
+                attachmentData += attachment.data().at(i);
             }
 
             vmime::encoding encoding;
             encoding.setUsage(vmime::encoding::USAGE_BINARY_DATA);
 
             vmime::shared_ptr<vmime::contentHandler> contentHandler
-                    = vmime::make_shared<vmime::stringContentHandler>(attachmentData.toStdString(), encoding);
+                    = vmime::make_shared<vmime::stringContentHandler>(attachmentData, encoding);
 
             vmime::word fileName(attachment.name().toStdString().c_str());
             vmime::mediaType mediaType(attachment.mimeType().toStdString());
