@@ -54,6 +54,13 @@ QVariant MessageMetadataSqlTableModel::data(const QModelIndex &index, int role) 
             return sender.emailAddress();
         }
     }
+    else if (index.column() == 7 && role == Qt::DisplayRole)
+    {
+        int sizeInBytes = QSqlTableModel::data(index, Qt::DisplayRole).toInt();
+        int sizeInKiloBytes = sizeInBytes / 1024;
+
+        return QString::number(sizeInKiloBytes) + " kB";
+    }
     else
     {
         return QSqlTableModel::data(index, role);
