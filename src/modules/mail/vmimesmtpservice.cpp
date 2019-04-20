@@ -78,9 +78,32 @@ vmime::shared_ptr<vmime::message> VmimeSmtpService::constructMessage(const Messa
 
         vmime::shared_ptr<vmime::htmlTextPart> htmlTextPart = vmime::dynamicCast<vmime::htmlTextPart>(messageBuilder.getTextPart());
         htmlTextPart->setCharset(vmime::charsets::UTF_8);
-        htmlTextPart->setText(vmime::make_shared<vmime::stringContentHandler>(message.htmlContent().toStdString()));
         htmlTextPart->setPlainText(vmime::make_shared<vmime::stringContentHandler>(message.plainTextContent().toStdString()));
-        // TODO: embedded objects
+
+        QString htmlContent = message.htmlContent();
+
+        for (EmbeddedObject embeddedObject : message.embeddedObjects())
+        {
+            std::string objectData;
+
+            for (int i = 0; i < embeddedObject.data().size(); i++)
+            {
+                objectData += embeddedObject.data().at(i);
+            }
+
+            vmime::encoding encoding;
+            encoding.setUsage(vmime::encoding::USAGE_BINARY_DATA);
+
+            vmime::shared_ptr<vmime::contentHandler> contentHandler = vmime::make_shared<vmime::stringContentHandler>(objectData, encoding);
+            vmime::mediaType mediaType(embeddedObject.mimeType().toStdString());
+
+            vmime::shared_ptr<const vmime::htmlTextPart::embeddedObject> eobj = htmlTextPart->addObject(contentHandler, mediaType);
+            QString cid = eobj->getReferenceId().c_str();
+
+            htmlContent.replace("src=\"cid:" + embeddedObject.name(), "src=\"cid:" + cid);
+        }
+
+        htmlTextPart->setText(vmime::make_shared<vmime::stringContentHandler>(htmlContent.toStdString()));
     }
     else
     {
