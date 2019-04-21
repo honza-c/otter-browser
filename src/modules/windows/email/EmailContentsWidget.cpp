@@ -256,7 +256,6 @@ void EmailContentsWidget::deleteFolderActionTriggered(bool)
 
         QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
         QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
-        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
 
         QMessageBox messageBox;
 
@@ -268,7 +267,13 @@ void EmailContentsWidget::deleteFolderActionTriggered(bool)
 
         if (messageBox.exec())
         {
-           qWarning() << "Folder " << folderPath << " of account " << emailAddress << " will be deleted";
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.deleteFolder(folderPath);
+                }
+            }
         }
     }
 }

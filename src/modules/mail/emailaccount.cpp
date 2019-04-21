@@ -448,6 +448,39 @@ QFuture<void> EmailAccount::renameFolderThread(const QString originalFolderPath,
     return QtConcurrent::run(renameFolderWorker, getConnectionSettings(), originalFolderPath, renamedFolderPath);
 }
 
+void EmailAccount::deleteFolder(const QString folderPath)
+{
+    QFuture<void> future = deleteFolderThread(folderPath);
+    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+
+    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    {
+        DatabaseManager::deleteFolderFromDatabase(m_emailAddress, folderPath);
+    });
+
+    watcher->setFuture(future);
+}
+
+QFuture<void> EmailAccount::deleteFolderThread(const QString folderPath)
+{
+    auto deleteFolderWorker = [](
+            const connectionSettingsHolder settings,
+            const QString folderPath)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+
+        imapService.deleteFolder(folderPath);
+    };
+
+    return QtConcurrent::run(deleteFolderWorker, getConnectionSettings(), folderPath);
+}
+
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
     QDebugStateSaver saver(debug);

@@ -51,6 +51,7 @@ public:
 
     void deleteMessage(const int uid, QString folderPath);
     void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
+    void deleteFolder(const QString folderPath);
 protected:
     virtual vmime::utility::url getStoreUrl() const = 0;
 
