@@ -50,6 +50,7 @@ public:
     void moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
 
     void deleteMessage(const int uid, QString folderPath);
+    void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
 protected:
     virtual vmime::utility::url getStoreUrl() const = 0;
 

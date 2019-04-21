@@ -21,6 +21,7 @@
 
 #include "RenameEmailFolderDialog.h"
 #include "ui_RenameEmailFolderDialog.h"
+#include <QDebug>
 
 namespace Otter
 {
@@ -32,6 +33,8 @@ RenameEmailFolderDialog::RenameEmailFolderDialog(QWidget *parent) :
     m_ui->setupUi(this);
 
     m_ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Rename Folder");
+    setWindowTitle("Rename Folder");
+    setFixedHeight(m_ui->verticalLayout_2->sizeHint().height());
 
     QObject::connect(m_ui->folderNameLineEditWidget, SIGNAL(textEdited(const QString &)), this, SLOT(editNameTextEdited(const QString &)));
 }
@@ -65,4 +68,14 @@ void RenameEmailFolderDialog::editNameTextEdited(const QString &text)
     }
 }
 
+}
+
+void Otter::RenameEmailFolderDialog::on_buttonBox_accepted()
+{
+    QDialog::accept();
+}
+
+void Otter::RenameEmailFolderDialog::on_buttonBox_rejected()
+{
+    QDialog::reject();
 }

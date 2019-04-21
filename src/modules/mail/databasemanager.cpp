@@ -1381,4 +1381,28 @@ QList<MessageMetadata> DatabaseManager::getMessageMetadataForAccount(const QStri
     return result;
 }
 
+void DatabaseManager::renameFolder(const QString emailAddress, const QString originalFolderPath, const QString renamedFolderPath)
+{
+    QString oldPath = "/";
+    oldPath.append(originalFolderPath);
+
+    QString newPath = "/";
+    newPath.append(renamedFolderPath);
+
+    int folderId = getFolderId(emailAddress, oldPath);
+
+    QSqlQuery query;
+
+    query.prepare("UPDATE Folders "
+                  "SET path = :path "
+                  "WHERE id = :folderId");
+
+    query.bindValue(":path", newPath);
+    query.bindValue(":folderId", folderId);
+
+    query.exec();
+
+    emit getInstance()->inboxFoldersStructureChanged();
+}
+
 }

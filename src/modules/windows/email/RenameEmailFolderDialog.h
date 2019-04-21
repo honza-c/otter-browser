@@ -46,6 +46,10 @@ public:
 private slots:
     void editNameTextEdited(const QString &);
 
+    void on_buttonBox_accepted();
+
+    void on_buttonBox_rejected();
+
 private:
     Ui::RenameEmailFolderDialog *m_ui;
 };

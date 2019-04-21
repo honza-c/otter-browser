@@ -257,6 +257,14 @@ void VmimeInboxService::moveMessage(const QString sourceFolderPath, const int me
     }
 }
 
+void VmimeInboxService::renameFolder(const QString originalFolderPath, const QString renamedFolderPath)
+{
+    initializeStore();
+
+    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(originalFolderPath.toStdString()));
+    folder->rename(vmime::net::folder::path(renamedFolderPath.toStdString()));
+}
+
 void VmimeInboxService::deleteMessage(const int uid, QString folderPath)
 {
     initializeStore();

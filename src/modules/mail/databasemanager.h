@@ -98,6 +98,8 @@ public:
     static QFuture<QList<unsigned long>> getUidsOfSeenMessagesOnServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
     static QFuture<QList<unsigned long>> getUidsOfMessagesDeletedFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
     static QFuture<QList<MessageMetadata>> getMissingMessagesFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
+
+    static void renameFolder(const QString emailAddress, const QString originalFolderPath, const QString renamedFolderPath);
 signals:
     void inboxFoldersStructureChanged();
     void messagesMetadataStructureChanged();

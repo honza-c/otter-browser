@@ -282,19 +282,42 @@ void EmailContentsWidget::renameFolderActionTriggered(bool)
         QModelIndex index = selectionModel->selectedIndexes().first();
 
         QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
-        QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
-        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
+        QString originalFolderPath = getFolderPathFromFolderTreeItemIndex(index);
 
         RenameEmailFolderDialog *dialog = new RenameEmailFolderDialog();
-        dialog->setFolderName(folderPath.split("/").last());
+        dialog->setFolderName(originalFolderPath.split("/").last());
+
 
         if (dialog->exec())
         {
-            QString folderName = dialog->getFolderName();
+            QString renamedFolderName = dialog->getFolderName();
 
-            if (folderName != QString())
+            if (renamedFolderName != QString())
             {
-                qWarning() << "Renaming a directory. Original name:  " << folderPath.split("/").last() << " New name: " << folderName;
+                originalFolderPath = originalFolderPath.remove(0, 1);
+
+                QStringList renamedFolderPathTokens = originalFolderPath.split("/");
+                renamedFolderPathTokens.last() = renamedFolderName;
+
+                QString renamedFolderPath;
+
+                for (int i = 0; i < renamedFolderPathTokens.count(); i++)
+                {
+                    renamedFolderPath.append(renamedFolderPathTokens.at(i));
+
+                    if (i < renamedFolderPathTokens.size() - 1)
+                    {
+                        renamedFolderPath.append("/");
+                    }
+                }
+
+                for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+                {
+                    if (account.emailAddress() == emailAddress)
+                    {
+                        account.renameFolder(originalFolderPath, renamedFolderPath);
+                    }
+                }
             }
         }
     }

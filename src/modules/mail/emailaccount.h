@@ -97,12 +97,15 @@ public:
 
     void deleteMessage(const int uid, const int folderId);
 
+    void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
+
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
     void updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent);
 
     QFuture<void> deleteMessageThread(const int uid, const QString folderPath);
+    QFuture<void> renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 
