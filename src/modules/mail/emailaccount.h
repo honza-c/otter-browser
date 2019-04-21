@@ -95,10 +95,14 @@ public:
     QFuture<bool> moveMessageThread(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
     void moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
 
+    void deleteMessage(const int uid, const int folderId);
+
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
     void updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent);
+
+    QFuture<void> deleteMessageThread(const int uid, const QString folderPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 

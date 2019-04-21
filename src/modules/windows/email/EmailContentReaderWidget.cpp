@@ -594,7 +594,35 @@ void EmailContentReaderWidget::copyMessageActionTriggered(bool)
 
 void EmailContentReaderWidget::deleteMessageActionTriggered(bool)
 {
-    // TODO:
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QMessageBox messageBox;
+
+        messageBox.setWindowTitle("Delete the message");
+        messageBox.setText("Are you sure to delete the selected message?");
+        messageBox.setIcon(QMessageBox::Question);
+        messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
+        messageBox.addButton(new QPushButton("Delete Message"), QMessageBox::ButtonRole::AcceptRole);
+
+        if (messageBox.exec())
+        {
+            QModelIndex index = selectionModel->selectedRows().at(0);
+
+            int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+            int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.deleteMessage(uid, folderId);
+                }
+            }
+        }
+    }
 }
 
 void EmailContentReaderWidget::messagesMetadataStructureChanged()

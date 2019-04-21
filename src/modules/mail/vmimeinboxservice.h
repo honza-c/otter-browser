@@ -48,6 +48,8 @@ public:
     QList<MessageMetadata> fetchMessagesMetadata();
     MessageContent fetchMessageContent(QString folderPath, int positionInFolder);
     void moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
+
+    void deleteMessage(const int uid, QString folderPath);
 protected:
     virtual vmime::utility::url getStoreUrl() const = 0;
 

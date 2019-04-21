@@ -1329,7 +1329,7 @@ void DatabaseManager::deleteMessageFromDatabase(const unsigned long uid, const Q
         deleteQuery.exec();
     }
 
-
+    emit getInstance()->inboxFoldersStructureChanged();
 }
 
 QList<MessageMetadata> DatabaseManager::getMessageMetadataForAccount(const QString emailAddress)

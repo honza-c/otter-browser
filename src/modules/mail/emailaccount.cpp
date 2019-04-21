@@ -377,6 +377,43 @@ void EmailAccount::updateMessageContentInDatabase(const QString emailAddress, co
     }
 }
 
+QFuture<void> EmailAccount::deleteMessageThread(const int uid, const QString folderPath)
+{
+    auto deleteMessageWorker = [](
+            const connectionSettingsHolder settings,
+            const int uid,
+            const QString folderPath)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+
+        imapService.deleteMessage(uid, folderPath);
+    };
+
+    return QtConcurrent::run(deleteMessageWorker, getConnectionSettings(), uid, folderPath);
+}
+
+void EmailAccount::deleteMessage(const int uid, const int folderId)
+{
+    QString folderPath = DatabaseManager::getFolderPath(folderId);
+    folderPath = folderPath.remove(0, 1);
+
+    QFuture<void> future = deleteMessageThread(uid, folderPath);
+    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+
+    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    {
+        DatabaseManager::deleteMessageFromDatabase(static_cast<unsigned long>(uid), m_emailAddress);
+    });
+
+    watcher->setFuture(future);
+}
+
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
     QDebugStateSaver saver(debug);
