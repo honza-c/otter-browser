@@ -481,6 +481,53 @@ QFuture<void> EmailAccount::deleteFolderThread(const QString folderPath)
     return QtConcurrent::run(deleteFolderWorker, getConnectionSettings(), folderPath);
 }
 
+void EmailAccount::createFolder(const QString folderPath)
+{
+    QFuture<void> future = createFolderThread(folderPath);
+    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+
+    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    {
+        InboxFolder folder;
+
+        folder.setPath("/" + folderPath);
+        folder.setEmailAddress(m_emailAddress);
+        folder.setIsAllMessages(false);
+        folder.setIsArchive(false);
+        folder.setIsDrafts(false);
+        folder.setIsFlagged(false);
+        folder.setIsImportant(false);
+        folder.setIsJunk(false);
+        folder.setIsSent(false);
+        folder.setIsTrash(false);
+        folder.setHasChildren(false);
+
+        DatabaseManager::addFolderToDatabase(folder);
+    });
+
+    watcher->setFuture(future);
+}
+
+QFuture<void> EmailAccount::createFolderThread(const QString folderPath)
+{
+    auto createFolderWorker = [](
+            const connectionSettingsHolder settings,
+            const QString folderPath)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+
+        imapService.createFolder(folderPath);
+    };
+
+    return QtConcurrent::run(createFolderWorker, getConnectionSettings(), folderPath);
+}
+
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
     QDebugStateSaver saver(debug);

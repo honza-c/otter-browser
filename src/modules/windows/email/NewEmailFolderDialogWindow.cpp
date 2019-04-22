@@ -61,3 +61,13 @@ void NewEmailFolderDialogWindow::editNameTextEdited(const QString &text)
 }
 
 }
+
+void Otter::NewEmailFolderDialogWindow::on_buttonBox_accepted()
+{
+    QDialog::accept();
+}
+
+void Otter::NewEmailFolderDialogWindow::on_buttonBox_rejected()
+{
+    QDialog::reject();
+}

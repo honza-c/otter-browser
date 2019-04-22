@@ -287,4 +287,17 @@ void VmimeInboxService::deleteMessage(const int uid, QString folderPath)
     folder->close(false);
 }
 
+void VmimeInboxService::createFolder(const QString folderPath)
+{
+    initializeStore();
+
+    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(folderPath.toStdString()));
+
+    vmime::net::folderAttributes attributes = vmime::net::folderAttributes();
+    attributes.setType(vmime::net::folderAttributes::Types::TYPE_CONTAINS_MESSAGES);
+    attributes.setSpecialUse(vmime::net::folderAttributes::SpecialUses::SPECIALUSE_NONE);
+
+    folder->create(attributes);
+}
+
 }

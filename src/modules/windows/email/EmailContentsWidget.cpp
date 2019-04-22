@@ -200,7 +200,6 @@ void EmailContentsWidget::createNewFolderActionTriggered(bool)
 
         QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
         QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
-        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
 
         NewEmailFolderDialogWindow *dialog = new NewEmailFolderDialogWindow();
         dialog->setWindowTitle("New Folder");
@@ -211,8 +210,13 @@ void EmailContentsWidget::createNewFolderActionTriggered(bool)
 
             if (folderName != QString())
             {
-                qWarning() << "Folder " << folderName << " will be created in INBOX folder of account " << emailAddress;
-                // TODO: validace na lomitka a existujici adresare ve stejnem adresari
+                for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+                {
+                    if (account.emailAddress() == emailAddress)
+                    {
+                        account.createFolder(folderName);
+                    }
+                }
             }
         }
     }
@@ -228,7 +232,6 @@ void EmailContentsWidget::createNewSubfolderActionTriggered(bool)
 
         QString emailAddress = getEmailAddressFromFolderTreeItemIndex(index);
         QString folderPath = getFolderPathFromFolderTreeItemIndex(index);
-        // int folderId = DatabaseManager::getFolderId(emailAddress, folderPath);
 
         NewEmailFolderDialogWindow *dialog = new NewEmailFolderDialogWindow();
         dialog->setWindowTitle("New Subfolder");
@@ -239,8 +242,15 @@ void EmailContentsWidget::createNewSubfolderActionTriggered(bool)
 
             if (folderName != QString())
             {
-                qWarning() << "Folder " << folderName << " will be created on path " << folderPath << " in account " << emailAddress;
-                // TODO: validace na lomitka a existujici adresare ve stejnem adresari
+                for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+                {
+                    if (account.emailAddress() == emailAddress)
+                    {
+                        QString path = folderPath + "/" + folderName;
+                        path = path.remove(0, 1);
+                        account.createFolder(path);
+                    }
+                }
             }
         }
     }

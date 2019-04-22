@@ -99,6 +99,7 @@ public:
 
     void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
     void deleteFolder(const QString folderPath);
+    void createFolder(const QString folderPath);
 
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
@@ -108,6 +109,7 @@ private:
     QFuture<void> deleteMessageThread(const int uid, const QString folderPath);
     QFuture<void> renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath);
     QFuture<void> deleteFolderThread(const QString folderPath);
+    QFuture<void> createFolderThread(const QString folderPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 
