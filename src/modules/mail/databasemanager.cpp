@@ -1405,4 +1405,67 @@ void DatabaseManager::renameFolder(const QString emailAddress, const QString ori
     emit getInstance()->inboxFoldersStructureChanged();
 }
 
+void DatabaseManager::copyMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const unsigned long newUid)
+{
+    int oldFolderId = getFolderId(emailAddress, oldPath);
+    int newFolderId = getFolderId(emailAddress, newPath);
+
+    QSqlQuery getMessageQuery;
+
+    getMessageQuery.prepare("SELECT"
+                            " * "
+                            "FROM MessageData"
+                            " WHERE "
+                            "folderId = :folderId AND uid = :uid");
+
+    getMessageQuery.bindValue(":folderId", oldFolderId);
+    getMessageQuery.bindValue(":uid", static_cast<int>(oldUid));
+    getMessageQuery.exec();
+
+
+    while (getMessageQuery.next())
+    {
+        bool isSeen = getMessageQuery.value(3).toBool();
+        bool isDraft = getMessageQuery.value(4).toBool();
+        QString date = getMessageQuery.value(5).toString();
+        QString sender = getMessageQuery.value(6).toString();
+        int size = getMessageQuery.value(7).toInt();
+        QString subject = getMessageQuery.value(8).toString();
+        QString recipients = getMessageQuery.value(9).toString();
+        QString copyRecipients = getMessageQuery.value(10).toString();
+        QString plainTextContent = getMessageQuery.value(11).toString();
+        QString htmlContent = getMessageQuery.value(12).toString();
+        QByteArray attachments = getMessageQuery.value(13).toByteArray();
+        QByteArray embeddedObjects = getMessageQuery.value(14).toByteArray();
+        QString replyToRecipients = getMessageQuery.value(15).toString();
+
+        QSqlQuery insertQuery;
+
+        insertQuery.prepare("INSERT INTO MessageData "
+                            "(folderId, uid, isSeen, isDraft, date, sender, size, subject, recipients, copyRecipients, plainTextContent, htmlContent, attachments, embeddedObjects, replyToRecipients)"
+                            " VALUES "
+                            "(:folderId, :uid, :isSeen, :isDraft, :date, :sender, :size, :subject, :recipients, :copyRecipients, :plainTextContent, :htmlContent, :attachments, :embeddedObjects, :replyToRecipients)");
+
+        insertQuery.bindValue(":folderId", newFolderId);
+        insertQuery.bindValue(":uid", static_cast<int>(newUid));
+        insertQuery.bindValue(":isSeen", isSeen);
+        insertQuery.bindValue(":isDraft", isDraft);
+        insertQuery.bindValue(":date", date);
+        insertQuery.bindValue(":sender", sender);
+        insertQuery.bindValue(":size", size);
+        insertQuery.bindValue(":subject", subject);
+        insertQuery.bindValue(":recipients", recipients);
+        insertQuery.bindValue(":copyRecipients", copyRecipients);
+        insertQuery.bindValue(":plainTextContent", plainTextContent);
+        insertQuery.bindValue(":htmlContent", htmlContent);
+        insertQuery.bindValue(":attachments", attachments);
+        insertQuery.bindValue(":embeddedObjects", embeddedObjects);
+        insertQuery.bindValue(":replyToRecipients", replyToRecipients);
+
+       insertQuery.exec();
+    }
+
+    emit m_instance->messagesMetadataStructureChanged();
+}
+
 }

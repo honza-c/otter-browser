@@ -528,6 +528,42 @@ QFuture<void> EmailAccount::createFolderThread(const QString folderPath)
     return QtConcurrent::run(createFolderWorker, getConnectionSettings(), folderPath);
 }
 
+void EmailAccount::copyMessage(const int uid, const QString oldPath, const QString newPath)
+{
+    QFuture<long> future = copyMessageThread(uid, oldPath, newPath);
+    QFutureWatcher<long> *watcher = new QFutureWatcher<long>();
+
+    connect(watcher, &QFutureWatcher<long>::finished, [=]()
+    {   
+        long copiedUid = future.result();
+        DatabaseManager::copyMessage(m_emailAddress, oldPath, newPath, static_cast<unsigned long>(uid), static_cast<unsigned long>(copiedUid));
+    });
+
+    watcher->setFuture(future);
+}
+
+QFuture<long> EmailAccount::copyMessageThread(const int uid, const QString oldPath, const QString newPath)
+{
+    auto copyMessageWorker = [](
+            const connectionSettingsHolder settings,
+            const int uid,
+            const QString oldPath,
+            const QString newPath)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+
+        return imapService.copyMessage(uid, oldPath, newPath);
+    };
+
+    return QtConcurrent::run(copyMessageWorker, getConnectionSettings(), uid, oldPath, newPath);
+}
+
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
     QDebugStateSaver saver(debug);

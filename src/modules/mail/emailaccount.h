@@ -100,6 +100,7 @@ public:
     void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
     void deleteFolder(const QString folderPath);
     void createFolder(const QString folderPath);
+    void copyMessage(const int uid, const QString oldPath, const QString newPath);
 
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
@@ -110,6 +111,7 @@ private:
     QFuture<void> renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath);
     QFuture<void> deleteFolderThread(const QString folderPath);
     QFuture<void> createFolderThread(const QString folderPath);
+    QFuture<long> copyMessageThread(const int uid, const QString oldPath, const QString newPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 

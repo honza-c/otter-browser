@@ -589,7 +589,25 @@ void EmailContentReaderWidget::moveMessageActionTriggered(bool)
 
 void EmailContentReaderWidget::copyMessageActionTriggered(bool)
 {
-    // TODO:
+    QAction *action = static_cast<QAction*>(QObject::sender());
+    QString newPath = action->text();
+
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+    QModelIndex index = selectionModel->selectedRows().at(0);
+
+    int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+    int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+    QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+    QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+    for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+    {
+        if (account.emailAddress() == emailAddress)
+        {
+            account.copyMessage(uid, currentPath, newPath);
+        }
+    }
 }
 
 void EmailContentReaderWidget::deleteMessageActionTriggered(bool)

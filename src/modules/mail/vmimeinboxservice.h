@@ -53,6 +53,7 @@ public:
     void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
     void deleteFolder(const QString folderPath);
     void createFolder(const QString folderPath);
+    long copyMessage(const int uid, const QString oldPath, const QString newPath);
 protected:
     virtual vmime::utility::url getStoreUrl() const = 0;
 

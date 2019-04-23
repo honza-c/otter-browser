@@ -300,4 +300,32 @@ void VmimeInboxService::createFolder(const QString folderPath)
     folder->create(attributes);
 }
 
+long VmimeInboxService::copyMessage(const int uid, const QString oldPath, const QString newPath)
+{
+    QString sourcePath = oldPath;
+    sourcePath = sourcePath.remove(0, 1);
+
+    QString destinationPath = newPath;
+    destinationPath = destinationPath.remove(0, 1);
+
+    initializeStore();
+
+    vmime::shared_ptr<vmime::net::folder> sourceFolder = m_store->getFolder(vmime::net::folder::path(sourcePath.toStdString()));
+    vmime::shared_ptr<vmime::net::folder> destinationFolder = m_store->getFolder(vmime::net::folder::path(destinationPath.toStdString()));
+
+    sourceFolder->open(vmime::net::folder::MODE_READ_WRITE);
+    destinationFolder->open(vmime::net::folder::MODE_READ_WRITE);
+
+    vmime::shared_ptr<vmime::net::message> message = sourceFolder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
+    vmime::net::messageSet set = sourceFolder->copyMessages(destinationFolder->getFullPath(), vmime::net::messageSet::byNumber(message->getNumber()));
+
+    const vmime::net::messageRange& range = set.getRangeAt(0);
+    const vmime::net::message::uid copiedUid = dynamic_cast<const vmime::net::UIDMessageRange&>(range).getFirst();
+
+    sourceFolder->close(false);
+    destinationFolder->close(false);
+
+    return atol(static_cast<std::string>(copiedUid).c_str());
+}
+
 }

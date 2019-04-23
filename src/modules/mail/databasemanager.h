@@ -100,6 +100,8 @@ public:
     static QFuture<QList<MessageMetadata>> getMissingMessagesFromServer(const QList<MessageMetadata> messagesFromServer, const QList<MessageMetadata> messagesFromDatabase);
 
     static void renameFolder(const QString emailAddress, const QString originalFolderPath, const QString renamedFolderPath);
+
+    static void copyMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const unsigned long newUid);
 signals:
     void inboxFoldersStructureChanged();
     void messagesMetadataStructureChanged();
