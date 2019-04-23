@@ -92,15 +92,13 @@ public:
     void fetchMessageMetadata();
     void updateMessageMetadataInDatabase(QList<MessageMetadata> metadata);
 
-    QFuture<bool> moveMessageThread(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
-    void moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
-
     void deleteMessage(const int uid, const int folderId);
+    void copyMessage(const int uid, const QString oldPath, const QString newPath);
+    void moveMessage(const int uid, const QString oldPath, const QString newPath);
 
     void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
     void deleteFolder(const QString folderPath);
     void createFolder(const QString folderPath);
-    void copyMessage(const int uid, const QString oldPath, const QString newPath);
 
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
@@ -112,6 +110,7 @@ private:
     QFuture<void> deleteFolderThread(const QString folderPath);
     QFuture<void> createFolderThread(const QString folderPath);
     QFuture<long> copyMessageThread(const int uid, const QString oldPath, const QString newPath);
+    QFuture<long> moveMessageThread(const int uid, const QString oldPath, const QString newPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 

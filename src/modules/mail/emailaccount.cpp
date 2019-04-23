@@ -207,42 +207,6 @@ QFuture<QList<InboxFolder>> EmailAccount::fetchInboxFolders()
     return QtConcurrent::run(fetchInboxFoldersWorker, getConnectionSettings());
 }
 
-QFuture<bool> EmailAccount::moveMessageThread(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
-{
-    auto moveMessageWorker = [](
-            const connectionSettingsHolder settings,
-            const QString sourceFolderPath,
-            const int messageId,
-            const QString destinationFolderPath)
-    {
-        VmimeInboxService *inboxService = new VmimeImapService();
-
-        inboxService->setEmailAddress(settings.emailAddress);
-        inboxService->setUserName(settings.userName);
-        inboxService->setPassword(settings.password);
-        inboxService->setServerUrl(settings.imapServerAddress);
-        inboxService->setPort(settings.imapServerPort);
-
-        inboxService->moveMessage(sourceFolderPath, messageId, destinationFolderPath);
-
-        return true;
-    };
-
-    return QtConcurrent::run(moveMessageWorker, getConnectionSettings(), sourceFolderPath, messageId, destinationFolderPath);
-}
-
-void EmailAccount::moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
-{
-    QFuture<bool> future = moveMessageThread(sourceFolderPath, messageId, destinationFolderPath);
-    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
-
-    connect(watcher, &QFutureWatcher<bool>::finished, [=](){
-        qWarning() << "Presun zprav dobehl se stavem: " << future.result();
-    });
-
-    watcher->setFuture(future);
-}
-
 void EmailAccount::fetchStoreContent()
 {
     QFuture<QList<InboxFolder>> future = fetchInboxFolders();
@@ -563,6 +527,42 @@ QFuture<long> EmailAccount::copyMessageThread(const int uid, const QString oldPa
 
     return QtConcurrent::run(copyMessageWorker, getConnectionSettings(), uid, oldPath, newPath);
 }
+
+QFuture<long> EmailAccount::moveMessageThread(const int uid, const QString oldPath, const QString newPath)
+{
+    auto moveMessageWorker = [](
+            const connectionSettingsHolder settings,
+            const int uid,
+            const QString oldPath,
+            const QString newPath)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+
+        return imapService.moveMessage(uid, oldPath, newPath);
+    };
+
+    return QtConcurrent::run(moveMessageWorker, getConnectionSettings(), uid, oldPath, newPath);
+}
+
+void EmailAccount::moveMessage(const int uid, const QString oldPath, const QString newPath)
+{
+    QFuture<long> future = moveMessageThread(uid, oldPath, newPath);
+    QFutureWatcher<long> *watcher = new QFutureWatcher<long>();
+
+    connect(watcher, &QFutureWatcher<long>::finished, [=](){
+        long movedUid = future.result();
+        DatabaseManager::moveMessage(m_emailAddress, oldPath, newPath, static_cast<unsigned long>(uid), static_cast<unsigned long>(movedUid));
+    });
+
+    watcher->setFuture(future);
+}
+
 
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {

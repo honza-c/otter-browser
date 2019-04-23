@@ -47,7 +47,7 @@ public:
     QList<MessageMetadata> fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb);
     QList<MessageMetadata> fetchMessagesMetadata();
     MessageContent fetchMessageContent(QString folderPath, int positionInFolder);
-    void moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath);
+    long moveMessage(const int uid, const QString oldPath, const QString newPath);
 
     void deleteMessage(const int uid, QString folderPath);
     void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);

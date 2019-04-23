@@ -1468,4 +1468,25 @@ void DatabaseManager::copyMessage(const QString emailAddress, const QString oldP
     emit m_instance->messagesMetadataStructureChanged();
 }
 
+void DatabaseManager::moveMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const long unsigned newUid)
+{
+    int oldFolderId = getFolderId(emailAddress, oldPath);
+    int newFolderId = getFolderId(emailAddress, newPath);
+
+    QSqlQuery query;
+
+    query.prepare("UPDATE MessageData "
+                  "SET folderId = :newFolderId, uid = :newUid "
+                  "WHERE folderId = :oldFolderId AND uid = :oldUid");
+
+    query.bindValue(":newFolderId", newFolderId);
+    query.bindValue(":newUid", static_cast<int>(newUid));
+    query.bindValue(":oldFolderId", oldFolderId);
+    query.bindValue(":oldUid", static_cast<int>(oldUid));
+
+    query.exec();
+
+    emit m_instance->messagesMetadataStructureChanged();
+}
+
 }

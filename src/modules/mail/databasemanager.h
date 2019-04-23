@@ -102,6 +102,7 @@ public:
     static void renameFolder(const QString emailAddress, const QString originalFolderPath, const QString renamedFolderPath);
 
     static void copyMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const unsigned long newUid);
+    static void moveMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const long unsigned newUid);
 signals:
     void inboxFoldersStructureChanged();
     void messagesMetadataStructureChanged();

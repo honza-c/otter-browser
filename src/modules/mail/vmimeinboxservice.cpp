@@ -176,85 +176,16 @@ void VmimeInboxService::initializeStore()
     }
 }
 
-void VmimeInboxService::moveMessage(const QString sourceFolderPath, const int messageId, const QString destinationFolderPath)
+long VmimeInboxService::moveMessage(const int uid, const QString oldPath, const QString newPath)
 {
-    initializeStore();
+    long result = copyMessage(uid, oldPath, newPath);
 
-    vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
-    std::vector<vmime::shared_ptr<vmime::net::folder>> folders = rootFolder->getFolders(true);
-    folders.push_back(rootFolder);
+    QString pathToDelete = oldPath;
+    pathToDelete.remove(0,1);
 
-    vmime::shared_ptr<vmime::net::folder> sourceFolder = nullptr;
-    vmime::shared_ptr<vmime::net::folder> destinationFolder = nullptr;
+    deleteMessage(uid, pathToDelete);
 
-    for (vmime::shared_ptr<vmime::net::folder> folder : folders)
-    {
-        if (folder->getFullPath().toString("/", vmime::charsets::UTF_8) == sourceFolderPath.right(sourceFolderPath.size() - 1).toStdString().c_str())
-        {
-            sourceFolder = folder;
-        }
-
-        if (folder->getFullPath().toString("/", vmime::charsets::UTF_8) == destinationFolderPath.right(destinationFolderPath.size() - 1).toStdString().c_str())
-        {
-            destinationFolder = folder;
-        }
-    }
-
-    if (sourceFolder != nullptr && destinationFolder != nullptr)
-    {
-        try
-        {
-            sourceFolder->open(vmime::net::folder::MODE_READ_WRITE, true);
-        }
-        catch (std::exception e) {
-            return;
-        }
-
-        try
-        {
-            destinationFolder->open(vmime::net::folder::MODE_READ_WRITE, true);
-        }
-        catch (std::exception e) {
-            return;
-        }
-
-        vmime::net::messageSet set = sourceFolder->copyMessages(sourceFolder->getFullPath(),
-                                                                vmime::net::messageSet::byNumber(static_cast<vmime::size_t>(messageId)));
-
-        /*
-        vmime::shared_ptr<vmime::message> message = sourceFolder->getMessage(static_cast<vmime::size_t>(messageId))->getParsedMessage();
-        vmime::shared_ptr<vmime::message> newMessage = vmime::make_shared<vmime::message>();
-        vmime::net::messageSet set = destinationFolder->addMessage(message);
-        */
-
-        if (set.isEmpty())
-        {
-            qWarning() << "Message has been added, but UID is not known";
-        }
-        else
-        {
-            qWarning() << "Message has been added, UID is known";
-        }
-
-        sourceFolder->deleteMessages(vmime::net::messageSet::byNumber(static_cast<vmime::size_t>(messageId)));
-
-        sourceFolder->expunge();
-        destinationFolder->expunge();
-
-
-        vmime::shared_ptr<vmime::net::message> message = sourceFolder->getMessage(static_cast<vmime::size_t>(messageId));
-        if (message->isExpunged())
-        {
-            qWarning() << "Message is successfully deleted";
-        }
-        else
-        {
-            qWarning() << "Message is not successfully deleted";
-        }
-
-        sourceFolder->close(true);
-        destinationFolder->close(true);
-    }
+    return result;
 }
 
 void VmimeInboxService::renameFolder(const QString originalFolderPath, const QString renamedFolderPath)
