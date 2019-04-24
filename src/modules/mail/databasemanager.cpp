@@ -1489,4 +1489,52 @@ void DatabaseManager::moveMessage(const QString emailAddress, const QString oldP
     emit m_instance->messagesMetadataStructureChanged();
 }
 
+QString DatabaseManager::getTrashFolderPath(const QString emailAddress)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT"
+                  " path "
+                  "FROM Folders"
+                  " WHERE "
+                  "emailAddress = :emailAddress AND isTrash = :isTrash");
+
+    query.bindValue(":emailAddress", emailAddress);
+    query.bindValue(":isTrash", true);
+
+    query.exec();
+
+    while (query.next())
+    {
+        return query.value(0).toString();
+    }
+
+    return QString();
+}
+
+bool DatabaseManager::hasTheAccountTrashFolder(const QString emailAddress)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT"
+                  " COUNT( * ) "
+                  "FROM Folders"
+                  " WHERE "
+                  "emailAddress = :emailAddress AND isTrash = :isTrash");
+
+    query.bindValue(":emailAddress", emailAddress);
+    query.bindValue(":isTrash", true);
+
+    query.exec();
+
+    if (query.next())
+    {
+        return query.value(0).toInt() > 0;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 }

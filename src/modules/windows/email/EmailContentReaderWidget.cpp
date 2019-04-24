@@ -183,17 +183,37 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
         QString htmlContent = DatabaseManager::getHtmlContent(messageId);
         QString plainTextContent = DatabaseManager::getTextContent(messageId);
 
+        int folderId = m_messageMetadataTableModel->data(current.sibling(current.row(), 1), Qt::DisplayRole).toInt();
+        int positionInFolder = DatabaseManager::getPositionInFolder(messageId);
+
+        QString folderPath = DatabaseManager::getFolderPath(folderId);
+        QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+        bool accountHasTrashFolder = DatabaseManager::hasTheAccountTrashFolder(emailAddress);
+
+        if (accountHasTrashFolder)
+        {
+            bool currentFolderIsTrash = DatabaseManager::isFolderTrash(folderId);
+
+            if (currentFolderIsTrash)
+            {
+                m_ui->moveToTrashButton->setText("Delete message");
+            }
+            else
+            {
+                m_ui->moveToTrashButton->setText("Move to trash");
+            }
+        }
+        else
+        {
+            m_ui->moveToTrashButton->setText("Delete message");
+        }
+
+
         if (htmlContent == QString() && plainTextContent == QString())
         {
             if (messageId > 0)
             {
-                int folderId = m_messageMetadataTableModel->data(current.sibling(current.row(), 1), Qt::DisplayRole).toInt();
-
-                QString folderPath = DatabaseManager::getFolderPath(folderId);
-                QString emailAddress = DatabaseManager::getEmailAddress(folderId);
-
-                int positionInFolder = DatabaseManager::getPositionInFolder(messageId);
-
                 if (positionInFolder > 0)
                 {
                     for (EmailAccount &userAccount : EmailAccountsManager::getEmailAccounts())
@@ -533,7 +553,58 @@ void EmailContentReaderWidget::messageContentFetched(int messageId)
 
 void EmailContentReaderWidget::on_moveToTrashButton_clicked()
 {
-    // TODO:
+    QPushButton *button = static_cast<QPushButton*>(sender());
+
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedRows().at(0);
+
+        if (button->text() == "Move to trash")
+        {
+            int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+            int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+            QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+            QString trashFolderPath = DatabaseManager::getTrashFolderPath(emailAddress);
+
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.moveMessage(uid, currentPath, trashFolderPath);
+                }
+            }
+        }
+        else if (button->text() == "Delete message")
+        {
+            QMessageBox messageBox;
+
+            messageBox.setWindowTitle("Delete the message");
+            messageBox.setText("Are you sure to delete the selected message?");
+            messageBox.setIcon(QMessageBox::Question);
+            messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
+            messageBox.addButton(new QPushButton("Delete Message"), QMessageBox::ButtonRole::AcceptRole);
+
+            if (messageBox.exec())
+            {
+                int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+                int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+                QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+                for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+                {
+                    if (account.emailAddress() == emailAddress)
+                    {
+                        account.deleteMessage(uid, folderId);
+                    }
+                }
+            }
+        }
+    }
 }
 
 void EmailContentReaderWidget::on_junkButton_clicked()

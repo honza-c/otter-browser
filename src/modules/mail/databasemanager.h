@@ -103,6 +103,9 @@ public:
 
     static void copyMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const unsigned long newUid);
     static void moveMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const long unsigned newUid);
+
+    static bool hasTheAccountTrashFolder(const QString emailAddress);
+    static QString getTrashFolderPath(const QString emailAddress);
 signals:
     void inboxFoldersStructureChanged();
     void messagesMetadataStructureChanged();
