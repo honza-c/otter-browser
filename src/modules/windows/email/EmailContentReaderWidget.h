@@ -75,6 +75,8 @@ private slots:
     void on_replyButton_clicked();
     void on_forwardButton_clicked();
 
+    void on_messageContentWidget_anchorClicked(const QUrl &arg1);
+
 private:
     void setupTableModel();
     void setupTableView();

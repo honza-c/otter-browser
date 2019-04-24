@@ -22,6 +22,7 @@
 #include "EmailContentReaderWidget.h"
 #include "ui_EmailContentReaderWidget.h"
 #include "../../../core/ThemesManager.h"
+#include "../../../core/Application.h"
 
 namespace Otter
 {
@@ -59,6 +60,8 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->forwardButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-forward"), true));
     m_ui->archiveButton->setIcon(ThemesManager::createIcon(QLatin1String("folder-koperta"), true));
     m_ui->enableRemoteContentButton->setIcon(ThemesManager::createIcon(QLatin1String("view-information"), true));
+
+    m_ui->messageContentWidget->setOpenLinks(false);
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -860,3 +863,8 @@ void EmailContentReaderWidget::messagesMetadataStructureChanged()
 
 }
 
+
+void Otter::EmailContentReaderWidget::on_messageContentWidget_anchorClicked(const QUrl &arg1)
+{
+    Application::triggerAction(ActionsManager::OpenUrlAction, {{QLatin1String("url"), arg1.url()}}, this);
+}
