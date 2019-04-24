@@ -58,6 +58,7 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->replyButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-sender"), true));
     m_ui->forwardButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-forward"), true));
     m_ui->archiveButton->setIcon(ThemesManager::createIcon(QLatin1String("folder-koperta"), true));
+    m_ui->enableRemoteContentButton->setIcon(ThemesManager::createIcon(QLatin1String("view-information"), true));
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()

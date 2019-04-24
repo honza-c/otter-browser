@@ -50,7 +50,7 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     m_ui->inboxFoldersTreeView->setViewMode(ItemViewWidget::TreeView);
     m_ui->inboxFoldersTreeView->expandAll();
 
-    m_ui->getMessagesButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send-receive"), false));
+    m_ui->getMessagesButton->setIcon(ThemesManager::createIcon(QLatin1String("mail"), false));
     m_ui->writeMessageButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-send"), false));
 
     connect(DatabaseManager::getInstance(), SIGNAL(inboxFoldersStructureChanged()), this, SLOT(inboxFoldersStructureChanged()));
