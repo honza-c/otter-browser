@@ -189,13 +189,9 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
         QString folderPath = DatabaseManager::getFolderPath(folderId);
         QString emailAddress = DatabaseManager::getEmailAddress(folderId);
 
-        bool accountHasTrashFolder = DatabaseManager::hasTheAccountTrashFolder(emailAddress);
-
-        if (accountHasTrashFolder)
+        if (DatabaseManager::hasTheAccountTrashFolder(emailAddress))
         {
-            bool currentFolderIsTrash = DatabaseManager::isFolderTrash(folderId);
-
-            if (currentFolderIsTrash)
+            if (DatabaseManager::isFolderTrash(folderId))
             {
                 m_ui->moveToTrashButton->setText("Delete message");
             }
@@ -207,6 +203,25 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
         else
         {
             m_ui->moveToTrashButton->setText("Delete message");
+        }
+
+
+        if (DatabaseManager::hasTheAccountJunkFolder(emailAddress))
+        {
+            m_ui->junkButton->setVisible(true);
+
+            if (DatabaseManager::isFolderJunk(folderId))
+            {
+                m_ui->junkButton->setText("Not junk");
+            }
+            else
+            {
+                m_ui->junkButton->setText("Junk");
+            }
+        }
+        else
+        {
+            m_ui->junkButton->setVisible(false);
         }
 
 
@@ -609,7 +624,51 @@ void EmailContentReaderWidget::on_moveToTrashButton_clicked()
 
 void EmailContentReaderWidget::on_junkButton_clicked()
 {
-    // TODO:
+    QPushButton *button = static_cast<QPushButton*>(sender());
+
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedRows().at(0);
+
+        if (button->text() == "Junk")
+        {
+            int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+            int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+            QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+            QString junkFolderPath = DatabaseManager::getJunkFolderPath(emailAddress);
+
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.moveMessage(uid, currentPath, junkFolderPath);
+                }
+            }
+        }
+        else if (button->text() == "Not junk")
+        {
+            int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+            int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+            QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+            QString defaultFolderPath = "/INBOX";
+
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.moveMessage(uid, currentPath, defaultFolderPath);
+                }
+            }
+        }
+    }
 }
 
 void EmailContentReaderWidget::on_archiveButton_clicked()

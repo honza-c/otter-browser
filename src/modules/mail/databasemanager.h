@@ -105,7 +105,10 @@ public:
     static void moveMessage(const QString emailAddress, const QString oldPath, const QString newPath, const unsigned long oldUid, const long unsigned newUid);
 
     static bool hasTheAccountTrashFolder(const QString emailAddress);
+    static bool hasTheAccountJunkFolder(const QString emailAddress);
     static QString getTrashFolderPath(const QString emailAddress);
+    static QString getJunkFolderPath(const QString emailAddress);
+
 signals:
     void inboxFoldersStructureChanged();
     void messagesMetadataStructureChanged();
