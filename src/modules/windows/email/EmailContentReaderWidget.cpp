@@ -57,6 +57,7 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->replyAllButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-all"), true));
     m_ui->replyButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-reply-sender"), true));
     m_ui->forwardButton->setIcon(ThemesManager::createIcon(QLatin1String("mail-forward"), true));
+    m_ui->archiveButton->setIcon(ThemesManager::createIcon(QLatin1String("folder-koperta"), true));
 }
 
 EmailContentReaderWidget::~EmailContentReaderWidget()
@@ -222,6 +223,22 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
         else
         {
             m_ui->junkButton->setVisible(false);
+        }
+
+        if (DatabaseManager::hasTheAccountArchiveFolder(emailAddress))
+        {
+            if (DatabaseManager::isFolderArchive(folderId))
+            {
+                m_ui->archiveButton->setText("Unarchive");
+            }
+            else
+            {
+                m_ui->archiveButton->setText("Archive");
+            }
+        }
+        else
+        {
+            m_ui->archiveButton->setVisible(false);
         }
 
 
@@ -673,7 +690,51 @@ void EmailContentReaderWidget::on_junkButton_clicked()
 
 void EmailContentReaderWidget::on_archiveButton_clicked()
 {
-    // TODO:
+    QPushButton *button = static_cast<QPushButton*>(sender());
+
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+
+    if (selectionModel->hasSelection())
+    {
+        QModelIndex index = selectionModel->selectedRows().at(0);
+
+        if (button->text() == "Archive")
+        {
+            int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+            int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+            QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+            QString archiveFolderPath = DatabaseManager::getArchiveFolderPath(emailAddress);
+
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.moveMessage(uid, currentPath, archiveFolderPath);
+                }
+            }
+        }
+        else if (button->text() == "Unarchive")
+        {
+            int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+            int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+            QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+            QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+            QString defaultFolderPath = "/INBOX";
+
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.moveMessage(uid, currentPath, defaultFolderPath);
+                }
+            }
+        }
+    }
 }
 
 void EmailContentReaderWidget::on_replyAllButton_clicked()

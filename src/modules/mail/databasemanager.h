@@ -106,8 +106,10 @@ public:
 
     static bool hasTheAccountTrashFolder(const QString emailAddress);
     static bool hasTheAccountJunkFolder(const QString emailAddress);
+    static bool hasTheAccountArchiveFolder(const QString emailAddress);
     static QString getTrashFolderPath(const QString emailAddress);
     static QString getJunkFolderPath(const QString emailAddress);
+    static QString getArchiveFolderPath(const QString emailAddress);
 
 signals:
     void inboxFoldersStructureChanged();

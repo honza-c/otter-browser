@@ -1535,6 +1535,29 @@ QString DatabaseManager::getJunkFolderPath(const QString emailAddress)
     return QString();
 }
 
+QString DatabaseManager::getArchiveFolderPath(const QString emailAddress)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT"
+                  " path "
+                  "FROM Folders"
+                  " WHERE "
+                  "emailAddress = :emailAddress AND isArchive = :isArchive");
+
+    query.bindValue(":emailAddress", emailAddress);
+    query.bindValue(":isArchive", true);
+
+    query.exec();
+
+    while (query.next())
+    {
+        return query.value(0).toString();
+    }
+
+    return QString();
+}
+
 bool DatabaseManager::hasTheAccountTrashFolder(const QString emailAddress)
 {
     QSqlQuery query;
@@ -1584,5 +1607,31 @@ bool DatabaseManager::hasTheAccountJunkFolder(const QString emailAddress)
         return false;
     }
 }
+
+bool DatabaseManager::hasTheAccountArchiveFolder(const QString emailAddress)
+{
+    QSqlQuery query;
+
+    query.prepare("SELECT"
+                  " COUNT( * ) "
+                  "FROM Folders"
+                  " WHERE "
+                  "emailAddress = :emailAddress AND isArchive = :isArchive");
+
+    query.bindValue(":emailAddress", emailAddress);
+    query.bindValue(":isArchive", true);
+
+    query.exec();
+
+    if (query.next())
+    {
+        return query.value(0).toInt() > 0;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 }
