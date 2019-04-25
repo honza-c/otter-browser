@@ -658,6 +658,14 @@ void DatabaseManager::addFolderToDatabase(const InboxFolder folder)
     query.bindValue(":isTrash", folder.isTrash());
 
     query.exec();
+}
+
+void DatabaseManager::addFoldersToDatabase(const QList<InboxFolder> folders)
+{
+    for (InboxFolder folder : folders)
+    {
+        addFolderToDatabase(folder);
+    }
 
     emit getInstance()->inboxFoldersStructureChanged();
 }

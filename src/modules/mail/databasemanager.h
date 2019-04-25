@@ -65,6 +65,7 @@ public:
     static QStringList getFoldersPathForAccount(const QString emailAddress);
     static void deleteFolderFromDatabase(const QString emailAddress, const QString path);
     static void addFolderToDatabase(const InboxFolder folder);
+    static void addFoldersToDatabase(const QList<InboxFolder> folders);
     static int getMessagesCountForFolder(const QString emailAddress, const QString path);
     static void addMessagesMetadataToDatabase(const QList<MessageMetadata> metadata);
     static void cleanUnusedDataFromDatabase(const QStringList emailAddresses);

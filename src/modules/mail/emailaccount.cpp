@@ -163,6 +163,8 @@ void EmailAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
         }
     }
 
+    QList<InboxFolder> newFolders;
+
     for (InboxFolder folder : folders)
     {
         bool found = false;
@@ -178,8 +180,13 @@ void EmailAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
 
         if (!found)
         {
-            DatabaseManager::addFolderToDatabase(folder);
+            newFolders << folder;
         }
+    }
+
+    if (!newFolders.empty())
+    {
+        DatabaseManager::addFoldersToDatabase(newFolders);
     }
 }
 
@@ -466,7 +473,10 @@ void EmailAccount::createFolder(const QString folderPath)
         folder.setIsTrash(false);
         folder.setHasChildren(false);
 
-        DatabaseManager::addFolderToDatabase(folder);
+        QList<InboxFolder> folders;
+        folders << folder;
+
+        DatabaseManager::addFoldersToDatabase(folders);
     });
 
     watcher->setFuture(future);
