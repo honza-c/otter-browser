@@ -563,6 +563,43 @@ void EmailAccount::moveMessage(const int uid, const QString oldPath, const QStri
     watcher->setFuture(future);
 }
 
+void EmailAccount::setMessageAsSeen(const int uid)
+{
+    QString folderPath = DatabaseManager::getFolderPath(m_emailAddress, static_cast<unsigned long>(uid));
+
+    QFuture<void> future = setMessageAsSeenThread(uid, folderPath);
+    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+
+
+    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    {
+        DatabaseManager::setMessageAsSeen(static_cast<unsigned long>(uid), m_emailAddress);
+    });
+
+    watcher->setFuture(future);
+}
+
+QFuture<void> EmailAccount::setMessageAsSeenThread(const int uid, const QString folderPath)
+{
+    auto setMessageAsSeenWorker = [](
+            const connectionSettingsHolder settings,
+            const int uid,
+            const QString folderPath)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.userName);
+        imapService.setPassword(settings.password);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+
+        imapService.setMessageAsSeen(uid, folderPath);
+    };
+
+    return QtConcurrent::run(setMessageAsSeenWorker, getConnectionSettings(), uid, folderPath);
+}
+
 
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {

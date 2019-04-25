@@ -110,6 +110,7 @@ public:
     static QString getTrashFolderPath(const QString emailAddress);
     static QString getJunkFolderPath(const QString emailAddress);
     static QString getArchiveFolderPath(const QString emailAddress);
+    static QString getFolderPath(const QString emailAddress, const unsigned long uid);
 
 signals:
     void inboxFoldersStructureChanged();

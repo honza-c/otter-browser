@@ -54,6 +54,7 @@ public:
     void deleteFolder(const QString folderPath);
     void createFolder(const QString folderPath);
     long copyMessage(const int uid, const QString oldPath, const QString newPath);
+    void setMessageAsSeen(const int uid, const QString folderPath);
 protected:
     virtual vmime::utility::url getStoreUrl() const = 0;
 

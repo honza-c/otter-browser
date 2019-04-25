@@ -1633,5 +1633,47 @@ bool DatabaseManager::hasTheAccountArchiveFolder(const QString emailAddress)
     }
 }
 
+QString DatabaseManager::getFolderPath(const QString emailAddress, const unsigned long uid)
+{
+    QList<int> folderIds;
+
+    QSqlQuery folderIdsQuery;
+
+    folderIdsQuery.prepare("SELECT"
+                  " id "
+                  "FROM Folders"
+                  " WHERE "
+                  " emailAddress = :emailAddress ");
+
+    folderIdsQuery.bindValue(":emailAddress", emailAddress);
+    folderIdsQuery.exec();
+
+    while (folderIdsQuery.next())
+    {
+        folderIds << folderIdsQuery.value(0).toInt();
+    }
+
+    QSqlQuery uidQuery;
+
+    uidQuery.prepare("SELECT"
+                     " folderId "
+                     "FROM MessageData"
+                     " WHERE "
+                     "uid = :uid");
+
+    uidQuery.bindValue(":uid", static_cast<int>(uid));
+
+    uidQuery.exec();
+
+    while (uidQuery.next())
+    {
+        if (folderIds.contains(uidQuery.value(0).toInt()))
+        {
+            return getFolderPath(uidQuery.value(0).toInt());
+        }
+    }
+
+    return QString();
+}
 
 }

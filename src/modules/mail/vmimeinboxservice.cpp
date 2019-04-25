@@ -259,4 +259,25 @@ long VmimeInboxService::copyMessage(const int uid, const QString oldPath, const 
     return atol(static_cast<std::string>(copiedUid).c_str());
 }
 
+void VmimeInboxService::setMessageAsSeen(const int uid, const QString folderPath)
+{
+    initializeStore();
+
+    QString path = folderPath;
+    path = path.remove(0, 1);
+
+    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(path.toStdString()));
+    folder->open(vmime::net::folder::MODE_READ_WRITE);
+    vmime::shared_ptr <vmime::net::message> msg = folder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
+
+    folder->fetchMessage(msg, vmime::net::fetchAttributes::FLAGS);
+
+    auto flags = msg->getFlags();
+    flags = flags | vmime::net::message::FLAG_SEEN;
+
+    msg->setFlags(flags, vmime::net::message::FLAG_MODE_SET);
+
+    folder->close(false);
+}
+
 }

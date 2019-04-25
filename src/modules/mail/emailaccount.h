@@ -100,6 +100,8 @@ public:
     void deleteFolder(const QString folderPath);
     void createFolder(const QString folderPath);
 
+    void setMessageAsSeen(const int uid);
+
 private:
     QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
@@ -111,6 +113,7 @@ private:
     QFuture<void> createFolderThread(const QString folderPath);
     QFuture<long> copyMessageThread(const int uid, const QString oldPath, const QString newPath);
     QFuture<long> moveMessageThread(const int uid, const QString oldPath, const QString newPath);
+    QFuture<void> setMessageAsSeenThread(const int uid, const QString folderPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 

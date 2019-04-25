@@ -190,6 +190,7 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
 
         int folderId = m_messageMetadataTableModel->data(current.sibling(current.row(), 1), Qt::DisplayRole).toInt();
         int positionInFolder = DatabaseManager::getPositionInFolder(messageId);
+        int uid = m_messageMetadataTableModel->data(current.sibling(current.row(), 2), Qt::DisplayRole).toInt();
 
         QString folderPath = DatabaseManager::getFolderPath(folderId);
         QString emailAddress = DatabaseManager::getEmailAddress(folderId);
@@ -245,6 +246,19 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
             m_ui->archiveButton->setVisible(false);
         }
 
+
+        bool isSeen = m_messageMetadataTableModel->data(current.sibling(current.row(), 3), Qt::DisplayRole).toBool();
+
+        if (!isSeen)
+        {
+            for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+            {
+                if (account.emailAddress() == emailAddress)
+                {
+                    account.setMessageAsSeen(uid);
+                }
+            }
+        }
 
         if (htmlContent == QString() && plainTextContent == QString())
         {
