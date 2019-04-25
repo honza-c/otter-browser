@@ -1301,6 +1301,8 @@ void DatabaseManager::setMessageAsSeen(const unsigned long uid, const QString em
 
         updateQuery.exec();
     }
+
+    emit m_instance->messagesMetadataStructureChanged();
 }
 
 void DatabaseManager::deleteMessageFromDatabase(const unsigned long uid, const QString emailAddress)

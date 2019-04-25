@@ -872,11 +872,10 @@ void EmailContentReaderWidget::deleteMessageActionTriggered(bool)
 
 void EmailContentReaderWidget::messagesMetadataStructureChanged()
 {
-    static_cast<QSqlTableModel>(m_ui->messageMetadataTableView->model()).select();
+    m_messageMetadataTableModel->select();
 }
 
 }
-
 
 void Otter::EmailContentReaderWidget::on_messageContentWidget_anchorClicked(const QUrl &arg1)
 {
