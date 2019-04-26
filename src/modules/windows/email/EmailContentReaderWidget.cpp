@@ -44,7 +44,7 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->blockRemoteContentLayout->setContentsMargins(0, 0, 0, 0);
 
     m_ui->splitter->setStretchFactor(0, 1);
-    m_ui->splitter->setStretchFactor(1, 5);
+    m_ui->splitter->setStretchFactor(1, 2);
 
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
 
