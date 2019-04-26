@@ -873,6 +873,13 @@ void EmailContentReaderWidget::deleteMessageActionTriggered(bool)
 void EmailContentReaderWidget::messagesMetadataStructureChanged()
 {
     m_messageMetadataTableModel->select();
+
+    while (m_messageMetadataTableModel->canFetchMore())
+    {
+        m_messageMetadataTableModel->fetchMore();
+    }
+
+    m_ui->messageMetadataTableView->scrollToBottom();
 }
 
 }
