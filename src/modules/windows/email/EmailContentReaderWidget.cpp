@@ -127,9 +127,9 @@ void EmailContentReaderWidget::messageMetadataTableViewContextMenuRequested(QPoi
 {
     QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
     MessageMetadataSqlTableModel *model = static_cast<MessageMetadataSqlTableModel*>(m_ui->messageMetadataTableView->model());
+    QModelIndex indexUnderCursor = m_ui->messageMetadataTableView->indexAt(position);
 
-
-    if (selectionModel->hasSelection())
+    if (indexUnderCursor.isValid())
     {
         QMenu *menu = new QMenu();
 
