@@ -214,7 +214,6 @@ void VmimeInboxService::deleteMessage(const int uid, QString folderPath)
     vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(folderPath.toStdString()));
     folder->open(vmime::net::folder::MODE_READ_WRITE);
     folder->deleteMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid)));
-
     folder->close(false);
 }
 
