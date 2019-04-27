@@ -37,10 +37,7 @@ PreferencesEmailPageWidget::PreferencesEmailPageWidget(QWidget *parent) :
     m_editMode = false;
     m_creatingNewAccountMode = false;
 
-    if (m_emailAccountsListModel->rowCount() == 0)
-    {
-        m_ui->removeAccountButton->setEnabled(false);
-    }
+    m_ui->removeAccountButton->setEnabled(false);
 
     m_ui->emailAccountDetailsWidget->setVisible(false);
 
