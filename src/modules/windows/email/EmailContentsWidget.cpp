@@ -58,6 +58,7 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     if (isSidebarPanel())
     {
         m_ui->emailTabWidget->setVisible(false);
+        m_ui->emailSidebarButtons->setVisible(false);
     }
     else
     {
