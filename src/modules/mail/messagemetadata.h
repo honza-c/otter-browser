@@ -98,7 +98,7 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const MessageMetadata &metadata);
-
+bool operator==(const MessageMetadata first, const MessageMetadata second);
 }
 
 #endif // MESSAGEMETADATA_H

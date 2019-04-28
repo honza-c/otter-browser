@@ -92,6 +92,7 @@ private:
 };
 
 QDebug operator<<(QDebug debug, const InboxFolder &inboxFolder);
+bool operator==(const InboxFolder first, const InboxFolder second);
 
 }
 

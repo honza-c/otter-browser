@@ -233,4 +233,18 @@ QDebug operator<<(QDebug debug, const InboxFolder &inboxFolder)
     return debug;
 }
 
+bool operator==(const InboxFolder first, const InboxFolder second)
+{
+    return first.path() == second.path() &&
+            first.emailAddress() == second.emailAddress() &&
+            first.isArchive() == second.isArchive() &&
+            first.isDrafts() == second.isDrafts() &&
+            first.isFlagged() == second.isFlagged() &&
+            first.isImportant() == second.isImportant() &&
+            first.isJunk() == second.isJunk() &&
+            first.isSent() == second.isSent() &&
+            first.isTrash() == second.isTrash() &&
+            first.hasChildren() == second.hasChildren();
+}
+
 }

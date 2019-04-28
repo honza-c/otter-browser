@@ -224,4 +224,21 @@ QDebug operator<<(QDebug debug, const MessageMetadata &metadata)
     return debug;
 }
 
+bool operator==(const MessageMetadata first, const MessageMetadata second)
+{
+    return first.emailAddress() == second.emailAddress()
+            && first.folderPath() == second.folderPath()
+            && first.uid() == second.uid()
+            && first.size() == second.size()
+            && first.dateTime() == second.dateTime()
+            && first.from() == second.from()
+            && first.replyTo() == second.replyTo()
+            && first.subject() == second.subject()
+            && first.isDeleted() == second.isDeleted()
+            && first.isDraft() == second.isDraft()
+            && first.isRecent() == second.isRecent()
+            && first.isReplied() == second.isReplied()
+            && first.isSeen() == second.isSeen();
+}
+
 }

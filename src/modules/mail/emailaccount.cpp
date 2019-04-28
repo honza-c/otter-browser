@@ -221,8 +221,11 @@ void EmailAccount::fetchStoreContent()
     QFutureWatcher<QList<InboxFolder>> *watcher = new QFutureWatcher<QList<InboxFolder>>();
 
     connect(watcher, &QFutureWatcher<QList<InboxFolder>>::finished, [=](){
-        updateFolderStructureInDatabase(future.result());
-        fetchMessageMetadata();
+        if (future.result() != QList<InboxFolder>())
+        {
+            updateFolderStructureInDatabase(future.result());
+            fetchMessageMetadata();
+        }
     });
 
     watcher->setFuture(future);
@@ -235,7 +238,10 @@ void EmailAccount::fetchMessageMetadata()
 
     connect(watcher, &QFutureWatcher<QList<MessageMetadata>>::finished, [=]()
     {
-        DatabaseManager::updateMessageMetadata(future.result(), m_emailAddress);
+        if (future.result() != QList<MessageMetadata>())
+        {
+            DatabaseManager::updateMessageMetadata(future.result(), m_emailAddress);
+        }
     });
 
     watcher->setFuture(future);
@@ -287,7 +293,10 @@ void EmailAccount::fetchMissingMessageContent(const QString folderPath, const in
     QString emailAddress = m_emailAddress;
 
     connect(watcher, &QFutureWatcher<MessageContent>::finished, [=](){
-        updateMessageContentInDatabase(emailAddress, folderPath, positionInFolder, future.result());
+        if (future.result() != MessageContent())
+        {
+            updateMessageContentInDatabase(emailAddress, folderPath, positionInFolder, future.result());
+        }
     });
 
     watcher->setFuture(future);
@@ -348,7 +357,7 @@ void EmailAccount::updateMessageContentInDatabase(const QString emailAddress, co
     }
 }
 
-QFuture<void> EmailAccount::deleteMessageThread(const int uid, const QString folderPath)
+QFuture<bool> EmailAccount::deleteMessageThread(const int uid, const QString folderPath)
 {
     auto deleteMessageWorker = [](
             const connectionSettingsHolder settings,
@@ -363,7 +372,7 @@ QFuture<void> EmailAccount::deleteMessageThread(const int uid, const QString fol
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
 
-        imapService.deleteMessage(uid, folderPath);
+        return imapService.deleteMessage(uid, folderPath);
     };
 
     return QtConcurrent::run(deleteMessageWorker, getConnectionSettings(), uid, folderPath);
@@ -374,12 +383,15 @@ void EmailAccount::deleteMessage(const int uid, const int folderId)
     QString folderPath = DatabaseManager::getFolderPath(folderId);
     folderPath = folderPath.remove(0, 1);
 
-    QFuture<void> future = deleteMessageThread(uid, folderPath);
-    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+    QFuture<bool> future = deleteMessageThread(uid, folderPath);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
 
-    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    connect(watcher, &QFutureWatcher<bool>::finished, [=]()
     {
-        DatabaseManager::deleteMessageFromDatabase(static_cast<unsigned long>(uid), m_emailAddress);
+        if (future.result())
+        {
+            DatabaseManager::deleteMessageFromDatabase(static_cast<unsigned long>(uid), m_emailAddress);
+        }
     });
 
     watcher->setFuture(future);
@@ -387,18 +399,21 @@ void EmailAccount::deleteMessage(const int uid, const int folderId)
 
 void EmailAccount::renameFolder(const QString originalFolderPath, const QString renamedFolderPath)
 {
-    QFuture<void> future = renameFolderThread(originalFolderPath, renamedFolderPath);
-    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+    QFuture<bool> future = renameFolderThread(originalFolderPath, renamedFolderPath);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
 
     connect(watcher, &QFutureWatcher<void>::finished, [=]()
     {
-        DatabaseManager::renameFolder(m_emailAddress, originalFolderPath, renamedFolderPath);
+        if (future.result())
+        {
+            DatabaseManager::renameFolder(m_emailAddress, originalFolderPath, renamedFolderPath);
+        }
     });
 
     watcher->setFuture(future);
 }
 
-QFuture<void> EmailAccount::renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath)
+QFuture<bool> EmailAccount::renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath)
 {
     auto renameFolderWorker = [](
             const connectionSettingsHolder settings,
@@ -413,7 +428,7 @@ QFuture<void> EmailAccount::renameFolderThread(const QString originalFolderPath,
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
 
-        imapService.renameFolder(originalFolderPath, renamedFolderPath);
+        return imapService.renameFolder(originalFolderPath, renamedFolderPath);
     };
 
     return QtConcurrent::run(renameFolderWorker, getConnectionSettings(), originalFolderPath, renamedFolderPath);
@@ -421,18 +436,21 @@ QFuture<void> EmailAccount::renameFolderThread(const QString originalFolderPath,
 
 void EmailAccount::deleteFolder(const QString folderPath)
 {
-    QFuture<void> future = deleteFolderThread(folderPath);
-    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+    QFuture<bool> future = deleteFolderThread(folderPath);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
 
-    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    connect(watcher, &QFutureWatcher<bool>::finished, [=]()
     {
-        DatabaseManager::deleteFolderFromDatabase(m_emailAddress, folderPath);
+        if (future.result())
+        {
+            DatabaseManager::deleteFolderFromDatabase(m_emailAddress, folderPath);
+        }
     });
 
     watcher->setFuture(future);
 }
 
-QFuture<void> EmailAccount::deleteFolderThread(const QString folderPath)
+QFuture<bool> EmailAccount::deleteFolderThread(const QString folderPath)
 {
     auto deleteFolderWorker = [](
             const connectionSettingsHolder settings,
@@ -446,7 +464,7 @@ QFuture<void> EmailAccount::deleteFolderThread(const QString folderPath)
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
 
-        imapService.deleteFolder(folderPath);
+        return imapService.deleteFolder(folderPath);
     };
 
     return QtConcurrent::run(deleteFolderWorker, getConnectionSettings(), folderPath);
@@ -454,35 +472,38 @@ QFuture<void> EmailAccount::deleteFolderThread(const QString folderPath)
 
 void EmailAccount::createFolder(const QString folderPath)
 {
-    QFuture<void> future = createFolderThread(folderPath);
-    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+    QFuture<bool> future = createFolderThread(folderPath);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
 
-    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    connect(watcher, &QFutureWatcher<bool>::finished, [=]()
     {
-        InboxFolder folder;
+        if (future.result())
+        {
+            InboxFolder folder;
 
-        folder.setPath("/" + folderPath);
-        folder.setEmailAddress(m_emailAddress);
-        folder.setIsAllMessages(false);
-        folder.setIsArchive(false);
-        folder.setIsDrafts(false);
-        folder.setIsFlagged(false);
-        folder.setIsImportant(false);
-        folder.setIsJunk(false);
-        folder.setIsSent(false);
-        folder.setIsTrash(false);
-        folder.setHasChildren(false);
+            folder.setPath("/" + folderPath);
+            folder.setEmailAddress(m_emailAddress);
+            folder.setIsAllMessages(false);
+            folder.setIsArchive(false);
+            folder.setIsDrafts(false);
+            folder.setIsFlagged(false);
+            folder.setIsImportant(false);
+            folder.setIsJunk(false);
+            folder.setIsSent(false);
+            folder.setIsTrash(false);
+            folder.setHasChildren(false);
 
-        QList<InboxFolder> folders;
-        folders << folder;
+            QList<InboxFolder> folders;
+            folders << folder;
 
-        DatabaseManager::addFoldersToDatabase(folders);
+            DatabaseManager::addFoldersToDatabase(folders);
+        }
     });
 
     watcher->setFuture(future);
 }
 
-QFuture<void> EmailAccount::createFolderThread(const QString folderPath)
+QFuture<bool> EmailAccount::createFolderThread(const QString folderPath)
 {
     auto createFolderWorker = [](
             const connectionSettingsHolder settings,
@@ -496,7 +517,7 @@ QFuture<void> EmailAccount::createFolderThread(const QString folderPath)
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
 
-        imapService.createFolder(folderPath);
+        return imapService.createFolder(folderPath);
     };
 
     return QtConcurrent::run(createFolderWorker, getConnectionSettings(), folderPath);
@@ -510,7 +531,11 @@ void EmailAccount::copyMessage(const int uid, const QString oldPath, const QStri
     connect(watcher, &QFutureWatcher<long>::finished, [=]()
     {   
         long copiedUid = future.result();
-        DatabaseManager::copyMessage(m_emailAddress, oldPath, newPath, static_cast<unsigned long>(uid), static_cast<unsigned long>(copiedUid));
+
+        if (copiedUid > 0)
+        {
+            DatabaseManager::copyMessage(m_emailAddress, oldPath, newPath, static_cast<unsigned long>(uid), static_cast<unsigned long>(copiedUid));
+        }
     });
 
     watcher->setFuture(future);
@@ -567,7 +592,11 @@ void EmailAccount::moveMessage(const int uid, const QString oldPath, const QStri
 
     connect(watcher, &QFutureWatcher<long>::finished, [=](){
         long movedUid = future.result();
-        DatabaseManager::moveMessage(m_emailAddress, oldPath, newPath, static_cast<unsigned long>(uid), static_cast<unsigned long>(movedUid));
+
+        if (movedUid > 0)
+        {
+            DatabaseManager::moveMessage(m_emailAddress, oldPath, newPath, static_cast<unsigned long>(uid), static_cast<unsigned long>(movedUid));
+        }
     });
 
     watcher->setFuture(future);
@@ -577,19 +606,22 @@ void EmailAccount::setMessageAsSeen(const int uid)
 {
     QString folderPath = DatabaseManager::getFolderPath(m_emailAddress, static_cast<unsigned long>(uid));
 
-    QFuture<void> future = setMessageAsSeenThread(uid, folderPath);
-    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+    QFuture<bool> future = setMessageAsSeenThread(uid, folderPath);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
 
 
-    connect(watcher, &QFutureWatcher<void>::finished, [=]()
+    connect(watcher, &QFutureWatcher<bool>::finished, [=]()
     {
-        DatabaseManager::setMessageAsSeen(static_cast<unsigned long>(uid), m_emailAddress);
+        if (future.result())
+        {
+            DatabaseManager::setMessageAsSeen(static_cast<unsigned long>(uid), m_emailAddress);
+        }
     });
 
     watcher->setFuture(future);
 }
 
-QFuture<void> EmailAccount::setMessageAsSeenThread(const int uid, const QString folderPath)
+QFuture<bool> EmailAccount::setMessageAsSeenThread(const int uid, const QString folderPath)
 {
     auto setMessageAsSeenWorker = [](
             const connectionSettingsHolder settings,
@@ -604,7 +636,7 @@ QFuture<void> EmailAccount::setMessageAsSeenThread(const int uid, const QString 
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
 
-        imapService.setMessageAsSeen(uid, folderPath);
+        return imapService.setMessageAsSeen(uid, folderPath);
     };
 
     return QtConcurrent::run(setMessageAsSeenWorker, getConnectionSettings(), uid, folderPath);

@@ -20,140 +20,155 @@
 **************************************************************************/
 
 #include "vmimeinboxservice.h"
+#include "../../core/NotificationsManager.h"
 
 namespace Otter
 {
 
 QList<InboxFolder> VmimeInboxService::fetchInboxFolders()
 {
-    QList<InboxFolder> folders;
-
-    initializeStore();
-    vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
-    std::vector<vmime::shared_ptr<vmime::net::folder>> subFolders = rootFolder->getFolders(true);
-    subFolders.push_back(rootFolder);
-
-    for (vmime::shared_ptr<vmime::net::folder> folder : subFolders)
+    if (!initializeStore())
     {
-        VmimeInboxFolderParser parser(folder);
-        InboxFolder inboxFolder = parser.parse();
-        inboxFolder.setEmailAddress(QString(m_emailAddress.c_str()));
-
-        folders.push_back(inboxFolder);
+        return QList<InboxFolder>();
     }
 
-    m_store->disconnect();
+    QList<InboxFolder> folders;
+
+    try {
+        vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
+        std::vector<vmime::shared_ptr<vmime::net::folder>> subFolders = rootFolder->getFolders(true);
+        subFolders.push_back(rootFolder);
+
+        for (vmime::shared_ptr<vmime::net::folder> folder : subFolders)
+        {
+            VmimeInboxFolderParser parser(folder);
+            InboxFolder inboxFolder = parser.parse();
+            inboxFolder.setEmailAddress(QString(m_emailAddress.c_str()));
+
+            folders.push_back(inboxFolder);
+        }
+
+        m_store->disconnect();
+    }
+    catch (vmime::exception e)
+    {
+        QString notificationText = m_emailAddress.c_str();
+        notificationText.append(": Failed to fetch IMAP folders: ");
+        notificationText.append(e.what());
+
+        Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+    }
 
     return folders;
 }
 
-QList<MessageMetadata> VmimeInboxService::fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb)
-{
-    QList<MessageMetadata> metadata;
-    QList<VmimeInboxFolder> inboxFolders;
-
-    initializeStore();
-    vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
-    std::vector<vmime::shared_ptr<vmime::net::folder>> subFolders = rootFolder->getFolders(true);
-    subFolders.push_back(rootFolder);
-
-    for (vmime::shared_ptr<vmime::net::folder> folder : subFolders)
-    {
-        inboxFolders << VmimeInboxFolder(folder, QString(m_emailAddress.c_str()));
-    }
-
-    for (VmimeInboxFolder inboxFolder : inboxFolders)
-    {
-        if (folderPathsWithMessagesCountsInDb.contains(inboxFolder.data().path()))
-        {
-            int count = folderPathsWithMessagesCountsInDb[inboxFolder.data().path()];
-            metadata.append(inboxFolder.getMessagesMetadataFromPosition(count));
-        }
-    }
-
-    m_store->disconnect();
-
-    return metadata;
-}
-
 QList<MessageMetadata> VmimeInboxService::fetchMessagesMetadata()
 {
+    if (!initializeStore())
+    {
+        return QList<MessageMetadata>();
+    }
+
     QList<MessageMetadata> metadata;
     QList<VmimeInboxFolder> inboxFolders;
 
-    initializeStore();
+    try {
+        vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
+        std::vector<vmime::shared_ptr<vmime::net::folder>> subFolders = rootFolder->getFolders(true);
+        subFolders.push_back(rootFolder);
 
-    vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
-    std::vector<vmime::shared_ptr<vmime::net::folder>> subFolders = rootFolder->getFolders(true);
-    subFolders.push_back(rootFolder);
+        for (vmime::shared_ptr<vmime::net::folder> folder : subFolders)
+        {
+            VmimeInboxFolder inboxFolder = VmimeInboxFolder(folder, QString(m_emailAddress.c_str()));
+            metadata.append(inboxFolder.getMessagesMetadata());
+        }
 
-    for (vmime::shared_ptr<vmime::net::folder> folder : subFolders)
-    {
-        VmimeInboxFolder inboxFolder = VmimeInboxFolder(folder, QString(m_emailAddress.c_str()));
-        metadata.append(inboxFolder.getMessagesMetadata());
+        m_store->disconnect();
     }
+    catch (vmime::exception e)
+    {
+        QString notificationText = m_emailAddress.c_str();
+        notificationText.append(": Failed to fetch metadata about messages: ");
+        notificationText.append(e.what());
 
-    m_store->disconnect();
+        Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+    }
 
     return metadata;
 }
 
 MessageContent VmimeInboxService::fetchMessageContent(QString folderPath, int uid)
 {
-    initializeStore();
-
-    vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
-    std::vector<vmime::shared_ptr<vmime::net::folder>> folders = rootFolder->getFolders(true);
-    folders.push_back(rootFolder);
-
-    for (vmime::shared_ptr<vmime::net::folder> folder : folders)
+    if (!initializeStore())
     {
-        if (QString(folder->getFullPath().toString("/", vmime::charsets::UTF_8).c_str()) == folderPath.right(folderPath.length() - 1))
-        {
-            try
-            {
-                folder->open(vmime::net::folder::MODE_READ_ONLY);
-            }
-            catch (vmime::exceptions::authentication_error e) {
-
-            }
-            catch (vmime::exceptions::command_error e)
-            {
-
-            }
-
-            vmime::shared_ptr<vmime::net::message> message = folder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
-
-            try
-            {
-                folder->fetchMessage(message, vmime::net::fetchAttributes::STRUCTURE);
-            }
-            catch (std::exception e)
-            {
-
-            }
-
-            vmime::shared_ptr<vmime::message> parsedMessage = message->getParsedMessage();
-
-            VmimeMessageContentParser contentParser(parsedMessage);
-            MessageContent messageContent;
-
-            messageContent.setHtmlContent(contentParser.parseHtmlContent());
-            messageContent.setPlainTextContent(contentParser.parsePlaintextContent());
-            messageContent.setAttachments(contentParser.parseAttachments());
-            messageContent.setEmbeddedObjects(contentParser.parseEmbeddedObjects());
-            messageContent.setRecipients(contentParser.parseRecipients());
-            messageContent.setCopyRecipients(contentParser.parseInCopyRecipients());
-            messageContent.setBlindCopyRecipients(contentParser.parseBlindCopyRecipients());
-
-            return messageContent;
-        }
+        return MessageContent();
     }
 
-    return MessageContent();
+    try {
+        vmime::shared_ptr<vmime::net::folder> rootFolder = m_store->getRootFolder();
+        std::vector<vmime::shared_ptr<vmime::net::folder>> folders = rootFolder->getFolders(true);
+        folders.push_back(rootFolder);
+
+        for (vmime::shared_ptr<vmime::net::folder> folder : folders)
+        {
+            if (QString(folder->getFullPath().toString("/", vmime::charsets::UTF_8).c_str()) == folderPath.right(folderPath.length() - 1))
+            {
+                try
+                {
+                    folder->open(vmime::net::folder::MODE_READ_ONLY);
+                }
+                catch (vmime::exceptions::authentication_error e) {
+
+                }
+                catch (vmime::exceptions::command_error e)
+                {
+
+                }
+
+                vmime::shared_ptr<vmime::net::message> message = folder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
+
+                try
+                {
+                    folder->fetchMessage(message, vmime::net::fetchAttributes::STRUCTURE);
+                }
+                catch (std::exception e)
+                {
+
+                }
+
+                vmime::shared_ptr<vmime::message> parsedMessage = message->getParsedMessage();
+
+                VmimeMessageContentParser contentParser(parsedMessage);
+                MessageContent messageContent;
+
+                messageContent.setHtmlContent(contentParser.parseHtmlContent());
+                messageContent.setPlainTextContent(contentParser.parsePlaintextContent());
+                messageContent.setAttachments(contentParser.parseAttachments());
+                messageContent.setEmbeddedObjects(contentParser.parseEmbeddedObjects());
+                messageContent.setRecipients(contentParser.parseRecipients());
+                messageContent.setCopyRecipients(contentParser.parseInCopyRecipients());
+                messageContent.setBlindCopyRecipients(contentParser.parseBlindCopyRecipients());
+
+                m_store->disconnect();
+
+                return messageContent;
+            }
+        }
+    }
+    catch (vmime::exception e)
+    {
+        QString notificationText = m_emailAddress.c_str();
+        notificationText.append(": Failed to fetch message content: ");
+        notificationText.append(e.what());
+
+        Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+
+        return MessageContent();
+    }
+
 }
 
-void VmimeInboxService::initializeStore()
+bool VmimeInboxService::initializeStore()
 {
     vmime::utility::url url = getStoreUrl();
 
@@ -161,18 +176,36 @@ void VmimeInboxService::initializeStore()
     m_store->setCertificateVerifier(m_certificateVerifier);
 
     int attempts = 0;
+    QString errorMessage;
+    bool succesfullyConnected = false;
 
     while (attempts < 10)
     {
         try
         {
             m_store->connect();
+            succesfullyConnected = true;
             break;
         }
         catch (vmime::exception e)
         {
+            errorMessage = e.what();
             attempts++;
         }
+    }
+
+    if (succesfullyConnected)
+    {
+        return true;
+    }
+    else
+    {
+        QString notificationText = m_emailAddress.c_str();
+        notificationText.append(": Failed to connect to server: ");
+        notificationText.append(errorMessage);
+
+        Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        return false;
     }
 }
 
@@ -180,103 +213,207 @@ long VmimeInboxService::moveMessage(const int uid, const QString oldPath, const 
 {
     long result = copyMessage(uid, oldPath, newPath);
 
-    QString pathToDelete = oldPath;
-    pathToDelete.remove(0,1);
+    if (result > 0)
+    {
+        QString pathToDelete = oldPath;
+        pathToDelete.remove(0,1);
 
-    deleteMessage(uid, pathToDelete);
+        deleteMessage(uid, pathToDelete);
+    }
 
     return result;
 }
 
-void VmimeInboxService::renameFolder(const QString originalFolderPath, const QString renamedFolderPath)
+bool VmimeInboxService::renameFolder(const QString originalFolderPath, const QString renamedFolderPath)
 {
-    initializeStore();
+    if (initializeStore())
+    {
+        try {
+            vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(originalFolderPath.toStdString()));
+            folder->rename(vmime::net::folder::path(renamedFolderPath.toStdString()));
 
-    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(originalFolderPath.toStdString()));
-    folder->rename(vmime::net::folder::path(renamedFolderPath.toStdString()));
+            m_store->disconnect();
+
+            return true;
+        }
+        catch (vmime::exception e)
+        {
+            QString notificationText = m_emailAddress.c_str();
+            notificationText.append(": Failed to rename IMAP folder: ");
+            notificationText.append(e.what());
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        }
+    }
+
+    return false;
 }
 
-void VmimeInboxService::deleteFolder(const QString folderPath)
+bool VmimeInboxService::deleteFolder(const QString folderPath)
 {
-    initializeStore();
+    if (initializeStore())
+    {
+        try {
+            QString path = folderPath;
+            path.remove(0,1);
 
-    QString path = folderPath;
-    path.remove(0,1);
+            vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(path.toStdString()));
+            folder->destroy();
 
-    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(path.toStdString()));
-    folder->destroy();
+            m_store->disconnect();
+
+            return true;
+        }
+        catch (vmime::exception e)
+        {
+            QString notificationText = m_emailAddress.c_str();
+            notificationText.append(": Failed to delete IMAP folder: ");
+            notificationText.append(e.what());
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        }
+    }
+
+    return false;
 }
 
-void VmimeInboxService::deleteMessage(const int uid, QString folderPath)
+bool VmimeInboxService::deleteMessage(const int uid, QString folderPath)
 {
-    initializeStore();
+    if (initializeStore())
+    {
+        try {
+            vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(folderPath.toStdString()));
+            folder->open(vmime::net::folder::MODE_READ_WRITE);
+            folder->deleteMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid)));
 
-    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(folderPath.toStdString()));
-    folder->open(vmime::net::folder::MODE_READ_WRITE);
-    folder->deleteMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid)));
-    folder->close(false);
+            folder->close(false);
+            m_store->disconnect();
+
+            return true;
+        }
+        catch (vmime::exception e)
+        {
+            QString notificationText = m_emailAddress.c_str();
+            notificationText.append(": Failed to delete e-mail message: ");
+            notificationText.append(e.what());
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        }
+    }
+
+    return false;
 }
 
-void VmimeInboxService::createFolder(const QString folderPath)
+bool VmimeInboxService::createFolder(const QString folderPath)
 {
-    initializeStore();
+    if (initializeStore())
+    {
+        try {
+            vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(folderPath.toStdString()));
 
-    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(folderPath.toStdString()));
+            vmime::net::folderAttributes attributes = vmime::net::folderAttributes();
+            attributes.setType(vmime::net::folderAttributes::Types::TYPE_CONTAINS_MESSAGES);
+            attributes.setSpecialUse(vmime::net::folderAttributes::SpecialUses::SPECIALUSE_NONE);
 
-    vmime::net::folderAttributes attributes = vmime::net::folderAttributes();
-    attributes.setType(vmime::net::folderAttributes::Types::TYPE_CONTAINS_MESSAGES);
-    attributes.setSpecialUse(vmime::net::folderAttributes::SpecialUses::SPECIALUSE_NONE);
+            folder->create(attributes);
 
-    folder->create(attributes);
+            m_store->disconnect();
+
+            return true;
+        }
+        catch (vmime::exception e)
+        {
+            QString notificationText = m_emailAddress.c_str();
+            notificationText.append(": Failed to create IMAP folder: ");
+            notificationText.append(e.what());
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        }
+    }
+
+    return false;
 }
 
 long VmimeInboxService::copyMessage(const int uid, const QString oldPath, const QString newPath)
 {
-    QString sourcePath = oldPath;
-    sourcePath = sourcePath.remove(0, 1);
+    if (initializeStore())
+    {
+        try
+        {
+            QString sourcePath = oldPath;
+            sourcePath = sourcePath.remove(0, 1);
 
-    QString destinationPath = newPath;
-    destinationPath = destinationPath.remove(0, 1);
+            QString destinationPath = newPath;
+            destinationPath = destinationPath.remove(0, 1);
 
-    initializeStore();
+            vmime::shared_ptr<vmime::net::folder> sourceFolder = m_store->getFolder(vmime::net::folder::path(sourcePath.toStdString()));
+            vmime::shared_ptr<vmime::net::folder> destinationFolder = m_store->getFolder(vmime::net::folder::path(destinationPath.toStdString()));
 
-    vmime::shared_ptr<vmime::net::folder> sourceFolder = m_store->getFolder(vmime::net::folder::path(sourcePath.toStdString()));
-    vmime::shared_ptr<vmime::net::folder> destinationFolder = m_store->getFolder(vmime::net::folder::path(destinationPath.toStdString()));
+            sourceFolder->open(vmime::net::folder::MODE_READ_WRITE);
+            destinationFolder->open(vmime::net::folder::MODE_READ_WRITE);
 
-    sourceFolder->open(vmime::net::folder::MODE_READ_WRITE);
-    destinationFolder->open(vmime::net::folder::MODE_READ_WRITE);
+            vmime::shared_ptr<vmime::net::message> message = sourceFolder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
+            vmime::net::messageSet set = sourceFolder->copyMessages(destinationFolder->getFullPath(), vmime::net::messageSet::byNumber(message->getNumber()));
 
-    vmime::shared_ptr<vmime::net::message> message = sourceFolder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
-    vmime::net::messageSet set = sourceFolder->copyMessages(destinationFolder->getFullPath(), vmime::net::messageSet::byNumber(message->getNumber()));
+            const vmime::net::messageRange& range = set.getRangeAt(0);
+            const vmime::net::message::uid copiedUid = dynamic_cast<const vmime::net::UIDMessageRange&>(range).getFirst();
 
-    const vmime::net::messageRange& range = set.getRangeAt(0);
-    const vmime::net::message::uid copiedUid = dynamic_cast<const vmime::net::UIDMessageRange&>(range).getFirst();
+            sourceFolder->close(false);
+            destinationFolder->close(false);
 
-    sourceFolder->close(false);
-    destinationFolder->close(false);
+            m_store->disconnect();
 
-    return atol(static_cast<std::string>(copiedUid).c_str());
+            return atol(static_cast<std::string>(copiedUid).c_str());
+        }
+        catch (vmime::exception e)
+        {
+            QString notificationText = m_emailAddress.c_str();
+            notificationText.append(": Failed to copy email message: ");
+            notificationText.append(e.what());
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        }
+    }
+
+    return -1;
 }
 
-void VmimeInboxService::setMessageAsSeen(const int uid, const QString folderPath)
+bool VmimeInboxService::setMessageAsSeen(const int uid, const QString folderPath)
 {
-    initializeStore();
+    if (initializeStore())
+    {
+        try
+        {
+            QString path = folderPath;
+            path = path.remove(0, 1);
 
-    QString path = folderPath;
-    path = path.remove(0, 1);
+            vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(path.toStdString()));
+            folder->open(vmime::net::folder::MODE_READ_WRITE);
+            vmime::shared_ptr <vmime::net::message> msg = folder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
 
-    vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(path.toStdString()));
-    folder->open(vmime::net::folder::MODE_READ_WRITE);
-    vmime::shared_ptr <vmime::net::message> msg = folder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
+            folder->fetchMessage(msg, vmime::net::fetchAttributes::FLAGS);
 
-    folder->fetchMessage(msg, vmime::net::fetchAttributes::FLAGS);
+            auto flags = msg->getFlags();
+            flags = flags | vmime::net::message::FLAG_SEEN;
 
-    auto flags = msg->getFlags();
-    flags = flags | vmime::net::message::FLAG_SEEN;
+            msg->setFlags(flags, vmime::net::message::FLAG_MODE_SET);
 
-    msg->setFlags(flags, vmime::net::message::FLAG_MODE_SET);
+            folder->close(false);
+            m_store->disconnect();
 
-    folder->close(false);
+            return true;
+        }
+        catch (vmime::exception e)
+        {
+            QString notificationText = m_emailAddress.c_str();
+            notificationText.append(": Failed to set message as seen on server: ");
+            notificationText.append(e.what());
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        }
+    }
+
+    return false;
 }
 
 }

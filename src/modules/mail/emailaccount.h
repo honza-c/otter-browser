@@ -107,13 +107,13 @@ private:
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
     void updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent);
 
-    QFuture<void> deleteMessageThread(const int uid, const QString folderPath);
-    QFuture<void> renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath);
-    QFuture<void> deleteFolderThread(const QString folderPath);
-    QFuture<void> createFolderThread(const QString folderPath);
+    QFuture<bool> deleteMessageThread(const int uid, const QString folderPath);
+    QFuture<bool> renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath);
+    QFuture<bool> deleteFolderThread(const QString folderPath);
+    QFuture<bool> createFolderThread(const QString folderPath);
     QFuture<long> copyMessageThread(const int uid, const QString oldPath, const QString newPath);
     QFuture<long> moveMessageThread(const int uid, const QString oldPath, const QString newPath);
-    QFuture<void> setMessageAsSeenThread(const int uid, const QString folderPath);
+    QFuture<bool> setMessageAsSeenThread(const int uid, const QString folderPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 

@@ -43,18 +43,17 @@ public:
         : VmimeBaseMessagingService(parent) {}
 
     QList<InboxFolder> fetchInboxFolders();
-    void initializeStore();
-    QList<MessageMetadata> fetchMessagesMetadata(QMap<QString, int> folderPathsWithMessagesCountsInDb);
+    bool initializeStore();
     QList<MessageMetadata> fetchMessagesMetadata();
     MessageContent fetchMessageContent(QString folderPath, int positionInFolder);
     long moveMessage(const int uid, const QString oldPath, const QString newPath);
 
-    void deleteMessage(const int uid, QString folderPath);
-    void renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
-    void deleteFolder(const QString folderPath);
-    void createFolder(const QString folderPath);
+    bool deleteMessage(const int uid, QString folderPath);
+    bool renameFolder(const QString originalFolderPath, const QString renamedFolderPath);
+    bool deleteFolder(const QString folderPath);
+    bool createFolder(const QString folderPath);
     long copyMessage(const int uid, const QString oldPath, const QString newPath);
-    void setMessageAsSeen(const int uid, const QString folderPath);
+    bool setMessageAsSeen(const int uid, const QString folderPath);
 protected:
     virtual vmime::utility::url getStoreUrl() const = 0;
 
