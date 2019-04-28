@@ -55,6 +55,8 @@ WriteEmailMessageWidget::WriteEmailMessageWidget(QWidget *parent) :
     m_ui->toLineEdit->setCompleter(m_completer);
     m_ui->inCopyLineEdit->setCompleter(m_completer);
     m_ui->inBlindCopyLineEdit->setCompleter(m_completer);
+
+    m_messageEdited = false;
 }
 
 WriteEmailMessageWidget::~WriteEmailMessageWidget()
@@ -89,6 +91,8 @@ void WriteEmailMessageWidget::setMessage(Message message)
         setAttachments(message);
         setEmbeddedObjects(message);
     }
+
+    m_messageEdited = false;
 }
 
 void WriteEmailMessageWidget::resetWidget()
@@ -105,6 +109,8 @@ void WriteEmailMessageWidget::resetWidget()
     m_ui->inBlindCopyLineEdit->setText(QString());
     m_ui->attachmentListView->setModel(new AttachmentsListModel(m_attachments));
     m_ui->attachmentsWidget->setVisible(false);
+
+    m_messageEdited = false;
 }
 
 void WriteEmailMessageWidget::setSenderIndex(const Message message)
@@ -354,6 +360,22 @@ void WriteEmailMessageWidget::setEmbeddedObjects(const Message message)
 
 void WriteEmailMessageWidget::on_backToInboxButton_clicked()
 {
+    if (m_messageEdited)
+    {
+        QMessageBox messageBox;
+
+        messageBox.setWindowTitle("Discard changes?");
+        messageBox.setText("Edited message was not sent. Are you sure to discard all changes in the message?");
+        messageBox.setIcon(QMessageBox::Question);
+        messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
+        messageBox.addButton(new QPushButton("Discard changes"), QMessageBox::ButtonRole::AcceptRole);
+
+        if (!messageBox.exec())
+        {
+            return;
+        }
+    }
+
     emit returnToInboxRequested();
 }
 
@@ -374,9 +396,15 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
 
     if (recipients.isEmpty())
     {
-        // TODO: chybova hlaska
-        qWarning() << "Failed to parse recipients";
-        close();
+        QMessageBox messageBox;
+
+        messageBox.setWindowTitle("Could not parse message");
+        messageBox.setText("Failed to parse recipients. Recipients in To: field should be a list of email addresses separated by comma");
+        messageBox.setIcon(QMessageBox::Critical);
+        messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+        messageBox.exec();
+
         return;
     }
 
@@ -389,8 +417,15 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
 
         if (copyRecipients.isEmpty())
         {
-            qWarning() << "Failed to parse copy recipients";
-            emit returnToInboxRequested();
+            QMessageBox messageBox;
+
+            messageBox.setWindowTitle("Could not parse message");
+            messageBox.setText("Failed to parse copy recipients. Recipients in In copy: field should be a list of email addresses separated by comma");
+            messageBox.setIcon(QMessageBox::Critical);
+            messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+            messageBox.exec();
+
             return;
         }
     }
@@ -404,8 +439,15 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
 
         if (blindCopyRecipients.isEmpty())
         {
-            qWarning() << "Failed to parse blind copy recipients";
-            emit returnToInboxRequested();
+            QMessageBox messageBox;
+
+            messageBox.setWindowTitle("Could not parse message");
+            messageBox.setText("Failed to parse blind copy recipients. Recipients in In blind copy: field should be a list of email addresses separated by comma");
+            messageBox.setIcon(QMessageBox::Critical);
+            messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+            messageBox.exec();
+
             return;
         }
     }
@@ -444,8 +486,11 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
     message.setEmbeddedObjects(m_embeddedObjects);
 
     int senderId = m_ui->senderComboBox->currentIndex();
-    EmailAccountsManager::getEmailAccounts().at(senderId).sendMessage(message);
-    emit returnToInboxRequested();
+
+    if (EmailAccountsManager::getEmailAccounts().at(senderId).sendMessage(message))
+    {
+        emit returnToInboxRequested();
+    }
 }
 
 QList<Contact> WriteEmailMessageWidget::parseContacts(const QString rawdata) const
@@ -475,7 +520,6 @@ QList<Contact> WriteEmailMessageWidget::parseContacts(const QString rawdata) con
         }
         else
         {
-            qWarning() << "Failed to parse contact: " << contactData;
             return QList<Contact>();
         }
     }
@@ -511,25 +555,49 @@ void WriteEmailMessageWidget::addAttachment()
 
         for (QString fileName : fileNames)
         {
-            if (fileName != QString())
+            QString name = fileName.split("/").last();
+
+            QFile file(fileName);
+
+            if (file.open(QIODevice::ReadOnly))
             {
-                QString name = fileName.split("/").last();
-
-                QFile file(fileName);
-                file.open(QIODevice::ReadOnly);
-
                 QMimeDatabase mimeDatabase;
                 QMimeType mimeType = mimeDatabase.mimeTypeForFile(fileName);
 
                 QByteArray data = file.readAll();
                 file.close();
 
-                Attachment attachment;
-                attachment.setData(data);
-                attachment.setMimeType(mimeType.name());
-                attachment.setName(name);
+                if (data != QByteArray())
+                {
+                    Attachment attachment;
+                    attachment.setData(data);
+                    attachment.setMimeType(mimeType.name());
+                    attachment.setName(name);
 
-                m_attachments.push_back(attachment);
+                    m_attachments.push_back(attachment);
+                }
+                else
+                {
+                    QMessageBox messageBox;
+
+                    messageBox.setWindowTitle("Could open attachment");
+                    messageBox.setText("Failed to open file: " + fileName);
+                    messageBox.setIcon(QMessageBox::Critical);
+                    messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+                    messageBox.exec();
+                }
+            }
+            else
+            {
+                QMessageBox messageBox;
+
+                messageBox.setWindowTitle("Could open attachment");
+                messageBox.setText("Failed to open file: " + fileName);
+                messageBox.setIcon(QMessageBox::Critical);
+                messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+                messageBox.exec();
             }
         }
 
@@ -558,4 +626,29 @@ void WriteEmailMessageWidget::on_removeAttachmentToolboxButton_clicked()
     }
 }
 
+}
+
+void Otter::WriteEmailMessageWidget::on_toLineEdit_textEdited(const QString &arg1)
+{
+    m_messageEdited = true;
+}
+
+void Otter::WriteEmailMessageWidget::on_inCopyLineEdit_textEdited(const QString &arg1)
+{
+    m_messageEdited = true;
+}
+
+void Otter::WriteEmailMessageWidget::on_inBlindCopyLineEdit_textEdited(const QString &arg1)
+{
+    m_messageEdited = true;
+}
+
+void Otter::WriteEmailMessageWidget::on_subjectLineEdit_textEdited(const QString &arg1)
+{
+    m_messageEdited = true;
+}
+
+void Otter::WriteEmailMessageWidget::on_messageContentTextEdit_textChanged()
+{
+    m_messageEdited = true;
 }

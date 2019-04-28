@@ -65,6 +65,16 @@ private slots:
     void on_addAttachmentToolboxButton_clicked();
     void on_removeAttachmentToolboxButton_clicked();
 
+    void on_toLineEdit_textEdited(const QString &arg1);
+
+    void on_inCopyLineEdit_textEdited(const QString &arg1);
+
+    void on_inBlindCopyLineEdit_textEdited(const QString &arg1);
+
+    void on_subjectLineEdit_textEdited(const QString &arg1);
+
+    void on_messageContentTextEdit_textChanged();
+
 signals:
     void returnToInboxRequested();
 
@@ -85,6 +95,7 @@ private:
 
     const QString dateTimeFormat = "dd.MM.yyyy HH:mm";
 
+    bool m_messageEdited;
     QList<Attachment> m_attachments;
     QList<EmbeddedObject> m_embeddedObjects;
     Mode m_mode;

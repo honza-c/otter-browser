@@ -86,7 +86,7 @@ public:
     QFuture<QList<InboxFolder>> fetchInboxFolders();
 
     void initializeInbox();
-    void sendMessage(Message message) const;
+    bool sendMessage(Message message) const;
     QFuture<MessageContent> fetchMessageContent(QString folderPath, int positionInFolder);
     void fetchMissingMessageContent(const QString folderPath, const int positionInFolder);
     void fetchMessageMetadata();

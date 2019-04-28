@@ -36,7 +36,7 @@ public:
     explicit VmimeSmtpService(QObject *parent = nullptr)
         : VmimeBaseMessagingService(parent) {}
 
-    void sendMessage(Message message) const;
+    bool sendMessage(Message message) const;
 
 private:
     vmime::shared_ptr<vmime::net::transport> getTransport() const;

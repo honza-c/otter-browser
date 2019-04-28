@@ -20,11 +20,12 @@
 **************************************************************************/
 
 #include "vmimesmtpservice.h"
+#include "../../core/NotificationsManager.h"
 
 namespace Otter
 {
 
-void VmimeSmtpService::sendMessage(Message message) const
+bool VmimeSmtpService::sendMessage(Message message) const
 {
     vmime::shared_ptr<vmime::message> constructedMessage = constructMessage(message);
     vmime::shared_ptr<vmime::net::transport> transport = getTransport();
@@ -34,15 +35,19 @@ void VmimeSmtpService::sendMessage(Message message) const
         transport->connect();
         transport->send(constructedMessage);
         transport->disconnect();
+
+        return true;
     }
     catch (vmime::exception e)
     {
-        qWarning() << "vmime error " << e.what();
+        QString notificationText = m_emailAddress.c_str();
+        notificationText.append(": Failed to send email message: ");
+        notificationText.append(e.what());
+
+        Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
     }
-    catch (std::exception e)
-    {
-        qWarning() << "std error " << e.what();
-    }
+
+    return false;
 }
 
 vmime::shared_ptr<vmime::net::transport> VmimeSmtpService::getTransport() const

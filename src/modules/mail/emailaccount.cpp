@@ -265,24 +265,18 @@ QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadata()
     return QtConcurrent::run(fetchMessageMetadataWorker, getConnectionSettings());
 }
 
-void EmailAccount::sendMessage(Message message) const
+bool EmailAccount::sendMessage(Message message) const
 {
-    auto sendMessageWorker = [](
-            const connectionSettingsHolder settings,
-            const Message message)
-    {
-        VmimeSmtpService smtpService;
+    VmimeSmtpService smtpService;
+    connectionSettingsHolder settings = getConnectionSettings();
 
-        smtpService.setEmailAddress(settings.emailAddress);
-        smtpService.setUserName(settings.userName);
-        smtpService.setPassword(settings.password);
-        smtpService.setServerUrl(settings.smtpServerUrl);
-        smtpService.setPort(settings.smtpServerPort);
+    smtpService.setEmailAddress(settings.emailAddress);
+    smtpService.setUserName(settings.userName);
+    smtpService.setPassword(settings.password);
+    smtpService.setServerUrl(settings.smtpServerUrl);
+    smtpService.setPort(settings.smtpServerPort);
 
-        smtpService.sendMessage(message);
-    };
-
-    QtConcurrent::run(sendMessageWorker, getConnectionSettings(),message);
+    return smtpService.sendMessage(message);
 }
 
 void EmailAccount::fetchMissingMessageContent(const QString folderPath, const int positionInFolder)

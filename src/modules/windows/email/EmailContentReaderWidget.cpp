@@ -491,9 +491,35 @@ void EmailContentReaderWidget::onAttachmentButtonClicked(bool)
         if (fileName != QString())
         {
             QFile file(fileName);
-            file.open(QIODevice::WriteOnly);
-            file.write(attachment.data());
-            file.close();
+
+            if (file.open(QIODevice::WriteOnly))
+            {
+                long size = file.write(attachment.data());
+
+                if (size == -1)
+                {
+                    QMessageBox messageBox;
+
+                    messageBox.setWindowTitle("Could save attachment");
+                    messageBox.setText("Failed to save file: " + fileName);
+                    messageBox.setIcon(QMessageBox::Critical);
+                    messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+                    messageBox.exec();
+                }
+                file.close();
+            }
+            else
+            {
+                QMessageBox messageBox;
+
+                messageBox.setWindowTitle("Could save attachment");
+                messageBox.setText("Failed to save file: " + fileName);
+                messageBox.setIcon(QMessageBox::Critical);
+                messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+                messageBox.exec();
+            }
         }
     }
 }
