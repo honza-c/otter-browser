@@ -220,7 +220,7 @@ void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
         QMessageBox messageBox;
 
         messageBox.setWindowTitle("Delete e-mail account");
-        messageBox.setText("Are you sure to delete the account <" +  accountAddress + ">?");
+        messageBox.setText("Are you sure to remove the account <" +  accountAddress + ">?");
         messageBox.setIcon(QMessageBox::Question);
         messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
         messageBox.addButton(new QPushButton("Delete Account"), QMessageBox::ButtonRole::AcceptRole);
