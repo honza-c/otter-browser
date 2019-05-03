@@ -252,6 +252,8 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
             {
                 if (positionInFolder > 0)
                 {
+                    m_ui->messageContentWidget->setText(QString("Downloading message from the server..."));
+
                     for (EmailAccount &userAccount : EmailAccountsManager::getEmailAccounts())
                     {
                         if (userAccount.emailAddress() == emailAddress)
