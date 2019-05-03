@@ -47,6 +47,7 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->splitter->setStretchFactor(1, 2);
 
     connect(m_ui->messageMetadataTableView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(messageMetadataTableViewSelectionChanged(const QModelIndex &, const QModelIndex &)));
+    connect(m_ui->messageMetadataTableView->horizontalHeader(), SIGNAL(sectionClicked(int)), m_messageMetadataTableModel, SLOT(onTableHeaderClicked(int)));
 
     for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
     {
