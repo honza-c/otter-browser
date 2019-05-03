@@ -69,6 +69,7 @@ private slots:
     void replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int);
     void inboxFoldersStructureChanged();
     void messagesMetadataStructureChanged();
+    void newEmailTabRequested(const QModelIndex &, const QModelIndex &);
 
     void on_getMessagesButton_clicked();
     void on_writeMessageButton_clicked();

@@ -24,6 +24,7 @@
 #include "../../../ui/Action.h"
 #include "../../../ui/MainWindow.h"
 #include "../../../ui/Window.h"
+#include "../../../core/Application.h"
 
 #include "ui_EmailContentsWidget.h"
 
@@ -59,6 +60,7 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
     {
         m_ui->emailTabWidget->setVisible(false);
         m_ui->emailSidebarButtons->setVisible(false);
+        connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(newEmailTabRequested(const QModelIndex &, const QModelIndex &)));
     }
     else
     {
@@ -416,6 +418,11 @@ Message EmailContentsWidget::getMessage(const int messageId) const
     message.setEmbeddedObjects(embeddedObjects);
 
     return message;
+}
+
+void EmailContentsWidget::newEmailTabRequested(const QModelIndex &, const QModelIndex &)
+{
+    Application::triggerAction(ActionsManager::OpenUrlAction, {{QLatin1String("url"), "about:email"}}, this);
 }
 
 }
