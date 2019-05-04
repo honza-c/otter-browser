@@ -22,6 +22,7 @@
 #include "PreferencesEmailPageWidget.h"
 #include "ui_PreferencesEmailPageWidget.h"
 #include <QMessageBox>
+#include "../../modules/windows/email/EmailAccountPreferencesDialogWindow.h"
 
 namespace Otter
 {
@@ -34,16 +35,10 @@ PreferencesEmailPageWidget::PreferencesEmailPageWidget(QWidget *parent) :
     m_emailAccounts = EmailAccountsManager::getInstance()->getEmailAccounts();
 
     m_emailAccountsListModel = new EmailAccountsListModel(m_emailAccounts);
-    m_editMode = false;
-    m_creatingNewAccountMode = false;
-
-    m_ui->removeAccountButton->setEnabled(false);
-
-    m_ui->emailAccountDetailsWidget->setVisible(false);
-
     m_ui->emailAccountsListView->setModel(m_emailAccountsListModel);
-    m_ui->saveAndDiscardChangesButtons->setVisible(false);
 
+    m_ui->editAccountButton->setEnabled(false);
+    m_ui->removeAccountButton->setEnabled(false);
 
     connect(m_ui->emailAccountsListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this, SLOT(emailAccountsListViewSelectionChanged(const QItemSelection &, const QItemSelection &)));
 }
@@ -63,155 +58,57 @@ void PreferencesEmailPageWidget::changeEvent(QEvent *event)
     }
 }
 
-void PreferencesEmailPageWidget::emailAccountsListViewSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void PreferencesEmailPageWidget::save()
 {
-    if (selected.indexes().size() > 0)
+
+}
+
+void PreferencesEmailPageWidget::emailAccountsListViewSelectionChanged(const QItemSelection &selected, const QItemSelection &)
+{
+    if (!selected.indexes().isEmpty() && m_emailAccountsListModel->rowCount() > 0 && selected.indexes().first().isValid())
     {
-        QModelIndex index = selected.indexes().first();
-
-        if (index.isValid() && index != QModelIndex())
-        {
-            int row = index.row();
-            EmailAccount account = m_emailAccounts.at(row);
-
-            m_ui->yourNameLineEditWidget->setText(account.contactName());
-            m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
-            m_ui->userNameLineEditWidget->setText(account.userName());
-            m_ui->passwordLineEditWidget->setText(account.password());
-            m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
-            m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
-            m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
-            m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
-
-            m_ui->emailAccountDetailsWidget->setVisible(true);
-
-            deactivateEditMode();
-        }
+        m_ui->editAccountButton->setEnabled(true);
+        m_ui->removeAccountButton->setEnabled(true);
     }
     else
     {
-        m_ui->emailAccountDetailsWidget->setVisible(false);
+        m_ui->editAccountButton->setEnabled(false);
+        m_ui->removeAccountButton->setEnabled(false);
     }
 }
 
-void Otter::PreferencesEmailPageWidget::save()
+void PreferencesEmailPageWidget::on_addAccountButton_clicked()
 {
+    EmailAccountPreferencesDialogWindow dialog;
+    dialog.setWindowTitle("Add e-mail account");
 
-}
-
-}
-
-void Otter::PreferencesEmailPageWidget::on_saveChangesButton_clicked()
-{
-    EmailAccount account;
-
-    account.setContactName(m_ui->yourNameLineEditWidget->text());
-    account.setEmailAddress(m_ui->emailAddressLineEditWidget->text());
-    account.setUserName(m_ui->userNameLineEditWidget->text());
-    account.setPassword(m_ui->passwordLineEditWidget->text());
-    account.setImapServerAddress(m_ui->imapServerUrlLineEditWidget->text());
-    account.setImapServerPort(m_ui->imapServerPortSpinBox->value());
-    account.setSmtpServerUrl(m_ui->smtpServerUrlLineEditWidget->text());
-    account.setSmtpServerPort(m_ui->smtpServerPortSpinBox->value());
-
-    if (m_creatingNewAccountMode)
+    if (dialog.exec())
     {
-        m_emailAccountsListModel->removeAccount(m_ui->emailAccountsListView->currentIndex().row());
-        m_emailAccountsListModel->addAccount(account);
-        m_creatingNewAccountMode = false;
-        m_ui->emailAccountsListView->setCurrentIndex(m_emailAccountsListModel->index(m_emailAccountsListModel->rowCount() - 1, 0, QModelIndex()));
+        m_emailAccountsListModel->addAccount(dialog.getEmailAccount());
         EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
     }
-    else
+}
+
+void PreferencesEmailPageWidget::on_editAccountButton_clicked()
+{
+    if (m_ui->emailAccountsListView->selectionModel()->hasSelection())
     {
         QModelIndex index = m_ui->emailAccountsListView->selectionModel()->selectedIndexes().first();
-        m_emailAccountsListModel->replaceAccount(account, index);
-        EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
-    }
 
-    deactivateEditMode();
-}
+        EmailAccountPreferencesDialogWindow dialog;
+        dialog.setWindowTitle("Edit e-mail account");
+        dialog.setEmailAccount(m_emailAccounts.at(index.row()));
 
-void Otter::PreferencesEmailPageWidget::on_discardChangesButton_clicked()
-{
-    if (!m_creatingNewAccountMode)
-    {
-        int index = m_ui->emailAccountsListView->selectionModel()->selectedIndexes().first().row();
-
-        EmailAccount account = m_emailAccounts.at(index);
-
-        m_ui->yourNameLineEditWidget->setText(account.contactName());
-        m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
-        m_ui->userNameLineEditWidget->setText(account.userName());
-        m_ui->passwordLineEditWidget->setText(account.password());
-        m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
-        m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
-        m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
-        m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
-    }
-    else
-    {
-        m_creatingNewAccountMode = false;
-        m_emailAccountsListModel->removeAccount(m_emailAccountsListModel->rowCount() - 1);
-        EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
-
-        if (m_emailAccountsListModel->rowCount() > 0)
+        if (dialog.exec())
         {
-            QModelIndex index = m_emailAccountsListModel->index(m_emailAccountsListModel->rowCount() - 1, 0, QModelIndex());
-            int row = index.row();
-            EmailAccount account = m_emailAccounts.at(row);
-
-            m_ui->yourNameLineEditWidget->setText(account.contactName());
-            m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
-            m_ui->userNameLineEditWidget->setText(account.userName());
-            m_ui->passwordLineEditWidget->setText(account.password());
-            m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
-            m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
-            m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
-            m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
-
-            m_ui->emailAccountsListView->setCurrentIndex(index);
-        }
-        else
-        {
-            m_ui->emailAccountDetailsWidget->setVisible(false);
+            m_emailAccountsListModel->replaceAccount(dialog.getEmailAccount(), index);
+            EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
         }
     }
-
-    deactivateEditMode();
-    m_ui->addAndRemoveAccountButtons->setVisible(true);
-    m_ui->saveAndDiscardChangesButtons->setVisible(false);
 }
 
-void Otter::PreferencesEmailPageWidget::on_addAccountButton_clicked()
+void PreferencesEmailPageWidget::on_removeAccountButton_clicked()
 {
-    m_creatingNewAccountMode = true;
-
-    EmailAccount account;
-    account.setEmailAddress("new account");
-
-    m_emailAccountsListModel->addAccount(account);
-
-    QModelIndex index = m_emailAccountsListModel->index(m_emailAccountsListModel->rowCount() - 1, 0, QModelIndex());
-    m_ui->emailAccountsListView->setCurrentIndex(index);
-
-    activateEditMode();
-
-    m_ui->yourNameLineEditWidget->setText(QString());
-    m_ui->emailAddressLineEditWidget->setText(QString());
-    m_ui->userNameLineEditWidget->setText(QString());
-    m_ui->passwordLineEditWidget->setText(QString());
-    m_ui->imapServerUrlLineEditWidget->setText(QString());
-    m_ui->imapServerPortSpinBox->clear();
-    m_ui->smtpServerUrlLineEditWidget->setText(QString());
-    m_ui->smtpServerPortSpinBox->clear();
-
-    m_ui->emailAccountDetailsWidget->setVisible(true);
-}
-
-void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
-{
-
     if (m_ui->emailAccountsListView->selectionModel()->hasSelection())
     {
         int accountIndex = m_ui->emailAccountsListView->selectionModel()->selectedRows().first().row();
@@ -219,140 +116,18 @@ void Otter::PreferencesEmailPageWidget::on_removeAccountButton_clicked()
         QString contactName = m_emailAccounts.at(accountIndex).contactName();
         QMessageBox messageBox;
 
-        messageBox.setWindowTitle("Delete e-mail account");
+        messageBox.setWindowTitle("Remove e-mail account");
         messageBox.setText("Are you sure to remove the account <" +  accountAddress + ">?");
         messageBox.setIcon(QMessageBox::Question);
         messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
-        messageBox.addButton(new QPushButton("Delete Account"), QMessageBox::ButtonRole::AcceptRole);
+        messageBox.addButton(new QPushButton("Remove Account"), QMessageBox::ButtonRole::AcceptRole);
 
         if (messageBox.exec())
         {
             m_emailAccountsListModel->removeRows(accountIndex, 1);
             EmailAccountsManager::updateEmailAccountsConfiguration(m_emailAccounts);
         }
-
-        if (m_emailAccountsListModel->rowCount() > 0)
-        {
-            if (accountIndex >= 1)
-            {
-                QModelIndex newIndex = m_emailAccountsListModel->index(accountIndex - 1, 0, QModelIndex());
-                EmailAccount account = m_emailAccounts.at(newIndex.row());
-
-                m_ui->yourNameLineEditWidget->setText(account.contactName());
-                m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
-                m_ui->userNameLineEditWidget->setText(account.userName());
-                m_ui->passwordLineEditWidget->setText(account.password());
-                m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
-                m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
-                m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
-                m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
-
-                m_ui->emailAccountsListView->setCurrentIndex(newIndex);
-            }
-            else
-            {
-                QModelIndex newIndex = m_emailAccountsListModel->index(0, 0, QModelIndex());
-                EmailAccount account = m_emailAccounts.at(newIndex.row());
-
-                m_ui->yourNameLineEditWidget->setText(account.contactName());
-                m_ui->emailAddressLineEditWidget->setText(account.emailAddress());
-                m_ui->userNameLineEditWidget->setText(account.userName());
-                m_ui->passwordLineEditWidget->setText(account.password());
-                m_ui->imapServerUrlLineEditWidget->setText(account.imapServerAddress());
-                m_ui->imapServerPortSpinBox->setValue(account.imapServerPort());
-                m_ui->smtpServerUrlLineEditWidget->setText(account.smtpServerUrl());
-                m_ui->smtpServerPortSpinBox->setValue(account.smtpServerPort());
-
-                m_ui->emailAccountsListView->setCurrentIndex(newIndex);
-            }
-        }
-        else
-        {
-            m_ui->emailAccountDetailsWidget->setVisible(false);
-        }
-
-        if (m_emailAccountsListModel->rowCount() == 0)
-        {
-            m_ui->removeAccountButton->setEnabled(false);
-        }
-        else
-        {
-            m_ui->removeAccountButton->setEnabled(true);
-        }
     }
 }
 
-void Otter::PreferencesEmailPageWidget::activateEditMode()
-{
-    if (!m_editMode)
-    {
-        m_editMode = true;
-
-        m_ui->emailAccountsListView->setEnabled(false);
-
-        m_ui->addAndRemoveAccountButtons->setVisible(false);
-        m_ui->saveAndDiscardChangesButtons->setVisible(true);
-    }
-}
-
-void Otter::PreferencesEmailPageWidget::deactivateEditMode()
-{
-    if (m_editMode)
-    {
-        m_editMode = false;
-
-        m_ui->emailAccountsListView->setEnabled(true);
-
-        m_ui->addAndRemoveAccountButtons->setVisible(true);
-        m_ui->saveAndDiscardChangesButtons->setVisible(false);
-
-        if (m_emailAccountsListModel->rowCount() == 0)
-        {
-            m_ui->removeAccountButton->setEnabled(false);
-        }
-        else
-        {
-            m_ui->removeAccountButton->setEnabled(true);
-        }
-    }
-}
-
-void Otter::PreferencesEmailPageWidget::on_yourNameLineEditWidget_textEdited(const QString &arg1)
-{
-    activateEditMode();
-}
-
-void Otter::PreferencesEmailPageWidget::on_emailAddressLineEditWidget_textEdited(const QString &arg1)
-{
-    activateEditMode();
-}
-
-void Otter::PreferencesEmailPageWidget::on_userNameLineEditWidget_textEdited(const QString &arg1)
-{
-    activateEditMode();
-}
-
-void Otter::PreferencesEmailPageWidget::on_passwordLineEditWidget_textEdited(const QString &arg1)
-{
-    activateEditMode();
-}
-
-void Otter::PreferencesEmailPageWidget::on_imapServerUrlLineEditWidget_textEdited(const QString &arg1)
-{
-    activateEditMode();
-}
-
-void Otter::PreferencesEmailPageWidget::on_imapServerPortSpinBox_valueChanged(int arg1)
-{
-    activateEditMode();
-}
-
-void Otter::PreferencesEmailPageWidget::on_smtpServerUrlLineEditWidget_textEdited(const QString &arg1)
-{
-    activateEditMode();
-}
-
-void Otter::PreferencesEmailPageWidget::on_smtpServerPortSpinBox_valueChanged(int arg1)
-{
-    activateEditMode();
 }

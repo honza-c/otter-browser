@@ -28,10 +28,11 @@ namespace Otter
 bool VmimeSmtpService::sendMessage(Message message) const
 {
     vmime::shared_ptr<vmime::message> constructedMessage = constructMessage(message);
-    vmime::shared_ptr<vmime::net::transport> transport = getTransport();
 
     try
     {
+        vmime::shared_ptr<vmime::net::transport> transport = getTransport();
+
         transport->connect();
         transport->send(constructedMessage);
         transport->disconnect();
@@ -61,11 +62,15 @@ vmime::shared_ptr<vmime::net::transport> VmimeSmtpService::getTransport() const
 
     transport = m_session->getTransport(url);
 
-    transport->setProperty("connection.tls", true);
     transport->setProperty("auth.username", m_emailAddress);
     transport->setProperty("auth.password", m_password);
     transport->setProperty("options.need-authentication", true);
-    transport->setCertificateVerifier(m_certificateVerifier);
+
+    if (m_isConnectionEncrypted)
+    {
+        transport->setProperty("connection.tls", true);
+        transport->setCertificateVerifier(m_certificateVerifier);
+    }
 
     return transport;
 }

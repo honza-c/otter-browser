@@ -36,6 +36,7 @@ VmimeBaseMessagingService::VmimeBaseMessagingService(const VmimeBaseMessagingSer
     m_userName = other.m_userName;
     m_password = other.m_password;
     m_serverUrl = other.m_serverUrl;
+    m_isConnectionEncrypted = other.m_isConnectionEncrypted;
 
     initializeSession();
 }
@@ -88,6 +89,16 @@ int VmimeBaseMessagingService::port() const
 void VmimeBaseMessagingService::setPort(const int port)
 {
     m_port = port;
+}
+
+bool VmimeBaseMessagingService::isConnectionEncrypted() const
+{
+    return m_isConnectionEncrypted;
+}
+
+void VmimeBaseMessagingService::setIsConnectionEncrypted(const bool isConnectionEncrypted)
+{
+    m_isConnectionEncrypted = isConnectionEncrypted;
 }
 
 void VmimeBaseMessagingService::initializeSession()

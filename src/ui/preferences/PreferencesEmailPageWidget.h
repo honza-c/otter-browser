@@ -55,28 +55,15 @@ private:
     Ui::PreferencesEmailPageWidget *m_ui;
     QList<EmailAccount> m_emailAccounts;
     EmailAccountsListModel *m_emailAccountsListModel;
-    bool m_editMode;
-    bool m_creatingNewAccountMode;
-
-    void activateEditMode();
-    void deactivateEditMode();
 
 signals:
     void settingsModified();
 
 private slots:
-    void on_saveChangesButton_clicked();
-    void on_discardChangesButton_clicked();
+
     void on_addAccountButton_clicked();
+    void on_editAccountButton_clicked();
     void on_removeAccountButton_clicked();
-    void on_yourNameLineEditWidget_textEdited(const QString &arg1);
-    void on_emailAddressLineEditWidget_textEdited(const QString &arg1);
-    void on_userNameLineEditWidget_textEdited(const QString &arg1);
-    void on_passwordLineEditWidget_textEdited(const QString &arg1);
-    void on_imapServerUrlLineEditWidget_textEdited(const QString &arg1);
-    void on_imapServerPortSpinBox_valueChanged(int arg1);
-    void on_smtpServerUrlLineEditWidget_textEdited(const QString &arg1);
-    void on_smtpServerPortSpinBox_valueChanged(int arg1);
 };
 
 }

@@ -15,223 +15,52 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QWidget" name="accountListAndActionButtonsWidget" native="true">
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QListView" name="emailAccountsListView"/>
-        </item>
-        <item>
-         <widget class="QWidget" name="saveAndDiscardChangesButtons" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QPushButton" name="saveChangesButton">
-             <property name="text">
-              <string>Save changes</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="discardChangesButton">
-             <property name="text">
-              <string>Discard changes</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="addAndRemoveAccountButtons" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QPushButton" name="addAccountButton">
-             <property name="text">
-              <string>Add account</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="removeAccountButton">
-             <property name="text">
-              <string>Remove account</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <widget class="QListView" name="emailAccountsListView"/>
      </item>
      <item>
-      <widget class="QWidget" name="emailAccountDetailsWidget" native="true">
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="4" column="0">
-         <widget class="QLabel" name="imapServerUrlLabel">
-          <property name="text">
-           <string>IMAP server URL:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="Otter::LineEditWidget" name="imapServerUrlLineEditWidget"/>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="imapServerPortLabel">
-          <property name="text">
-           <string>IMAP server port:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QSpinBox" name="imapServerPortSpinBox">
-          <property name="maximum">
-           <number>65535</number>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="smtpServerUrlLabel">
-          <property name="text">
-           <string>SMTP server URL:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="smtpServerPortLabel">
-          <property name="text">
-           <string>SMTP server port:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <widget class="QSpinBox" name="smtpServerPortSpinBox">
-          <property name="maximum">
-           <number>65535</number>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="Otter::LineEditWidget" name="smtpServerUrlLineEditWidget"/>
-        </item>
-        <item row="3" column="1">
-         <widget class="Otter::LineEditWidget" name="passwordLineEditWidget">
-          <property name="echoMode">
-           <enum>QLineEdit::Password</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="Otter::LineEditWidget" name="yourNameLineEditWidget"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="passwordLabel">
-          <property name="text">
-           <string>Password:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="Otter::LineEditWidget" name="userNameLineEditWidget">
-          <property name="placeholderText">
-           <string>Mostly same as the email address</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="Otter::LineEditWidget" name="emailAddressLineEditWidget"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="emailAddressLabel">
-          <property name="text">
-           <string>Email address:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="yourNameLabel">
-          <property name="text">
-           <string>Your name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="userNameLabel">
-          <property name="text">
-           <string>User name:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="1">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="addAccountButton">
+         <property name="text">
+          <string>Add account</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="editAccountButton">
+         <property name="text">
+          <string>Edit account</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="removeAccountButton">
+         <property name="text">
+          <string>Remove account</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>Otter::LineEditWidget</class>
-   <extends>QLineEdit</extends>
-   <header>src/ui/LineEditWidget.h</header>
-  </customwidget>
- </customwidgets>
- <tabstops>
-  <tabstop>emailAccountsListView</tabstop>
-  <tabstop>saveChangesButton</tabstop>
-  <tabstop>discardChangesButton</tabstop>
-  <tabstop>addAccountButton</tabstop>
-  <tabstop>removeAccountButton</tabstop>
-  <tabstop>yourNameLineEditWidget</tabstop>
-  <tabstop>emailAddressLineEditWidget</tabstop>
-  <tabstop>userNameLineEditWidget</tabstop>
-  <tabstop>passwordLineEditWidget</tabstop>
-  <tabstop>imapServerUrlLineEditWidget</tabstop>
-  <tabstop>imapServerPortSpinBox</tabstop>
-  <tabstop>smtpServerUrlLineEditWidget</tabstop>
-  <tabstop>smtpServerPortSpinBox</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -258,7 +258,7 @@ void EmailContentReaderWidget::messageMetadataTableViewSelectionChanged(const QM
                     {
                         if (userAccount.emailAddress() == emailAddress)
                         {
-                            userAccount.fetchMissingMessageContent(folderPath, positionInFolder);
+                            userAccount.fetchMessageContent(folderPath, positionInFolder);
                         }
                     }
                 }

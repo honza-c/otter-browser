@@ -166,14 +166,31 @@ MessageContent VmimeInboxService::fetchMessageContent(QString folderPath, int ui
         return MessageContent();
     }
 
+    return MessageContent();
 }
 
 bool VmimeInboxService::initializeStore()
 {
-    vmime::utility::url url = getStoreUrl();
+    try
+    {
+        vmime::utility::url url(getStoreUrl().toStdString());
+        m_session->getStore(url);
+    }
+    catch (vmime::exception e)
+    {
+        QString notificationText = m_emailAddress.c_str();
+        notificationText.append(": Failed to connect create IMAP store: ");
+        notificationText.append(e.what());
 
-    m_store = m_session->getStore(url);
-    m_store->setCertificateVerifier(m_certificateVerifier);
+        Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        return false;
+    }
+
+
+    if (m_isConnectionEncrypted)
+    {
+        m_store->setCertificateVerifier(m_certificateVerifier);
+    }
 
     int attempts = 0;
     QString errorMessage;

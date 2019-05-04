@@ -19,33 +19,40 @@
 *
 **************************************************************************/
 
-#include "vmimeimapservice.h"
+#ifndef EMAILACCOUNTPREFERENCESDIALOGWINDOW_H
+#define EMAILACCOUNTPREFERENCESDIALOGWINDOW_H
+
+#include <QDialog>
+#include "../../mail/emailaccount.h"
 
 namespace Otter
 {
 
-QString VmimeImapService::getStoreUrl() const
+namespace Ui {
+    class EmailAccountPreferencesDialogWindow;
+}
+
+class EmailAccountPreferencesDialogWindow : public QDialog
 {
-    QString imapAddress;
+    Q_OBJECT
 
-    if (m_isConnectionEncrypted)
-    {
-        imapAddress += "imaps://";
-    }
-    else
-    {
-        imapAddress += "imap://";
-    }
+public:
+    explicit EmailAccountPreferencesDialogWindow(QWidget *parent = nullptr);
+    ~EmailAccountPreferencesDialogWindow();
 
-    imapAddress += m_userName.c_str();
-    imapAddress += ":";
-    imapAddress += QString(m_password.c_str());
-    imapAddress += "@";
-    imapAddress += QString(m_serverUrl.c_str());
-    imapAddress += ":";
-    imapAddress += QString::number(m_port);
+    EmailAccount getEmailAccount() const;
+    void setEmailAccount(const EmailAccount account);
 
-    return imapAddress;
-}
+
+private slots:
+    void on_buttonBox_accepted();
+    void on_buttonBox_rejected();
+    void on_imapEncryptedConnectionCheckbox_clicked();
+    void on_smtpEncryptedConnectionCheckBox_clicked();
+
+private:
+    Ui::EmailAccountPreferencesDialogWindow *m_ui;
+};
 
 }
+#endif // EMAILACCOUNTPREFERENCESDIALOGWINDOW_H

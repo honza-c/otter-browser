@@ -283,6 +283,7 @@ set(otter_src
 	src/modules/windows/cache/CacheContentsWidget.cpp
 	src/modules/windows/configuration/ConfigurationContentsWidget.cpp
 	src/modules/windows/cookies/CookiesContentsWidget.cpp
+        src/modules/windows/email/EmailAccountPreferencesDialogWindow.cpp
         src/modules/windows/email/EmailContentReaderWidget.cpp
         src/modules/windows/email/EmailContentsWidget.cpp
         src/modules/windows/email/NewEmailFolderDialogWindow.cpp
@@ -367,6 +368,7 @@ qt5_wrap_ui(otter_ui
 	src/modules/windows/cache/CacheContentsWidget.ui
 	src/modules/windows/configuration/ConfigurationContentsWidget.ui
 	src/modules/windows/cookies/CookiesContentsWidget.ui
+        src/modules/windows/email/EmailAccountPreferencesDialogWindow.ui
         src/modules/windows/email/EmailContentReaderWidget.ui
         src/modules/windows/email/EmailContentsWidget.ui
         src/modules/windows/email/NewEmailFolderDialogWindow.ui

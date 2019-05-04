@@ -49,13 +49,19 @@ public:
     struct connectionSettingsHolder
     {
         QString contactName;
-        QString userName;
         QString emailAddress;
-        QString password;
-        QString smtpServerUrl;
-        int smtpServerPort;
+
+        QString imapServerUserName;
+        QString imapServerPassword;
         QString imapServerAddress;
         int imapServerPort;
+        bool isImapServerConnectionSecured;
+
+        QString smtpServerUserName;
+        QString smtpServerPassword;
+        QString smtpServerAddress;
+        int smtpServerPort;
+        bool isSmtpServerConnectionSecured;
     };
 
     QString contactName() const;
@@ -64,17 +70,11 @@ public:
     QString emailAddress() const;
     void setEmailAddress(const QString emailAddress);
 
-    QString userName() const;
-    void setUserName(const QString userName);
+    QString imapServerUserName() const;
+    void setImapServerUserName(const QString imapServerUserName);
 
-    QString password() const;
-    void setPassword(const QString password);
-
-    QString smtpServerUrl() const;
-    void setSmtpServerUrl(const QString smtpServerUrl);
-
-    int smtpServerPort() const;
-    void setSmtpServerPort(const int smtpServerPort);
+    QString imapServerPassword() const;
+    void setImapServerPassword(const QString imapServerPassword);
 
     QString imapServerAddress() const;
     void setImapServerAddress(const QString imapServerAddress);
@@ -82,15 +82,27 @@ public:
     int imapServerPort() const;
     void setImapServerPort(const int imapServerPort);
 
-    void fetchStoreContent();
-    QFuture<QList<InboxFolder>> fetchInboxFolders();
+    bool isImapServerConnectionEncrypted() const;
+    void setIsImapServerConnectionEncrypted(const bool isImapServerConnectionEncrypted);
 
-    void initializeInbox();
+    QString smtpServerUserName() const;
+    void setSmtpServerUserName(const QString smtpServerUserName);
+
+    QString smtpServerPassword() const;
+    void setSmtpServerPassword(const QString smtpServerPassword);
+
+    QString smtpServerAddress() const;
+    void setSmtpServerAddress(const QString smtpServerAddress);
+
+    int smtpServerPort() const;
+    void setSmtpServerPort(const int smtpServerPort);
+
+    bool isSmtpServerConnectionEncrypted() const;
+    void setIsSmtpServerConnectionEncrypted(const bool isSmtpServerConnectionEncrypted);
+
+    void fetchStoreContent();
     bool sendMessage(Message message) const;
-    QFuture<MessageContent> fetchMessageContent(QString folderPath, int positionInFolder);
-    void fetchMissingMessageContent(const QString folderPath, const int positionInFolder);
-    void fetchMessageMetadata();
-    void updateMessageMetadataInDatabase(QList<MessageMetadata> metadata);
+    void fetchMessageContent(const QString folderPath, const int positionInFolder);
 
     void deleteMessage(const int uid, const int folderId);
     void copyMessage(const int uid, const QString oldPath, const QString newPath);
@@ -103,10 +115,13 @@ public:
     void setMessageAsSeen(const int uid);
 
 private:
-    QFuture<QList<MessageMetadata>> fetchMessagesMetadata();
+    void fetchMessagesMetadata();
     void updateFolderStructureInDatabase(QList<InboxFolder> folders);
     void updateMessageContentInDatabase(const QString emailAddress, const QString folderPath, const int positionInFolder, MessageContent messageContent);
 
+    QFuture<QList<InboxFolder>> fetchInboxFoldersThread();
+    QFuture<MessageContent> fetchMessageContentThread(QString folderPath, int positionInFolder);
+    QFuture<QList<MessageMetadata>> fetchMessagesMetadataThread();
     QFuture<bool> deleteMessageThread(const int uid, const QString folderPath);
     QFuture<bool> renameFolderThread(const QString originalFolderPath, const QString renamedFolderPath);
     QFuture<bool> deleteFolderThread(const QString folderPath);
@@ -118,17 +133,19 @@ private:
     connectionSettingsHolder getConnectionSettings() const;
 
     QString m_contactName;
-    QString m_userName;
     QString m_emailAddress;
-    QString m_password;
 
-    QString m_smtpServerUrl;
-    int m_smtpServerPort;
-
+    QString m_imapServerUserName;
+    QString m_imapServerPassword;
     QString m_imapServerAddress;
     int m_imapServerPort;
+    bool m_isImapServerConnectionEncrypted;
 
-    VmimeImapService *m_imapService;
+    QString m_smtpServerUserName;
+    QString m_smtpServerPassword;
+    QString m_smtpServerAddress;
+    int m_smtpServerPort;
+    bool m_isSmtpServerConnectionEncrypted;
 
 signals:
     void messageContentFetched(int);

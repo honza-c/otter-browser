@@ -63,7 +63,7 @@ void EmailAccountsManager::updateInboxes()
 
     for (EmailAccount &account : m_emailAccounts)
     {
-        account.initializeInbox();
+        account.fetchStoreContent();
         emailAddresses << account.emailAddress();
     }
 
@@ -97,7 +97,7 @@ bool EmailAccountsManager::loadEmailAccounts(const QString &path)
 
     for (EmailAccount &account : m_emailAccounts)
     {
-        account.initializeInbox();
+        account.fetchStoreContent();
         emailAddresses << account.emailAddress();
     }
 
@@ -142,12 +142,18 @@ QJsonObject EmailAccountsManager::writeToJson(const EmailAccount account)
 
     json[QLatin1String("contactName")] = account.contactName();
     json[QLatin1String("emailAddress")] = account.emailAddress();
-    json[QLatin1String("userName")] = account.userName();
-    json[QLatin1String("password")] = account.password();
-    json[QLatin1String("smtpServerUrl")] = account.smtpServerUrl();
-    json[QLatin1String("smtpServerPort")] = QString::number(account.smtpServerPort());
+
+    json[QLatin1String("imapServerUserName")] = account.imapServerUserName();
+    json[QLatin1String("imapServerPassword")] = account.imapServerPassword();
     json[QLatin1String("imapServerAddress")] = account.imapServerAddress();
     json[QLatin1String("imapServerPort")] = QString::number(account.imapServerPort());
+    json[QLatin1String("isImapServerConnectionSecured")] = account.isImapServerConnectionEncrypted();
+
+    json[QLatin1String("smtpServerUserName")] = account.smtpServerUserName();
+    json[QLatin1String("smtpServerPassword")] = account.smtpServerPassword();
+    json[QLatin1String("smtpServerAddress")] = account.smtpServerAddress();
+    json[QLatin1String("smtpServerPort")] = QString::number(account.smtpServerPort());
+    json[QLatin1String("isSmtpServerConnectionSecured")] = account.isSmtpServerConnectionEncrypted();
 
     return json;
 }
@@ -158,12 +164,18 @@ EmailAccount EmailAccountsManager::readFromJson(const QJsonObject json)
 
     account.setContactName(json[QLatin1String("contactName")].toString());
     account.setEmailAddress(json[QLatin1String("emailAddress")].toString());
-    account.setUserName(json[QLatin1String("userName")].toString());
-    account.setPassword(json[QLatin1String("password")].toString());
-    account.setSmtpServerUrl(json[QLatin1String("smtpServerUrl")].toString());
-    account.setSmtpServerPort(json[QLatin1String("smtpServerPort")].toString().toInt());
+
+    account.setImapServerUserName(json[QLatin1String("imapServerUserName")].toString());
+    account.setImapServerPassword(json[QLatin1String("imapServerPassword")].toString());
     account.setImapServerAddress(json[QLatin1String("imapServerAddress")].toString());
     account.setImapServerPort(json[QLatin1String("imapServerPort")].toString().toInt());
+    account.setIsImapServerConnectionEncrypted(json[QLatin1String("isImapServerConnectionSecured")].toBool());
+
+    account.setSmtpServerUserName(json[QLatin1String("smtpServerUserName")].toString());
+    account.setSmtpServerPassword(json[QLatin1String("smtpServerPassword")].toString());
+    account.setSmtpServerAddress(json[QLatin1String("smtpServerAddress")].toString());
+    account.setSmtpServerPort(json[QLatin1String("smtpServerPort")].toString().toInt());
+    account.setIsSmtpServerConnectionEncrypted(json[QLatin1String("isSmtpServerConnectionSecured")].toBool());
 
     return account;
 }
@@ -179,7 +191,7 @@ void EmailAccountsManager::updateEmailAccountsConfiguration(const QList<EmailAcc
 
         for (EmailAccount &account : m_emailAccounts)
         {
-            account.initializeInbox();
+            account.fetchStoreContent();
             emailAddresses << account.emailAddress();
         }
 

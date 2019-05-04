@@ -34,7 +34,7 @@ public:
         : VmimeInboxService(parent) {}
 
 private:
-    vmime::utility::url getStoreUrl() const;
+    QString getStoreUrl() const;
 };
 
 }

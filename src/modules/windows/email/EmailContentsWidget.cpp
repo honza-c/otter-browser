@@ -113,7 +113,7 @@ void EmailContentsWidget::on_getMessagesButton_clicked()
 {
     for (EmailAccount& account : EmailAccountsManager::getEmailAccounts())
     {
-        account.initializeInbox();
+        account.fetchStoreContent();
     }
 }
 

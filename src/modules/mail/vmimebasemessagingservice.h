@@ -52,6 +52,9 @@ public:
     int port() const;
     void setPort(const int port);
 
+    bool isConnectionEncrypted() const;
+    void setIsConnectionEncrypted(const bool isConnectionEncrypted);
+
     void initializeSession();
 
 signals:
@@ -67,6 +70,7 @@ public slots:
     std::string m_userName;
     std::string m_password;
     int m_port;
+    bool m_isConnectionEncrypted;
 
     vmime::shared_ptr<vmime::net::session> m_session;
     vmime::shared_ptr<vmime::security::cert::defaultCertificateVerifier> m_certificateVerifier;

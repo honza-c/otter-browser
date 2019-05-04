@@ -29,33 +29,45 @@ EmailAccount::EmailAccount(QObject *parent)
 {
     m_smtpServerPort = 0;
     m_imapServerPort = 0;
+
+    m_isImapServerConnectionEncrypted = false;
+    m_isSmtpServerConnectionEncrypted = false;
 }
 
 EmailAccount::EmailAccount(const EmailAccount &other)
 {
     m_contactName = other.m_contactName;
     m_emailAddress = other.m_emailAddress;
-    m_userName = other.m_userName;
-    m_password = other.m_password;
-    m_smtpServerUrl = other.m_smtpServerUrl;
-    m_smtpServerPort = other.m_smtpServerPort;
+
+    m_imapServerUserName = other.m_imapServerUserName;
+    m_imapServerPassword = other.m_imapServerPassword;
     m_imapServerAddress = other.m_imapServerAddress;
     m_imapServerPort = other.m_imapServerPort;
+    m_isImapServerConnectionEncrypted = other.m_isImapServerConnectionEncrypted;
 
-    m_imapService = other.m_imapService;
+    m_smtpServerUserName = other.m_smtpServerUserName;
+    m_smtpServerPassword = other.m_smtpServerPassword;
+    m_smtpServerAddress = other.m_smtpServerAddress;
+    m_smtpServerPort = other.m_smtpServerPort;
+    m_isSmtpServerConnectionEncrypted = other.m_isSmtpServerConnectionEncrypted;
 }
 
 EmailAccount& EmailAccount::operator=(const EmailAccount &other)
 {
     m_contactName = other.m_contactName;
     m_emailAddress = other.m_emailAddress;
-    m_userName = other.m_userName;
-    m_password = other.m_password;
-    m_smtpServerUrl = other.m_smtpServerUrl;
-    m_smtpServerPort = other.m_smtpServerPort;
+
+    m_imapServerUserName = other.m_imapServerUserName;
+    m_imapServerPassword = other.m_imapServerPassword;
     m_imapServerAddress = other.m_imapServerAddress;
     m_imapServerPort = other.m_imapServerPort;
-    m_imapService = other.m_imapService;
+    m_isImapServerConnectionEncrypted = other.m_isImapServerConnectionEncrypted;
+
+    m_smtpServerUserName = other.m_smtpServerUserName;
+    m_smtpServerPassword = other.m_smtpServerPassword;
+    m_smtpServerAddress = other.m_smtpServerAddress;
+    m_smtpServerPort = other.m_smtpServerPort;
+    m_isSmtpServerConnectionEncrypted = other.m_isSmtpServerConnectionEncrypted;
 
     return *this;
 }
@@ -80,34 +92,84 @@ void EmailAccount::setEmailAddress(QString emailAddress)
     m_emailAddress = emailAddress;
 }
 
-QString EmailAccount::userName() const
+QString EmailAccount::imapServerUserName() const
 {
-    return m_userName;
+    return m_imapServerUserName;
 }
 
-void EmailAccount::setUserName(const QString userName)
+void EmailAccount::setImapServerUserName(const QString imapServerUserName)
 {
-    m_userName = userName;
+    m_imapServerUserName = imapServerUserName;
 }
 
-QString EmailAccount::password() const
+QString EmailAccount::imapServerPassword() const
 {
-    return m_password;
+    return m_imapServerPassword;
 }
 
-void EmailAccount::setPassword(QString password)
+void EmailAccount::setImapServerPassword(QString imapServerPassword)
 {
-    m_password = password;
+    m_imapServerPassword = imapServerPassword;
 }
 
-QString EmailAccount::smtpServerUrl() const
+QString EmailAccount::imapServerAddress() const
 {
-    return m_smtpServerUrl;
+    return m_imapServerAddress;
 }
 
-void EmailAccount::setSmtpServerUrl(QString smtpServerUrl)
+void EmailAccount:: setImapServerAddress(QString imapServerAddress)
 {
-    m_smtpServerUrl = smtpServerUrl;
+    m_imapServerAddress = imapServerAddress;
+}
+
+int EmailAccount::imapServerPort() const
+{
+    return m_imapServerPort;
+}
+
+void EmailAccount::setImapServerPort(int imapServerPort)
+{
+    m_imapServerPort = imapServerPort;
+}
+
+bool EmailAccount::isImapServerConnectionEncrypted() const
+{
+    return m_isImapServerConnectionEncrypted;
+}
+
+void EmailAccount::setIsImapServerConnectionEncrypted(const bool isImapServerConnectionSecured)
+{
+    m_isImapServerConnectionEncrypted = isImapServerConnectionSecured;
+}
+
+QString EmailAccount::smtpServerUserName() const
+{
+    return m_smtpServerUserName;
+}
+
+void EmailAccount::setSmtpServerUserName(const QString smtpServerUserName)
+{
+    m_smtpServerUserName = smtpServerUserName;
+}
+
+QString EmailAccount::smtpServerPassword() const
+{
+    return m_smtpServerPassword;
+}
+
+void EmailAccount::setSmtpServerPassword(const QString smtpServerPassword)
+{
+    m_smtpServerPassword = smtpServerPassword;
+}
+
+QString EmailAccount::smtpServerAddress() const
+{
+    return m_smtpServerAddress;
+}
+
+void EmailAccount::setSmtpServerAddress(QString smtpServerUrl)
+{
+    m_smtpServerAddress = smtpServerUrl;
 }
 
 int EmailAccount::smtpServerPort() const
@@ -120,24 +182,14 @@ void EmailAccount::setSmtpServerPort(int smtpServerPort)
     m_smtpServerPort = smtpServerPort;
 }
 
-QString EmailAccount::imapServerAddress() const
+bool EmailAccount::isSmtpServerConnectionEncrypted() const
 {
-    return m_imapServerAddress;
+    return m_isSmtpServerConnectionEncrypted;
 }
 
-void EmailAccount:: setImapServerAddress(QString incomingServerAddress)
+void EmailAccount::setIsSmtpServerConnectionEncrypted(const bool isSmtpServerConnectionSecured)
 {
-    m_imapServerAddress = incomingServerAddress;
-}
-
-int EmailAccount::imapServerPort() const
-{
-    return m_imapServerPort;
-}
-
-void EmailAccount::setImapServerPort(int incomingServerPort)
-{
-    m_imapServerPort = incomingServerPort;
+    m_isSmtpServerConnectionEncrypted = isSmtpServerConnectionSecured;
 }
 
 void EmailAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
@@ -190,25 +242,21 @@ void EmailAccount::updateFolderStructureInDatabase(QList<InboxFolder> folders)
     }
 }
 
-void EmailAccount::initializeInbox()
-{
-    fetchStoreContent();
-}
-
-QFuture<QList<InboxFolder>> EmailAccount::fetchInboxFolders()
+QFuture<QList<InboxFolder>> EmailAccount::fetchInboxFoldersThread()
 {
     auto fetchInboxFoldersWorker = [](
             const connectionSettingsHolder settings)
     {
-        VmimeInboxService *inboxService = new VmimeImapService();
+        VmimeImapService imapService;
 
-        inboxService->setEmailAddress(settings.emailAddress);
-        inboxService->setUserName(settings.userName);
-        inboxService->setPassword(settings.password);
-        inboxService->setServerUrl(settings.imapServerAddress);
-        inboxService->setPort(settings.imapServerPort);
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
-        return inboxService->fetchInboxFolders();
+        return imapService.fetchInboxFolders();
     };
 
     return QtConcurrent::run(fetchInboxFoldersWorker, getConnectionSettings());
@@ -216,7 +264,7 @@ QFuture<QList<InboxFolder>> EmailAccount::fetchInboxFolders()
 
 void EmailAccount::fetchStoreContent()
 {
-    QFuture<QList<InboxFolder>> future = fetchInboxFolders();
+    QFuture<QList<InboxFolder>> future = fetchInboxFoldersThread();
 
     QFutureWatcher<QList<InboxFolder>> *watcher = new QFutureWatcher<QList<InboxFolder>>();
 
@@ -224,16 +272,16 @@ void EmailAccount::fetchStoreContent()
         if (future.result() != QList<InboxFolder>())
         {
             updateFolderStructureInDatabase(future.result());
-            fetchMessageMetadata();
+            fetchMessagesMetadata();
         }
     });
 
     watcher->setFuture(future);
 }
 
-void EmailAccount::fetchMessageMetadata()
+void EmailAccount::fetchMessagesMetadata()
 {
-    QFuture<QList<MessageMetadata>> future = fetchMessagesMetadata();
+    QFuture<QList<MessageMetadata>> future = fetchMessagesMetadataThread();
     QFutureWatcher<QList<MessageMetadata>> *watcher = new QFutureWatcher<QList<MessageMetadata>>();
 
     connect(watcher, &QFutureWatcher<QList<MessageMetadata>>::finished, [=]()
@@ -247,17 +295,18 @@ void EmailAccount::fetchMessageMetadata()
     watcher->setFuture(future);
 }
 
-QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadata()
+QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadataThread()
 {
     auto fetchMessageMetadataWorker = [](const connectionSettingsHolder settings)
     {
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.fetchMessagesMetadata();
     };
@@ -271,17 +320,18 @@ bool EmailAccount::sendMessage(Message message) const
     connectionSettingsHolder settings = getConnectionSettings();
 
     smtpService.setEmailAddress(settings.emailAddress);
-    smtpService.setUserName(settings.userName);
-    smtpService.setPassword(settings.password);
-    smtpService.setServerUrl(settings.smtpServerUrl);
+    smtpService.setUserName(settings.smtpServerUserName);
+    smtpService.setPassword(settings.smtpServerPassword);
+    smtpService.setServerUrl(settings.smtpServerAddress);
     smtpService.setPort(settings.smtpServerPort);
+    smtpService.setIsConnectionEncrypted(settings.isSmtpServerConnectionSecured);
 
     return smtpService.sendMessage(message);
 }
 
-void EmailAccount::fetchMissingMessageContent(const QString folderPath, const int positionInFolder)
+void EmailAccount::fetchMessageContent(const QString folderPath, const int positionInFolder)
 {
-    QFuture<MessageContent> future = fetchMessageContent(folderPath, positionInFolder);
+    QFuture<MessageContent> future = fetchMessageContentThread(folderPath, positionInFolder);
     QFutureWatcher<MessageContent> *watcher = new QFutureWatcher<MessageContent>();
 
     QString emailAddress = m_emailAddress;
@@ -296,7 +346,7 @@ void EmailAccount::fetchMissingMessageContent(const QString folderPath, const in
     watcher->setFuture(future);
 }
 
-QFuture<MessageContent> EmailAccount::fetchMessageContent(QString folderPath, int uid)
+QFuture<MessageContent> EmailAccount::fetchMessageContentThread(QString folderPath, int uid)
 {
     auto fetchMessageContentWorker = [](
             const connectionSettingsHolder settings,
@@ -306,10 +356,11 @@ QFuture<MessageContent> EmailAccount::fetchMessageContent(QString folderPath, in
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.fetchMessageContent(folderPath, positionInFolder);
     };
@@ -322,13 +373,19 @@ EmailAccount::connectionSettingsHolder EmailAccount::getConnectionSettings() con
     connectionSettingsHolder settings;
 
     settings.contactName = m_contactName;
-    settings.userName = m_userName;
     settings.emailAddress = m_emailAddress;
-    settings.password = m_password;
-    settings.smtpServerUrl = m_smtpServerUrl;
-    settings.smtpServerPort = m_smtpServerPort;
+
+    settings.imapServerUserName = m_imapServerUserName;
+    settings.imapServerPassword = m_imapServerPassword;
     settings.imapServerAddress = m_imapServerAddress;
     settings.imapServerPort = m_imapServerPort;
+    settings.isImapServerConnectionSecured = m_isImapServerConnectionEncrypted;
+
+    settings.smtpServerUserName = m_smtpServerUserName;
+    settings.smtpServerPassword = m_smtpServerPassword;
+    settings.smtpServerAddress = m_smtpServerAddress;
+    settings.smtpServerPort = m_smtpServerPort;
+    settings.isSmtpServerConnectionSecured = m_isSmtpServerConnectionEncrypted;
 
     return settings;
 }
@@ -361,10 +418,11 @@ QFuture<bool> EmailAccount::deleteMessageThread(const int uid, const QString fol
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.deleteMessage(uid, folderPath);
     };
@@ -417,10 +475,11 @@ QFuture<bool> EmailAccount::renameFolderThread(const QString originalFolderPath,
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.renameFolder(originalFolderPath, renamedFolderPath);
     };
@@ -453,10 +512,11 @@ QFuture<bool> EmailAccount::deleteFolderThread(const QString folderPath)
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.deleteFolder(folderPath);
     };
@@ -506,10 +566,11 @@ QFuture<bool> EmailAccount::createFolderThread(const QString folderPath)
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.createFolder(folderPath);
     };
@@ -546,10 +607,11 @@ QFuture<long> EmailAccount::copyMessageThread(const int uid, const QString oldPa
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.copyMessage(uid, oldPath, newPath);
     };
@@ -568,10 +630,11 @@ QFuture<long> EmailAccount::moveMessageThread(const int uid, const QString oldPa
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.moveMessage(uid, oldPath, newPath);
     };
@@ -625,17 +688,17 @@ QFuture<bool> EmailAccount::setMessageAsSeenThread(const int uid, const QString 
         VmimeImapService imapService;
 
         imapService.setEmailAddress(settings.emailAddress);
-        imapService.setUserName(settings.userName);
-        imapService.setPassword(settings.password);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
         imapService.setServerUrl(settings.imapServerAddress);
         imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
 
         return imapService.setMessageAsSeen(uid, folderPath);
     };
 
     return QtConcurrent::run(setMessageAsSeenWorker, getConnectionSettings(), uid, folderPath);
 }
-
 
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
@@ -645,18 +708,28 @@ QDebug operator<<(QDebug debug, const EmailAccount &account)
                     << account.contactName()
                     << "\nEmail address: "
                     << account.emailAddress()
-                    << "\nUser name: "
-                    << account.userName()
-                    << "\nPassword: "
-                    << account.password()
-                    << "\nSMTP server URL: "
-                    << account.smtpServerUrl()
-                    << "\nSMTP server port: "
-                    << account.smtpServerPort()
+
+                    << "\nIMAP server user name: "
+                    << account.imapServerUserName()
+                    << "\nIMAP server password: "
+                    << account.imapServerPassword()
                     << "\nIncoming server address: "
                     << account.imapServerAddress()
                     << "\nIncoming server port: "
-                    << account.imapServerPort();
+                    << account.imapServerPort()
+                    << "\nIs IMAP server connection secured: "
+                    << account.isImapServerConnectionEncrypted()
+
+                    << "\nSMTP server user name: "
+                    << account.smtpServerUserName()
+                    << "\nSMTP server password: "
+                    << account.smtpServerPassword()
+                    << "\nSMTP server address: "
+                    << account.smtpServerAddress()
+                    << "\nSMTP server port: "
+                    << account.smtpServerPort()
+                    << "\nIs SMTP server connection secured: "
+                    << account.isSmtpServerConnectionEncrypted();
 
     return debug;
 }
