@@ -1305,6 +1305,45 @@ void DatabaseManager::setMessageAsSeen(const unsigned long uid, const QString em
     emit m_instance->messagesMetadataStructureChanged();
 }
 
+void DatabaseManager::setMessageAsUnseen(const unsigned long uid, const QString emailAddress)
+{
+    QList<int> folderIds;
+
+    QSqlQuery folderIdsQuery;
+
+    folderIdsQuery.prepare("SELECT"
+                  " id "
+                  "FROM Folders"
+                  " WHERE "
+                  " emailAddress = :emailAddress ");
+
+    folderIdsQuery.bindValue(":emailAddress", emailAddress);
+    folderIdsQuery.exec();
+
+    while (folderIdsQuery.next())
+    {
+        folderIds << folderIdsQuery.value(0).toInt();
+    }
+
+    for (int folderId : folderIds)
+    {
+        QSqlQuery updateQuery;
+
+
+        updateQuery.prepare("UPDATE MessageData "
+                            "SET isSeen = :isSeen "
+                            "WHERE folderId = :folderId AND uid = :uid");
+
+        updateQuery.bindValue(":folderId", folderId);
+        updateQuery.bindValue(":isSeen", false);
+        updateQuery.bindValue(":uid", static_cast<int>(uid));
+
+        updateQuery.exec();
+    }
+
+    emit m_instance->messagesMetadataStructureChanged();
+}
+
 void DatabaseManager::deleteMessageFromDatabase(const unsigned long uid, const QString emailAddress)
 {
     QList<int> folderIds;

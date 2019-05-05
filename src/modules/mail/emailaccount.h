@@ -113,6 +113,7 @@ public:
     void createFolder(const QString folderPath);
 
     void setMessageAsSeen(const int uid);
+    void setMessageAsUnseen(const int uid);
 
 private:
     void fetchMessagesMetadata();
@@ -129,6 +130,7 @@ private:
     QFuture<long> copyMessageThread(const int uid, const QString oldPath, const QString newPath);
     QFuture<long> moveMessageThread(const int uid, const QString oldPath, const QString newPath);
     QFuture<bool> setMessageAsSeenThread(const int uid, const QString folderPath);
+    QFuture<bool> setMessageAsUnseenThread(const int uid, const QString folderPath);
 
     connectionSettingsHolder getConnectionSettings() const;
 

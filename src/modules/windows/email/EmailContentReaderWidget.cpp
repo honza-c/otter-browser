@@ -169,6 +169,23 @@ void EmailContentReaderWidget::messageMetadataTableViewContextMenuRequested(QPoi
             }
         }
 
+
+
+        QString markAsReadText;
+
+        if (model->data(QModelIndex(index.sibling(index.row(), 3)), Qt::DisplayRole).toBool())
+        {
+            markAsReadText = "Mark as unseen";
+        }
+        else
+        {
+            markAsReadText = "Mark as seen";
+        }
+
+        QAction *markAsReadAction = new QAction(markAsReadText);
+
+        QObject::connect(markAsReadAction, SIGNAL(triggered(bool)), this, SLOT(markAsReadActionTriggered(bool)));
+
         QAction *deleteAction = new QAction("Delete Message");
 
         QObject::connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(deleteMessageActionTriggered(bool)));
@@ -176,6 +193,7 @@ void EmailContentReaderWidget::messageMetadataTableViewContextMenuRequested(QPoi
         menu->addMenu(moveMessageMenu);
         menu->addMenu(copyMessageMenu);
         menu->addAction(deleteAction);
+        menu->addAction(markAsReadAction);
 
         menu->popup(m_ui->messageMetadataTableView->viewport()->mapToGlobal(position));
     }
@@ -865,6 +883,34 @@ void EmailContentReaderWidget::copyMessageActionTriggered(bool)
         if (account.emailAddress() == emailAddress)
         {
             account.copyMessage(uid, currentPath, newPath);
+        }
+    }
+}
+
+void EmailContentReaderWidget::markAsReadActionTriggered(bool)
+{
+    QAction *action = static_cast<QAction*>(QObject::sender());
+
+    QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
+    QModelIndex index = selectionModel->selectedRows().at(0);
+
+    int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+    int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+    QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+    for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+    {
+        if (account.emailAddress() == emailAddress)
+        {
+            if (action->text() == "Mark as seen")
+            {
+                account.setMessageAsSeen(uid);
+            }
+            else
+            {
+                account.setMessageAsUnseen(uid);
+            }
         }
     }
 }

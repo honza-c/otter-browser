@@ -432,4 +432,41 @@ bool VmimeInboxService::setMessageAsSeen(const int uid, const QString folderPath
     return false;
 }
 
+bool VmimeInboxService::setMessageAsUnseen(const int uid, const QString folderPath)
+{
+    if (initializeStore())
+    {
+        try
+        {
+            QString path = folderPath;
+            path = path.remove(0, 1);
+
+            vmime::shared_ptr<vmime::net::folder> folder = m_store->getFolder(vmime::net::folder::path(path.toStdString()));
+            folder->open(vmime::net::folder::MODE_READ_WRITE);
+            vmime::shared_ptr <vmime::net::message> msg = folder->getMessages(vmime::net::messageSet::byUID(static_cast<vmime::size_t>(uid))).at(0);
+
+            folder->fetchMessage(msg, vmime::net::fetchAttributes::FLAGS);
+
+            auto flags = msg->getFlags();
+            flags &= ~vmime::net::message::FLAG_SEEN;
+            msg->setFlags(flags, vmime::net::message::FLAG_MODE_SET);
+
+            folder->close(false);
+            m_store->disconnect();
+
+            return true;
+        }
+        catch (vmime::exception e)
+        {
+            QString notificationText = m_emailAddress.c_str();
+            notificationText.append(": Failed to set message as unseen on server: ");
+            notificationText.append(e.what());
+
+            Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
+        }
+    }
+
+    return false;
+}
+
 }

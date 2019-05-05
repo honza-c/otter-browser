@@ -700,6 +700,47 @@ QFuture<bool> EmailAccount::setMessageAsSeenThread(const int uid, const QString 
     return QtConcurrent::run(setMessageAsSeenWorker, getConnectionSettings(), uid, folderPath);
 }
 
+void EmailAccount::setMessageAsUnseen(const int uid)
+{
+    QString folderPath = DatabaseManager::getFolderPath(m_emailAddress, static_cast<unsigned long>(uid));
+
+    QFuture<bool> future = setMessageAsUnseenThread(uid, folderPath);
+    QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
+
+
+    connect(watcher, &QFutureWatcher<bool>::finished, [=]()
+    {
+        if (future.result())
+        {
+            DatabaseManager::setMessageAsUnseen(static_cast<unsigned long>(uid), m_emailAddress);
+        }
+    });
+
+    watcher->setFuture(future);
+}
+
+QFuture<bool> EmailAccount::setMessageAsUnseenThread(const int uid, const QString folderPath)
+{
+    auto setMessageAsSeenWorker = [](
+            const connectionSettingsHolder settings,
+            const int uid,
+            const QString folderPath)
+    {
+        VmimeImapService imapService;
+
+        imapService.setEmailAddress(settings.emailAddress);
+        imapService.setUserName(settings.imapServerUserName);
+        imapService.setPassword(settings.imapServerPassword);
+        imapService.setServerUrl(settings.imapServerAddress);
+        imapService.setPort(settings.imapServerPort);
+        imapService.setIsConnectionEncrypted(settings.isImapServerConnectionSecured);
+
+        return imapService.setMessageAsUnseen(uid, folderPath);
+    };
+
+    return QtConcurrent::run(setMessageAsSeenWorker, getConnectionSettings(), uid, folderPath);
+}
+
 QDebug operator<<(QDebug debug, const EmailAccount &account)
 {
     QDebugStateSaver saver(debug);

@@ -53,6 +53,7 @@ public:
     bool createFolder(const QString folderPath);
     long copyMessage(const int uid, const QString oldPath, const QString newPath);
     bool setMessageAsSeen(const int uid, const QString folderPath);
+    bool setMessageAsUnseen(const int uid, const QString folderPath);
 protected:
     virtual QString getStoreUrl() const = 0;
 

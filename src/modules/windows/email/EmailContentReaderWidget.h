@@ -65,6 +65,7 @@ private slots:
     void moveMessageActionTriggered(bool);
     void copyMessageActionTriggered(bool);
     void deleteMessageActionTriggered(bool);
+    void markAsReadActionTriggered(bool);
 
     void on_enableRemoteContentButton_clicked(bool checked);
     void on_filterMessagesEdit_textChanged(const QString &input);

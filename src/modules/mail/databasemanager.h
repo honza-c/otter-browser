@@ -91,6 +91,7 @@ public:
     static void updateMessageMetadata(const QList<MessageMetadata> freshMetadataFromServer, const QString emailAddress);
     static QList<MessageMetadata> getMessageMetadataForAccount(const QString emailAddress);
     static void setMessageAsSeen(const unsigned long uid, const QString emailAddress);
+    static void setMessageAsUnseen(const unsigned long uid, const QString emailAddress);
     static void deleteMessageFromDatabase(const unsigned long uid, const QString emailAddress);
 
     static QString getArchiveFolderPathForAccount(QString emailAddress);
