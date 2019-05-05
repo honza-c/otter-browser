@@ -45,6 +45,8 @@ bool VmimeSmtpService::sendMessage(Message message) const
         notificationText.append(": Failed to send email message: ");
         notificationText.append(e.what());
 
+        qWarning() << notificationText;
+
         Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
     }
 

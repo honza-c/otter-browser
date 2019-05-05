@@ -56,6 +56,8 @@ QList<InboxFolder> VmimeInboxService::fetchInboxFolders()
         notificationText.append(": Failed to fetch IMAP folders: ");
         notificationText.append(e.what());
 
+        qWarning() << notificationText;
+
         Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
     }
 
@@ -90,6 +92,8 @@ QList<MessageMetadata> VmimeInboxService::fetchMessagesMetadata()
         QString notificationText = m_emailAddress.c_str();
         notificationText.append(": Failed to fetch metadata about messages: ");
         notificationText.append(e.what());
+
+        qWarning() << notificationText;
 
         Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
     }
@@ -161,6 +165,8 @@ MessageContent VmimeInboxService::fetchMessageContent(QString folderPath, int ui
         notificationText.append(": Failed to fetch message content: ");
         notificationText.append(e.what());
 
+        qWarning() << notificationText;
+
         Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
 
         return MessageContent();
@@ -181,6 +187,8 @@ bool VmimeInboxService::initializeStore()
         QString notificationText = m_emailAddress.c_str();
         notificationText.append(": Failed to connect create IMAP store: ");
         notificationText.append(e.what());
+
+        qWarning() << notificationText;
 
         Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         return false;
@@ -220,6 +228,8 @@ bool VmimeInboxService::initializeStore()
         notificationText.append(": Failed to connect to server: ");
         notificationText.append(errorMessage);
 
+        qWarning() << notificationText;
+
         Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         return false;
     }
@@ -258,6 +268,8 @@ bool VmimeInboxService::renameFolder(const QString originalFolderPath, const QSt
             notificationText.append(": Failed to rename IMAP folder: ");
             notificationText.append(e.what());
 
+            qWarning() << notificationText;
+
             Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
     }
@@ -286,6 +298,8 @@ bool VmimeInboxService::deleteFolder(const QString folderPath)
             notificationText.append(": Failed to delete IMAP folder: ");
             notificationText.append(e.what());
 
+            qWarning() << notificationText;
+
             Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
     }
@@ -312,6 +326,8 @@ bool VmimeInboxService::deleteMessage(const int uid, QString folderPath)
             QString notificationText = m_emailAddress.c_str();
             notificationText.append(": Failed to delete e-mail message: ");
             notificationText.append(e.what());
+
+            qWarning() << notificationText;
 
             Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
@@ -342,6 +358,8 @@ bool VmimeInboxService::createFolder(const QString folderPath)
             QString notificationText = m_emailAddress.c_str();
             notificationText.append(": Failed to create IMAP folder: ");
             notificationText.append(e.what());
+
+            qWarning() << notificationText;
 
             Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
@@ -387,6 +405,8 @@ long VmimeInboxService::copyMessage(const int uid, const QString oldPath, const 
             notificationText.append(": Failed to copy email message: ");
             notificationText.append(e.what());
 
+            qWarning() << notificationText;
+
             Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
     }
@@ -425,6 +445,8 @@ bool VmimeInboxService::setMessageAsSeen(const int uid, const QString folderPath
             notificationText.append(": Failed to set message as seen on server: ");
             notificationText.append(e.what());
 
+            qWarning() << notificationText;
+
             Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
     }
@@ -461,6 +483,8 @@ bool VmimeInboxService::setMessageAsUnseen(const int uid, const QString folderPa
             QString notificationText = m_emailAddress.c_str();
             notificationText.append(": Failed to set message as unseen on server: ");
             notificationText.append(e.what());
+
+            qWarning() << notificationText;
 
             Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         }
