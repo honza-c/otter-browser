@@ -174,7 +174,7 @@ bool VmimeInboxService::initializeStore()
     try
     {
         vmime::utility::url url(getStoreUrl().toStdString());
-        m_session->getStore(url);
+        m_store = m_session->getStore(url);
     }
     catch (vmime::exception e)
     {
@@ -185,7 +185,6 @@ bool VmimeInboxService::initializeStore()
         Notification *notification(NotificationsManager::createNotification(NotificationsManager::UpdateAvailableEvent, notificationText));
         return false;
     }
-
 
     if (m_isConnectionEncrypted)
     {
