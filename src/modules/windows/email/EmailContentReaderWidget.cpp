@@ -847,19 +847,23 @@ void EmailContentReaderWidget::moveMessageActionTriggered(bool)
     QString newPath = action->text();
 
     QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
-    QModelIndex index = selectionModel->selectedRows().at(0);
 
-    int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
-    int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
-
-    QString emailAddress = DatabaseManager::getEmailAddress(folderId);
-    QString currentPath = DatabaseManager::getFolderPath(folderId);
-
-    for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+    if (selectionModel->hasSelection())
     {
-        if (account.emailAddress() == emailAddress)
+        QModelIndex index = selectionModel->selectedRows().at(0);
+
+        int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+        int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+        QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+        QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+        for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
         {
-            account.moveMessage(uid, currentPath, newPath);
+            if (account.emailAddress() == emailAddress)
+            {
+                account.moveMessage(uid, currentPath, newPath);
+            }
         }
     }
 }
@@ -870,19 +874,23 @@ void EmailContentReaderWidget::copyMessageActionTriggered(bool)
     QString newPath = action->text();
 
     QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
-    QModelIndex index = selectionModel->selectedRows().at(0);
 
-    int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
-    int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
-
-    QString emailAddress = DatabaseManager::getEmailAddress(folderId);
-    QString currentPath = DatabaseManager::getFolderPath(folderId);
-
-    for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+    if (selectionModel->hasSelection())
     {
-        if (account.emailAddress() == emailAddress)
+        QModelIndex index = selectionModel->selectedRows().at(0);
+
+        int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+        int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+        QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+        QString currentPath = DatabaseManager::getFolderPath(folderId);
+
+        for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
         {
-            account.copyMessage(uid, currentPath, newPath);
+            if (account.emailAddress() == emailAddress)
+            {
+                account.copyMessage(uid, currentPath, newPath);
+            }
         }
     }
 }
@@ -892,24 +900,28 @@ void EmailContentReaderWidget::markAsReadActionTriggered(bool)
     QAction *action = static_cast<QAction*>(QObject::sender());
 
     QItemSelectionModel *selectionModel = m_ui->messageMetadataTableView->selectionModel();
-    QModelIndex index = selectionModel->selectedRows().at(0);
 
-    int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
-    int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
-
-    QString emailAddress = DatabaseManager::getEmailAddress(folderId);
-
-    for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
+    if (selectionModel->hasSelection())
     {
-        if (account.emailAddress() == emailAddress)
+        QModelIndex index = selectionModel->selectedRows().at(0);
+
+        int uid = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 2)), Qt::DisplayRole).toInt();
+        int folderId = m_messageMetadataTableModel->data(QModelIndex(index.sibling(index.row(), 1)), Qt::DisplayRole).toInt();
+
+        QString emailAddress = DatabaseManager::getEmailAddress(folderId);
+
+        for (EmailAccount &account : EmailAccountsManager::getEmailAccounts())
         {
-            if (action->text() == "Mark as seen")
+            if (account.emailAddress() == emailAddress)
             {
-                account.setMessageAsSeen(uid);
-            }
-            else
-            {
-                account.setMessageAsUnseen(uid);
+                if (action->text() == "Mark as seen")
+                {
+                    account.setMessageAsSeen(uid);
+                }
+                else
+                {
+                    account.setMessageAsUnseen(uid);
+                }
             }
         }
     }
