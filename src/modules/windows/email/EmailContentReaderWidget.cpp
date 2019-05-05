@@ -84,6 +84,7 @@ void EmailContentReaderWidget::setupTableView()
     m_ui->messageMetadataTableView->horizontalHeader()->moveSection(8, 1);
     m_ui->messageMetadataTableView->horizontalHeader()->moveSection(6, 15);
 
+    m_ui->messageMetadataTableView->hideColumn(0);
     m_ui->messageMetadataTableView->hideColumn(1);
     m_ui->messageMetadataTableView->hideColumn(2);
     m_ui->messageMetadataTableView->hideColumn(3);
@@ -110,7 +111,6 @@ void EmailContentReaderWidget::setupTableView()
 
     m_ui->messageMetadataTableView->horizontalHeader()->setStretchLastSection(false);
 
-    m_ui->messageMetadataTableView->setColumnWidth(0, 70); // id
     m_ui->messageMetadataTableView->horizontalHeader()->setSectionResizeMode(8, QHeaderView::Stretch); // subject
     m_ui->messageMetadataTableView->setColumnWidth(6, 250); // sender
     m_ui->messageMetadataTableView->setColumnWidth(7, 100); // size
