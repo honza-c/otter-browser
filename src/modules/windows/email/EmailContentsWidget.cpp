@@ -76,17 +76,11 @@ EmailContentsWidget::EmailContentsWidget(const QVariantMap &parameters, Window *
         connect(m_ui->emailContentReaderWidget, SIGNAL(replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int)), this, SLOT(replyOrForwardMessageRequested(WriteEmailMessageWidget::Mode, int)));
         connect(DatabaseManager::getInstance(), SIGNAL(messagesMetadataStructureChanged()), this, SLOT(messagesMetadataStructureChanged()));
     }
-
-    m_unreadMessagesCount = DatabaseManager::getTotalCountOfUnreadMessages();
 }
 
 QString EmailContentsWidget::getTitle() const
 {
-    QString title = "(";
-    title.append(QString::number(m_unreadMessagesCount));
-    title.append(") Email");
-
-    return title;
+    return "Email";
 }
 
 QLatin1String EmailContentsWidget::getType() const
@@ -123,7 +117,6 @@ void EmailContentsWidget::inboxFoldersStructureChanged()
     m_ui->inboxFoldersTreeView->setModel(model);
     m_ui->inboxFoldersTreeView->expandAll();
     connect(m_ui->inboxFoldersTreeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)), m_ui->emailContentReaderWidget, SLOT(selectedInboxFolderTreeIndexChanged(const QModelIndex &, const QModelIndex &)));
-    m_unreadMessagesCount = DatabaseManager::getTotalCountOfUnreadMessages();
 }
 
 void EmailContentsWidget::messagesMetadataStructureChanged()
