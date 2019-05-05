@@ -62,6 +62,9 @@ EmailContentReaderWidget::EmailContentReaderWidget(QWidget *parent) :
     m_ui->archiveButton->setIcon(ThemesManager::createIcon(QLatin1String("folder-koperta"), true));
     m_ui->enableRemoteContentButton->setIcon(ThemesManager::createIcon(QLatin1String("view-information"), true));
 
+    m_messageMetadataTableModel->setFilter(QString("folderId = %1").arg(-1));
+    m_messageMetadataTableModel->select();
+
     m_ui->messageContentWidget->setOpenLinks(false);
 }
 
