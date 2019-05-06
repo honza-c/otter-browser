@@ -55,6 +55,8 @@ public:
     QUrl getUrl() const override;
     QIcon getIcon() const override;
 
+    bool hasUnsavedMessage();
+
 protected:
 
 protected slots:

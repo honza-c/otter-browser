@@ -29,6 +29,7 @@
 #include "../modules/widgets/address/AddressWidget.h"
 #include "../modules/widgets/search/SearchWidget.h"
 #include "../modules/windows/web/WebContentsWidget.h"
+#include "../modules/windows/email/EmailContentsWidget.h"
 
 #include <QtCore/QTimer>
 #include <QtGui/QPainter>
@@ -202,6 +203,27 @@ void Window::clear()
 
 void Window::requestClose()
 {
+    if (m_contentsWidget->getUrl().toString() == "about:email")
+    {
+        EmailContentsWidget *emailWidget = static_cast<EmailContentsWidget*>(m_contentsWidget.data());
+
+        if (emailWidget->hasUnsavedMessage())
+        {
+            QMessageBox messageBox;
+
+            messageBox.setWindowTitle("Discard changes?");
+            messageBox.setText("Written message was not sent. Are you sure to discard all changes in the message?");
+            messageBox.setIcon(QMessageBox::Question);
+            messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
+            messageBox.addButton(new QPushButton("Discard changes"), QMessageBox::ButtonRole::AcceptRole);
+
+            if (!messageBox.exec())
+            {
+                return;
+            }
+        }
+    }
+
 	if (!m_contentsWidget || m_contentsWidget->close())
 	{
 		m_isAboutToClose = true;

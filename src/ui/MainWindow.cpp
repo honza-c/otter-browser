@@ -1678,7 +1678,7 @@ void MainWindow::handleRequestedCloseWindow(Window *window)
 		}
 
 		if (lastTabClosingAction == QLatin1String("openTab"))
-		{
+        {
 			window = getWindowByIndex(0);
 
 			if (window)
@@ -1704,6 +1704,10 @@ void MainWindow::handleRequestedCloseWindow(Window *window)
 	}
 
 	m_tabBar->removeTab(index);
+
+
+
+
 
 	if (m_tabSwitchingOrderIndex >= 0)
 	{

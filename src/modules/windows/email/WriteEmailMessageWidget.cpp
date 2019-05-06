@@ -365,7 +365,7 @@ void WriteEmailMessageWidget::on_backToInboxButton_clicked()
         QMessageBox messageBox;
 
         messageBox.setWindowTitle("Discard changes?");
-        messageBox.setText("Edited message was not sent. Are you sure to discard all changes in the message?");
+        messageBox.setText("Written message was not sent. Are you sure to discard all changes in the message?");
         messageBox.setIcon(QMessageBox::Question);
         messageBox.addButton(new QPushButton("Cancel"), QMessageBox::ButtonRole::RejectRole);
         messageBox.addButton(new QPushButton("Discard changes"), QMessageBox::ButtonRole::AcceptRole);
@@ -624,6 +624,11 @@ void WriteEmailMessageWidget::on_removeAttachmentToolboxButton_clicked()
     {
         m_ui->attachmentsWidget->setVisible(false);
     }
+}
+
+bool WriteEmailMessageWidget::hasUnsavedMessage()
+{
+    return m_messageEdited;
 }
 
 }

@@ -57,6 +57,7 @@ public:
     void setMessage(Message message);
     void setSenderComboBoxEditable(bool value);
     void setMode(const Mode mode);
+    bool hasUnsavedMessage();
 
 private slots:
     void on_backToInboxButton_clicked();

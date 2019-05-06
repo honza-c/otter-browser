@@ -418,4 +418,9 @@ void EmailContentsWidget::newEmailTabRequested(const QModelIndex &, const QModel
     Application::triggerAction(ActionsManager::OpenUrlAction, {{QLatin1String("url"), "about:email"}}, this);
 }
 
+bool EmailContentsWidget::hasUnsavedMessage()
+{
+    return m_ui->writeEmailWidget->isVisible() && m_ui->writeEmailWidget->hasUnsavedMessage();
+}
+
 }
