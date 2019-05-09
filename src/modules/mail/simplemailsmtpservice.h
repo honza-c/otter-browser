@@ -19,30 +19,30 @@
 *
 **************************************************************************/
 
-#ifndef VMIMESMTPSERVICE_H
-#define VMIMESMTPSERVICE_H
+#ifndef SIMPLEMAILSMTPSERVICE_H
+#define SIMPLEMAILSMTPSERVICE_H
 
-#include <vmime/vmime.hpp>
 #include <QObject>
-#include "vmimebasemessagingservice.h"
 #include "message.h"
+#include "vmimebasemessagingservice.h"
 
 namespace Otter
 {
 
-class VmimeSmtpService : public VmimeBaseMessagingService
+class SimpleMailSmtpService : public VmimeBaseMessagingService
 {
+    Q_OBJECT
 public:
-    explicit VmimeSmtpService(QObject *parent = nullptr)
-        : VmimeBaseMessagingService(parent) {}
+    explicit SimpleMailSmtpService(QObject *parent = nullptr)
+        : VmimeBaseMessagingService (parent) {}
 
-    bool sendMessage(Message message) const;
+    bool sendMessage(const Message message) const;
 
-private:
-    vmime::shared_ptr<vmime::net::transport> getTransport() const;
-    vmime::shared_ptr<vmime::message> constructMessage(const Message message) const;
+signals:
+
+public slots:
 };
 
 }
 
-#endif // VMIMESMTPSERVICE_H
+#endif // SIMPLEMAILSMTPSERVICE_H

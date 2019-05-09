@@ -20,6 +20,7 @@
 **************************************************************************/
 
 #include "emailaccount.h"
+#include "simplemailsmtpservice.h"
 
 namespace Otter
 {
@@ -316,7 +317,7 @@ QFuture<QList<MessageMetadata>> EmailAccount::fetchMessagesMetadataThread()
 
 bool EmailAccount::sendMessage(Message message) const
 {
-    VmimeSmtpService smtpService;
+    SimpleMailSmtpService smtpService;
     connectionSettingsHolder settings = getConnectionSettings();
 
     smtpService.setEmailAddress(settings.emailAddress);

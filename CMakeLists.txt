@@ -256,6 +256,7 @@ set(otter_src
         src/modules/mail/qpushbuttonwithid.cpp
         src/modules/mail/emailaccount.cpp
         src/modules/mail/emailaccountslistmodel.cpp
+        src/modules/mail/simplemailsmtpservice.cpp
         src/modules/mail/vmimebasemessagingservice.cpp
         src/modules/mail/vmimeimapservice.cpp
         src/modules/mail/vmimeinboxfolder.cpp
@@ -263,7 +264,6 @@ set(otter_src
         src/modules/mail/vmimeinboxservice.cpp
         src/modules/mail/vmimemessagecontentparser.cpp
         src/modules/mail/vmimemessagemetadataparser.cpp
-        src/modules/mail/vmimesmtpservice.cpp
 	src/modules/widgets/action/ActionWidget.cpp
 	src/modules/widgets/address/AddressWidget.cpp
 	src/modules/widgets/bookmark/BookmarkWidget.cpp
@@ -575,6 +575,12 @@ add_executable(otter-browser WIN32 MACOSX_BUNDLE
 
 target_link_libraries(otter-browser vmime)
 target_link_libraries(otter-browser Qt5::Sql)
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty/simple-mail/src/)
+
+add_library(simplemail-qt5 SHARED IMPORTED)
+set_property(TARGET simplemail-qt5 PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/libsimplemail-qt5.so")
+target_link_libraries(otter-browser simplemail-qt5)
+
 
 if (Qt5WebEngineWidgets_FOUND AND ENABLE_QTWEBENGINE)
 	target_link_libraries(otter-browser Qt5::WebEngineCore Qt5::WebEngineWidgets)

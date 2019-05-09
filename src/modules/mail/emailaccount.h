@@ -32,7 +32,6 @@
 #include "inboxfoldertreeitem.h"
 #include "vmimeimapservice.h"
 #include "message.h"
-#include "vmimesmtpservice.h"
 #include "messagecontent.h"
 
 namespace Otter
