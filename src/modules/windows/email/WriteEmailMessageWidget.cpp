@@ -493,11 +493,23 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
     }
     else
     {
+        htmlContent.append("<p>");
         htmlContent.append(m_ui->messageContentTextEdit->toPlainText());
-        htmlContent.append(m_ui->messageContentTextBrowser->toHtml());
+        htmlContent.append("</p>");
 
-        plainTextContent.append(m_ui->messageContentTextEdit->toPlainText());
-        plainTextContent.append(m_ui->messageContentTextBrowser->toPlainText());
+        if (m_mode == Mode::Forward)
+        {
+            htmlContent.append(getHtmlForwardMessageHeader());
+            htmlContent.append(m_message.htmlContent());
+        }
+        else if (m_mode == Mode::Reply || m_mode == Mode::ReplyAll)
+        {
+            htmlContent.append(getHtmlReplyMessageHeader());
+
+            htmlContent.append("<div style=\"border-left: thick solid #201e50; margin-left: 15px;\">");
+            htmlContent.append(m_message.htmlContent());
+            htmlContent.append("</div>");
+        }
     }
 
     Message message;
@@ -519,6 +531,46 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
         resetWidget();
         emit returnToInboxRequested();
     }
+}
+
+QString WriteEmailMessageWidget::getHtmlReplyMessageHeader()
+{
+    QString replyHtmlContent;
+
+    replyHtmlContent.append("<p>On ");
+
+    replyHtmlContent.append(m_message.dateTime().toString(dateTimeFormat));
+    replyHtmlContent.append(", ");
+
+    QString sender = Contact::toString(m_message.sender());
+
+    sender.replace("<", "&lt;");
+    sender.replace(">", "&gt;");
+
+    replyHtmlContent.append(sender);
+    replyHtmlContent.append(" wrote:<br></p>");
+    replyHtmlContent.append("<br>");
+
+    return replyHtmlContent;
+}
+
+QString WriteEmailMessageWidget::getHtmlForwardMessageHeader()
+{
+    QString forwardContent;
+
+    forwardContent.append("--------Forwarded Message--------<br>");
+    forwardContent.append("<b>Subject:</b> " + m_message.subject() + "<br>");
+    forwardContent.append("<b>Date:</b> " + m_message.dateTime().toString(dateTimeFormat) + "<br>");
+    forwardContent.append("<b>From:</b> " + m_message.sender().name() + " <" + m_message.sender().emailAddress() + ">" + "<br>");
+    forwardContent.append("<b>To:</b> ");
+
+    QString recipients = Contact::toString(m_message.addressListTo());
+    recipients.replace("<", "&lt;");
+    recipients.replace(">", "&gt;");
+
+    forwardContent.append(recipients);
+
+    return forwardContent;
 }
 
 QList<Contact> WriteEmailMessageWidget::parseContacts(const QString rawdata) const

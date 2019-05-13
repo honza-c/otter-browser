@@ -87,6 +87,9 @@ private:
     void setAttachments(const Message message);
     void setEmbeddedObjects(const Message message);
 
+    QString getHtmlForwardMessageHeader();
+    QString getHtmlReplyMessageHeader();
+
     void addAttachment();
     QList<Contact> parseContacts(const QString rawdata) const;
     QRegExp getEmailAddressRegexPattern() const;
