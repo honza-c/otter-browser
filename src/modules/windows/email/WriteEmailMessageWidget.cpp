@@ -327,6 +327,7 @@ void WriteEmailMessageWidget::setPlainTextContent(const QString content)
     {
         QString replyContent;
 
+        replyContent.append("\n");
         replyContent.append("On ");
         replyContent.append(m_message.dateTime().toString(dateTimeFormat));
         replyContent.append(", ");
@@ -341,10 +342,35 @@ void WriteEmailMessageWidget::setPlainTextContent(const QString content)
 
             if (line.length() >= 78)
             {
-                int breakPosition = line.lastIndexOf(" ");
-                line.replace(breakPosition, 1, "\n> ");
+                QStringList sublines;
+
+                int length = line.length();
+
+                for (int i = 0; i < length % 78; i++)
+                {
+                    bool isLastPart = (i + 1) == length % 78;
+
+                    if (isLastPart)
+                    {
+                        sublines.append(line.mid(i * 78, -1));
+                    }
+                    else
+                    {
+                        sublines.append(line.mid(i * 78, 78));
+                    }
+                }
+
+                for (QString &subline : sublines)
+                {
+                    int breakPosition = subline.lastIndexOf(" ");
+                    subline.replace(breakPosition, 1, "\n> ");
+                    replyContent.append(subline);
+                }
             }
-            replyContent.append(line);
+            else
+            {
+                replyContent.append(line);
+            }
         }
 
         replyContent.append("\n\n");
