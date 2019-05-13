@@ -402,6 +402,7 @@ void WriteEmailMessageWidget::on_backToInboxButton_clicked()
         }
     }
 
+    resetWidget();
     emit returnToInboxRequested();
 }
 
@@ -515,6 +516,7 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
 
     if (EmailAccountsManager::getEmailAccounts().at(senderId).sendMessage(message))
     {
+        resetWidget();
         emit returnToInboxRequested();
     }
 }
