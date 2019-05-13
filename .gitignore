@@ -11,3 +11,5 @@ debug
 *.user
 .kde4
 *.kde4
+*.so.*
+*.so
