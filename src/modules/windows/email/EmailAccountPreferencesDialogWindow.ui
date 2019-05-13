@@ -80,14 +80,14 @@
        <item row="11" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>SMTP server URL:</string>
+          <string>SMTP host:</string>
          </property>
         </widget>
        </item>
        <item row="12" column="0">
         <widget class="QLabel" name="label_11">
          <property name="text">
-          <string>SMTP server port:</string>
+          <string>SMTP port:</string>
          </property>
         </widget>
        </item>
@@ -97,7 +97,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>IMAP server URL:</string>
+          <string>IMAP host:</string>
          </property>
         </widget>
        </item>
@@ -124,7 +124,7 @@
        <item row="6" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>IMAP server port</string>
+          <string>IMAP port:</string>
          </property>
         </widget>
        </item>
