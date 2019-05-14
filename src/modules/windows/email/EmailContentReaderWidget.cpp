@@ -174,6 +174,7 @@ void EmailContentReaderWidget::messageMetadataTableViewContextMenuRequested(QPoi
 
 
 
+        /*
         QString markAsReadText;
 
         if (model->data(QModelIndex(index.sibling(index.row(), 3)), Qt::DisplayRole).toBool())
@@ -188,6 +189,7 @@ void EmailContentReaderWidget::messageMetadataTableViewContextMenuRequested(QPoi
         QAction *markAsReadAction = new QAction(markAsReadText);
 
         QObject::connect(markAsReadAction, SIGNAL(triggered(bool)), this, SLOT(markAsReadActionTriggered(bool)));
+        */
 
         QAction *deleteAction = new QAction("Delete Message");
 
@@ -196,7 +198,7 @@ void EmailContentReaderWidget::messageMetadataTableViewContextMenuRequested(QPoi
         menu->addMenu(moveMessageMenu);
         menu->addMenu(copyMessageMenu);
         menu->addAction(deleteAction);
-        menu->addAction(markAsReadAction);
+        //menu->addAction(markAsReadAction);
 
         menu->popup(m_ui->messageMetadataTableView->viewport()->mapToGlobal(position));
     }
