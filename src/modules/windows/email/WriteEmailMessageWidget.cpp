@@ -483,6 +483,20 @@ void WriteEmailMessageWidget::on_sendButton_clicked()
 
     QString subject = m_ui->subjectLineEdit->text();
 
+    if (subject == QString())
+    {
+        QMessageBox messageBox;
+
+        messageBox.setWindowTitle("Message subject cannot be empty");
+        messageBox.setText("Message subject cannot be empty");
+        messageBox.setIcon(QMessageBox::Critical);
+        messageBox.addButton(new QPushButton("Close"), QMessageBox::ButtonRole::AcceptRole);
+
+        messageBox.exec();
+
+        return;
+    }
+
     // content
     QString plainTextContent;
     QString htmlContent;
